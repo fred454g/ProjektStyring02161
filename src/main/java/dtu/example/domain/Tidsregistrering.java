@@ -5,10 +5,10 @@ import java.time.LocalDate;
 public class Tidsregistrering {
     
     private LocalDate dato;
-    private float antalArbejdstimer;
+    private double antalArbejdstimer;
     private String initialer;
     
-    public Tidsregistrering(LocalDate dato, float antalArbejdstimer, String initialer) {
+    public Tidsregistrering(LocalDate dato, double antalArbejdstimer, String initialer) {
         this.dato = dato;
         this.antalArbejdstimer = antalArbejdstimer;
         this.initialer = initialer;
@@ -21,7 +21,7 @@ public class Tidsregistrering {
         return this.dato;
     }
 
-    public float getAntalArbejdstimer() {
+    public double getAntalArbejdstimer() {
         return this.antalArbejdstimer;
     }
 

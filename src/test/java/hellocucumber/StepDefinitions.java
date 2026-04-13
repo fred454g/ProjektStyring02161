@@ -217,7 +217,33 @@ public class StepDefinitions {
     }
 
     // =============================
-    // ??
+    // registrer_tid.feature
     // =============================
 
+    @Given("at medarbejderen {string} er logget ud")
+    public void atMedarbejderenErLoggetUd(String initialer) {
+        planlaegningsvaerktoej.userLogout();
+    }
+
+    @When("medarbejderen registrerer {double} timer på aktiviteten {string} på projekt {string} for dags dato")
+    public void medarbejderenRegistrererTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
+        try {
+            planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("er {double} timer tilføjet til det samlede tidsforbrug for {string} på aktiviteten {string} på projekt {string}")
+    public void erTimerTilføjetTilDetSamledeTidsforbrugForPåAktivitetenPåProjekt(Double timer, String initialer, String aktivitetsNavn, String projektNr) {
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
+        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
+        assertEquals(timer, registreret);
+    }
+
+    // =============================
+    // ??
+    // =============================
 }
+

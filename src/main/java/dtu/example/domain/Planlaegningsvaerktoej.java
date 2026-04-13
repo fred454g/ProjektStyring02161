@@ -132,12 +132,27 @@ public class Planlaegningsvaerktoej {
         return false;
     }
 
-    public boolean registrerTidPaaProjekt(String projektNummer, String aktivitetsNummer, String initialer, float antalArbejdstimer) throws OperationNotAllowedException {
+    public void registrerTid(String projektNr, String aktivitetsNavn, Double timer) throws OperationNotAllowedException {
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
 
-        return false;
+        if (timer <= 0) {
+            throw new OperationNotAllowedException("Antal timer skal være større end 0");
+        }
+
+        if (timer > 24) {
+            throw new OperationNotAllowedException("Antal timer kan ikke overstige 24 timer per dag");
+        }
+
+        // 1. find projekt
+        Projekt projekt = findProjekt(projektNr);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+
+        // 2. Hvis projekt findes, lad os bede projekt om at registrere tid på aktivitet
+        projekt.registrerTid(aktivitetsNavn, loggedInUser, timer);
     }
 
     // =========================
@@ -288,4 +303,5 @@ public class Planlaegningsvaerktoej {
         }
         return null;
     }
+
 }

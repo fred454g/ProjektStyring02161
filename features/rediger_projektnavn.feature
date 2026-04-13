@@ -2,6 +2,7 @@ Feature: Rediger projektnavn
     For at kunne rette fejl eller opdatere projektets formål
     Som en medarbejder
     Vil jeg gerne kunne ændre navnet på et eksisterende projekt
+    
     Background: At der findes et projekt
         Given at medarbejderen "jfk" med navn "John F. Kennedy" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet

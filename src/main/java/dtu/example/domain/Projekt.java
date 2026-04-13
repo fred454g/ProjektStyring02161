@@ -135,8 +135,15 @@ public class Projekt {
         aktivitet.fjernMedarbejder(medarbejder);
     }
 
-    public boolean registrerTid(String aktivitetsNummer, String initialer, float antalArbejdstimer) {
-        return false;
+    public void registrerTid(String aktivitetsNavn, Medarbejder medarbejder, Double timer) throws OperationNotAllowedException {
+        // 1. find gældende aktivitet
+        Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
+
+        // Har vi fundet et match?
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
+        }
+        aktivitet.registrerTid(medarbejder, timer);
     }
 
     // =====================
