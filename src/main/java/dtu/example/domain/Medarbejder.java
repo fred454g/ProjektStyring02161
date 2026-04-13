@@ -10,6 +10,9 @@ public class Medarbejder {
         this.initialer = initialer;
     }
 
+    // Git test 1
+
+
     // =================
     // Get Methods
     // =================
