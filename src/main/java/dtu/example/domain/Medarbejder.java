@@ -10,9 +10,9 @@ public class Medarbejder {
         this.initialer = initialer;
     }
 
-    // Git test 5
+    // Git test 1
 
-    // Git test 4
+    // Git test 2
 
 
     // =================
