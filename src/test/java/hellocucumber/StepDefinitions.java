@@ -271,6 +271,25 @@ public class StepDefinitions {
     }
 
     // =============================
+    // registrer_fravaer.feature
+    // =============================
+
+    @When("medarbejderen registrerer fravær af typen {string} fra uge {int} til uge {int}")
+    public void medarbejderenRegistrererFraværAfTypenFraUgeTilUge(String type, Integer startUge, Integer slutUge) {
+        try {
+            planlaegningsvaerktoej.registrerFravaer(type, startUge, slutUge);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("er medarbejderen markeret som fraværende med typen {string} fra uge {int} til uge {int}")
+    public void erMedarbejderenMarkeretSomFraværendeMedTypenFraUgeTilUge(String type, Integer startUge, Integer slutUge) {
+        String initialer = planlaegningsvaerktoej.getLoggedinUserInitials();
+        assertTrue(planlaegningsvaerktoej.harFravaer(initialer, type, startUge, slutUge));
+    }
+    
+    // =============================
     // ??
     // =============================
 }

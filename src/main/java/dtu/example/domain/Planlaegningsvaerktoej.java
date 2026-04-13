@@ -3,6 +3,7 @@ package dtu.example.domain;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -153,6 +154,7 @@ public class Planlaegningsvaerktoej {
 
         // 2. Hvis projekt findes, lad os bede projekt om at registrere tid på aktivitet
         projekt.registrerTid(aktivitetsNavn, loggedInUser, timer);
+        observers.firePropertyChange("TID_REGISTRERET", null, loggedInUser); 
     }
 
     public double visEgneTimer() throws OperationNotAllowedException {
@@ -261,6 +263,33 @@ public class Planlaegningsvaerktoej {
 
         projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
         return true;
+    }
+
+    // =====================
+    // Fravaer Metoder
+    // =====================
+
+    public void registrerFravaer(String type, Integer startUge, Integer slutUge) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+
+        if (startUge > slutUge) {
+            throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
+        }
+
+        if (loggedInUser.harOverlappendeFravaer(startUge, slutUge)) {
+            throw new OperationNotAllowedException("Fraværsperioden overlapper med eksisterende fravær");
+        }
+
+        Fravaer fravaer = new Fravaer(type, startUge, slutUge);
+        loggedInUser.tilfoejFravaer(fravaer);
+        observers.firePropertyChange("FRAVAER_REGISTRERET", null, loggedInUser);
+    }
+
+    public boolean harFravaer(String initialer, String type, Integer startUge, Integer slutUge) {
+        Medarbejder medarbejder = findMedarbejder(initialer);
+        return medarbejder.harFravaer(type, startUge, slutUge);
     }
 
     // =====================
