@@ -12,6 +12,8 @@ public class Medarbejder {
 
     // Git test 1
 
+    // Git test 2
+
 
     // =================
     // Get Methods
