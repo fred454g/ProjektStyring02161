@@ -11,24 +11,28 @@ public class Planlaegningsvaerktoej {
     private List<Projekt> projekter = new ArrayList<>();
     private List<Medarbejder> medarbejdere = new ArrayList<>();
     private PropertyChangeSupport observers = new PropertyChangeSupport(this);
-    private String loggedInUser = "";
+    private Medarbejder loggedInUser = null;
     private int hoejesteProjektnummer = 1;
+    private int hoejesteAktivitetsnummer = 1;
 
 
     // ====================
     // User Methods
     // ====================
 
-    public String getLoggedinUser() {
-        return loggedInUser;
+    public String getLoggedinUserInitials() {
+        return this.loggedInUser.getInitialer();
     }
 
-    public void userLogin(String initialer) {
-        this.loggedInUser = initialer;
+    public void userLogin(String initialer) throws OperationNotAllowedException {
+        if (findMedarbejder(initialer) == null) {
+            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet.");
+        }
+        this.loggedInUser = findMedarbejder(initialer);
     }
 
     public void userLogout() {
-        this.loggedInUser = "";
+        this.loggedInUser = null;
     }
 
     public void nyMedarbejder(String navn, String initialer) throws OperationNotAllowedException {
@@ -52,7 +56,7 @@ public class Planlaegningsvaerktoej {
     * @param OperationNotAllowedException Indikere at systemets krav ikke opfyldes
     */
     public void opretProjekt(String projektNavn) throws OperationNotAllowedException {
-        if (this.loggedInUser == null ||this.loggedInUser.isEmpty()) {
+        if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
 
@@ -67,11 +71,19 @@ public class Planlaegningsvaerktoej {
         observers.firePropertyChange("PROJECT_OPRETTET", null, nytProjekt);
     }
 
-    public boolean setProjekt(String projektNummer) {
+    public boolean setProjekt(String projektNummer) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+
         return false;
     }
 
     public boolean omdoebProjekt(String projektNummer, String nytNavn) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+        
         // Tjek om navnet allerede er i brug
         for (Projekt p: this.projekter) {
             if (p.getProjektNavn().equals(nytNavn)) {
@@ -84,22 +96,44 @@ public class Planlaegningsvaerktoej {
         return projekt.opdaterNavn(nytNavn);
     }
 
-    public boolean opdaterProjektMedProjektleder(String projektNummer, String medarbejderInitialer) {
+    public boolean opdaterProjektMedProjektleder(String projektNummer, String medarbejderInitialer) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+        
         Projekt projekt = findProjekt(projektNummer);
         Medarbejder nyProjektleder = findMedarbejder(medarbejderInitialer);
         projekt.opdaterProjektleder(nyProjektleder);
         return true;
     }
 
-    public boolean tilknytMedarbejderTilProjekt(String projektNummer, Medarbejder medarbejder) {
+    public boolean tilknytMedarbejderTilProjekt(String projektNummer, String medarbejderInfo) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+        
+        Projekt projekt = findProjekt(projektNummer);
+        Medarbejder medarbejder = findMedarbejder(medarbejderInfo);
+        if (medarbejder == null) {
+            throw new OperationNotAllowedException("Medarbejder med initialer " + medarbejderInfo + " findes ikke i systemet");
+        }
+        projekt.tilknytMedarbejder(medarbejder);
+        return true;
+    }
+
+    public boolean fjernMedarbejderFraProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+
         return false;
     }
 
-    public boolean fjernMedarbejderFraProjekt(String projektNummer, String initialer) {
-        return false;
-    }
+    public boolean registrerTidPaaProjekt(String projektNummer, String aktivitetsNummer, String initialer, float antalArbejdstimer) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
 
-    public boolean registrerTidPaaProjekt(String projektNummer, String aktivitetsNummer, String initialer, float antalArbejdstimer) {
         return false;
     }
 
@@ -107,16 +141,55 @@ public class Planlaegningsvaerktoej {
     // Aktivitet Metoder
     // =========================
 
-    public boolean opretAktivitet(String projektNummer, float forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) {
+    public boolean opretAktivitet(String projektNummer, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+        
+        Projekt projekt = findProjekt(projektNummer);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+        String nytAktivitetsnr = String.valueOf(26000 + this.hoejesteProjektnummer);
+        projekt.opretAktivitet(nytAktivitetsnr, aktivitetsNavn, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
+        this.hoejesteAktivitetsnummer++;
+        return true;
+    }
+
+    public boolean opretAktivitet(String projektNummer, String aktivitetsNavn) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+        
+        Projekt projekt = findProjekt(projektNummer);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+        String nytAktivitetsnr = String.valueOf(26000 + this.hoejesteProjektnummer);
+        projekt.opretAktivitet(nytAktivitetsnr, aktivitetsNavn);
+        this.hoejesteAktivitetsnummer++;
+        return true;
+    }
+
+    public boolean sletAktivitet(String projektNummer, String aktivitetsNummer) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
         return false;
     }
 
-    public boolean sletAktivitet(String projektNummer, String aktivitetsNummer) {
-        return false;
-    }
+    public boolean opdaterAktivitet(String projektNummer, String aktivitetsNummer, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
 
-    public boolean opdaterAktivitet(String projektNummer, String aktivitetsNummer, float forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) {
-        return false;
+        Projekt projekt = findProjekt(projektNummer);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+
+        projekt.opdaterAktivitet(aktivitetsNummer, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
+        return true;
     }
 
     // =====================
@@ -133,11 +206,17 @@ public class Planlaegningsvaerktoej {
     // ========================
     // Status Metoder
     // ========================
-    public float visMedarbejdersTimerFra(String initialer, LocalDate dato) {
+    public float visMedarbejdersTimerFra(String initialer, LocalDate dato) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
         return 0.0f;
     }
 
-    public float visProjektStatus(String projektNummer) {
+    public float visProjektStatus(String projektNummer) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
         return 0.0f;
     }
 
