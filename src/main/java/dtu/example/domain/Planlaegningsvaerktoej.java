@@ -113,6 +113,9 @@ public class Planlaegningsvaerktoej {
         }
         
         Projekt projekt = findProjekt(projektNummer);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
         Medarbejder medarbejder = findMedarbejder(medarbejderInfo);
         if (medarbejder == null) {
             throw new OperationNotAllowedException("Medarbejder med initialer " + medarbejderInfo + " findes ikke i systemet");
@@ -189,6 +192,44 @@ public class Planlaegningsvaerktoej {
         }
 
         projekt.opdaterAktivitet(aktivitetsNummer, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
+        return true;
+    }
+
+    public boolean tilknytMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String medarbejderInfo) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+        
+        Projekt projekt = findProjekt(projektNummer);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+
+        Medarbejder medarbejder = findMedarbejder(medarbejderInfo);
+        if (medarbejder == null) {
+            throw new OperationNotAllowedException("Medarbejder med initialer " + medarbejderInfo + " findes ikke i systemet");
+        }
+
+        projekt.tilknytMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
+        return true;
+    }
+
+    public boolean fjernMedarbejderFraAktivitet(String projektNummer, String aktivitetsNavn, String medarbejderInfo) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+        
+        Projekt projekt = findProjekt(projektNummer);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+
+        Medarbejder medarbejder = findMedarbejder(medarbejderInfo);
+        if (medarbejder == null) {
+            throw new OperationNotAllowedException("Medarbejder med initialer " + medarbejderInfo + " findes ikke i systemet");
+        }
+
+        projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
         return true;
     }
 

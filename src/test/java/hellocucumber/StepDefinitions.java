@@ -169,6 +169,54 @@ public class StepDefinitions {
     }
 
     // =============================
+    // administrer_medarbejder_aktivitet
+    // =============================
+    @Given("at medarbejderen {string} er tilknyttet aktiviteten {string} på projekt {string}")
+    public void atMedarbejderenErTilknyttetAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn, String projektNr) throws OperationNotAllowedException {
+        planlaegningsvaerktoej.tilknytMedarbejderTilAktivitet(projektNr, aktivitetsNavn, medarbejderInfo);
+    }
+
+    @When("medarbejderen fjerner {string} fra aktiviteten {string} på projekt {string}")
+    public void medarbejderenFjernerFraAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn, String projektNr) {
+        try {
+            planlaegningsvaerktoej.fjernMedarbejderFraAktivitet(projektNr, aktivitetsNavn, medarbejderInfo);
+        } catch (OperationNotAllowedException  e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("er {string} ikke længere tilknyttet aktiviteten {string} på projekt {string}")
+    public void erIkkeLængereTilknyttetAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn, String projektNr) {
+        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(medarbejderInfo);
+        assertFalse(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn).isMedarbejderInAktivitet(medarbejder));
+    }
+
+    @Given("at aktiviteten {string} findes på projekt {string}")
+    public void atAktivitetenFindesPåProjekt(String aktivitetsNavn, String projektNr) throws OperationNotAllowedException {
+        planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn);
+    }
+
+    @Given("at medarbejderen {string} er tilknyttet projekt {string}")
+    public void atMedarbejderenErTilknyttetProjekt(String medarbejderInfo, String projektNr) throws OperationNotAllowedException {
+        planlaegningsvaerktoej.tilknytMedarbejderTilProjekt(projektNr, medarbejderInfo);
+    }
+
+    @When("medarbejderen tilknytter {string} til aktiviteten {string} på projekt {string}")
+    public void medarbejderenTilknytterTilAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn, String projektNr) {
+        try {
+            planlaegningsvaerktoej.tilknytMedarbejderTilAktivitet(projektNr, aktivitetsNavn, medarbejderInfo);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("er {string} tilknyttet aktiviteten {string} på projekt {string}")
+    public void erTilknyttetAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn, String projektNr) {
+        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(medarbejderInfo);
+        assertTrue(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn).isMedarbejderInAktivitet(medarbejder));
+    }
+
+    // =============================
     // ??
     // =============================
 

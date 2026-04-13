@@ -32,7 +32,8 @@ public class Projekt {
     }
 
     // ====================
-
+    // Projekt Metoder
+    // ====================
     public boolean opdaterNavn(String nytNavn) {
         this.projektNavn = nytNavn;
         return true;
@@ -42,6 +43,34 @@ public class Projekt {
         this.projektleder = nyProjektleder;
         return true;
     }
+
+    public void fjernMedarbejder(String initialer) {
+
+    }
+
+    public float visMedarbejdersTimer(String initialer) {
+        return 0.0f;
+    }
+
+    public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+        if (!isMedarbejderInProjekt(medarbejder)) {
+            this.tilknyttedeMedarbejdere.add(medarbejder);
+        } else {
+            throw new OperationNotAllowedException("Medarbejder er allerede tilknyttet projekt");
+        }
+    }
+
+    public void overbliksRapport(int starttidspunkt, int sluttidspunkt) {
+
+    }
+
+    public void givProjektStatus() {
+
+    }
+
+    // ===================
+    // Aktivitet metoder
+    // ===================
 
     public boolean opretAktivitet(String aktivitetsNr, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
         if (findAktivitet(aktivitetsNavn) != null) {
@@ -80,32 +109,34 @@ public class Projekt {
         aktivitet.setSluttidspunkt(sluttidspunkt);
     }
 
-    public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+    public void tilknytMedarbejderTilAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
         if (!isMedarbejderInProjekt(medarbejder)) {
-            this.tilknyttedeMedarbejdere.add(medarbejder);
-        } else {
-            throw new OperationNotAllowedException("Medarbejder er allerede tilknyttet projekt");
+            throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
         }
+
+        Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
+        }
+
+        aktivitet.tilknytMedarbejder(medarbejder);
     }
 
-    public void fjernMedarbejder(String initialer) {
+    public void fjernMedarbejderFraAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
+        if (!isMedarbejderInProjekt(medarbejder)) {
+            throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
+        }
 
+        Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
+        }
+
+        aktivitet.fjernMedarbejder(medarbejder);
     }
 
     public boolean registrerTid(String aktivitetsNummer, String initialer, float antalArbejdstimer) {
         return false;
-    }
-
-    public float visMedarbejdersTimer(String initialer) {
-        return 0.0f;
-    }
-
-    public void overbliksRapport(int starttidspunkt, int sluttidspunkt) {
-
-    }
-
-    public void givProjektStatus() {
-
     }
 
     // =====================

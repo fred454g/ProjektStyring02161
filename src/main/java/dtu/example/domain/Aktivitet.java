@@ -11,6 +11,7 @@ public class Aktivitet {
     private double forventedeAntalArbejdstimer;
     private int starttidspunkt;
     private int sluttidspunkt;
+    private List<Medarbejder> tilknyttedeMedarbejdere = new ArrayList<>();
     private List<Tidsregistrering> tidsregistreringer = new ArrayList<>();
     
     public Aktivitet(String aktivitetsnummer, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) {
@@ -66,6 +67,22 @@ public class Aktivitet {
         return true;
     }
 
+    public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+        if (!isMedarbejderInAktivitet(medarbejder)) {
+            this.tilknyttedeMedarbejdere.add(medarbejder);
+        } else {
+            throw new OperationNotAllowedException("Medarbejder er allerede tilknyttet aktivitet");
+        }
+    }
+
+    public void fjernMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+        if (!isMedarbejderInAktivitet(medarbejder)) {
+            throw new OperationNotAllowedException("Medarbejder er ikke i aktivitet");
+        }
+
+        this.tilknyttedeMedarbejdere.remove(medarbejder);
+    }
+
     public void registrerTid(String initialer, LocalDate dato, double antalArbejdstimer) {
 
     }
@@ -80,5 +97,17 @@ public class Aktivitet {
 
     public void givAktivitetsStatus() {
 
+    }
+
+    // =====================
+    // Helpers
+    // =====================
+    public Boolean isMedarbejderInAktivitet(Medarbejder medarbejder) {
+        for (Medarbejder m: this.tilknyttedeMedarbejdere) {
+            if (m.equals(medarbejder)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
