@@ -48,10 +48,6 @@ public class Projekt {
 
     }
 
-    public float visMedarbejdersTimer(String initialer) {
-        return 0.0f;
-    }
-
     public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
         if (!isMedarbejderInProjekt(medarbejder)) {
             this.tilknyttedeMedarbejdere.add(medarbejder);
@@ -146,6 +142,16 @@ public class Projekt {
         aktivitet.registrerTid(medarbejder, timer);
     }
 
+    public double getRegistreretTidForMedarbejder(String initialer) {
+        double total = 0;
+        
+        for (Aktivitet a : this.aktiviteter) {
+            total += a.getRegistreretTidForMedarbejder(initialer);
+        }
+
+        return total;
+    }
+
     // =====================
     // Helpers
     // =====================
@@ -166,4 +172,6 @@ public class Projekt {
         }
         return null;
     }
+
+    
 }

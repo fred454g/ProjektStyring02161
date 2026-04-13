@@ -155,6 +155,21 @@ public class Planlaegningsvaerktoej {
         projekt.registrerTid(aktivitetsNavn, loggedInUser, timer);
     }
 
+    public double visEgneTimer() throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+
+        String initialer = loggedInUser.getInitialer();
+        double total = 0;
+
+        for (Projekt p : this.projekter) {
+            total += p.getRegistreretTidForMedarbejder(initialer);
+        }
+
+        return total;
+    }
+
     // =========================
     // Aktivitet Metoder
     // =========================

@@ -10,6 +10,7 @@ public class StepDefinitions {
 	
     private ErrorMessageHolder errorMessageHolder;
     private Planlaegningsvaerktoej planlaegningsvaerktoej;
+    private double totalTimer;
 
 	/* The only purpose of this constructor is to test
 	 * if Cucumber Dependency Injection using Picocontainer works.
@@ -239,6 +240,33 @@ public class StepDefinitions {
         Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
         Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
         double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
+        assertEquals(timer, registreret);
+    }
+
+    // =============================
+    // vis_egne_timer.feature
+    // =============================
+    @When("medarbejderen anmoder om at se sine egne tidsregistreringer")
+    public void medarbejderenAnmoderOmAtSeSineEgneTidsregistreringer() {
+        try {
+            totalTimer = planlaegningsvaerktoej.visEgneTimer();
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("viser systemet {double} timer totalt for medarbejderen")
+    public void viserSystemetTimerTotaltForMedarbejderen(Double timer) {
+        assertEquals(timer, totalTimer);
+    }
+
+    @Then("systemet viser {double} timer på aktiviteten {string} på projekt {string}")
+    public void systemetViserTimerPåAktivitetenPåProjekt(Double timer, String aktivitetsNavn, String projektNr) {
+        String initialer = planlaegningsvaerktoej.getLoggedinUserInitials();
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
+        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
+
         assertEquals(timer, registreret);
     }
 
