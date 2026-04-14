@@ -1,21 +1,42 @@
 package dtu.example.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
 
 public class Medarbejder {
     
     private String navn;
     private String initialer;
+    private List<Fravaer> fravaersliste = new ArrayList<>();
 
     public Medarbejder(String navn, String initialer) {
         this.navn = navn;
         this.initialer = initialer;
     }
 
-    // Git test 1
+    public void tilfoejFravaer(Fravaer fravaer) {
+        this.fravaersliste.add(fravaer);
+    }
 
-    // Git test 2
+    public boolean harFravaer(String type, int startUge, int slutUge) {
+        for (Fravaer f : this.fravaersliste) {
+            if (f.getType().equals(type) && f.getStartUge() == startUge && f.getSlutUge() == slutUge) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public boolean harOverlappendeFravaer(int startUge, int slutUge) {
+        for (Fravaer f : this.fravaersliste) {
+            if (f.overlapper(startUge, slutUge)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // =================
     // Get Methods

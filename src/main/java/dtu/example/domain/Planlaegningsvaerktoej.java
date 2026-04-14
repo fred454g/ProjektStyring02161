@@ -148,12 +148,43 @@ public class Planlaegningsvaerktoej {
         return false;
     }
 
-    public boolean registrerTidPaaProjekt(String projektNummer, String aktivitetsNummer, String initialer, float antalArbejdstimer) throws OperationNotAllowedException {
+    public void registrerTid(String projektNr, String aktivitetsNavn, Double timer) throws OperationNotAllowedException {
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
 
-        return false;
+        if (timer <= 0) {
+            throw new OperationNotAllowedException("Antal timer skal være større end 0");
+        }
+
+        if (timer > 24) {
+            throw new OperationNotAllowedException("Antal timer kan ikke overstige 24 timer per dag");
+        }
+
+        // 1. find projekt
+        Projekt projekt = findProjekt(projektNr);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+
+        // 2. Hvis projekt findes, lad os bede projekt om at registrere tid på aktivitet
+        projekt.registrerTid(aktivitetsNavn, loggedInUser, timer);
+        observers.firePropertyChange("TID_REGISTRERET", null, loggedInUser); 
+    }
+
+    public double visEgneTimer() throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+
+        String initialer = loggedInUser.getInitialer();
+        double total = 0;
+
+        for (Projekt p : this.projekter) {
+            total += p.getRegistreretTidForMedarbejder(initialer);
+        }
+
+        return total;
     }
 
     // =========================
@@ -253,6 +284,33 @@ public class Planlaegningsvaerktoej {
         projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
         observers.firePropertyChange("MEDARBEJDER_FJERNET_AKTIVITET", medarbejder, projekt.findAktivitet(aktivitetsNavn));
         return true;
+    }
+
+    // =====================
+    // Fravaer Metoder
+    // =====================
+
+    public void registrerFravaer(String type, Integer startUge, Integer slutUge) throws OperationNotAllowedException {
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+
+        if (startUge > slutUge) {
+            throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
+        }
+
+        if (loggedInUser.harOverlappendeFravaer(startUge, slutUge)) {
+            throw new OperationNotAllowedException("Fraværsperioden overlapper med eksisterende fravær");
+        }
+
+        Fravaer fravaer = new Fravaer(type, startUge, slutUge);
+        loggedInUser.tilfoejFravaer(fravaer);
+        observers.firePropertyChange("FRAVAER_REGISTRERET", null, loggedInUser);
+    }
+
+    public boolean harFravaer(String initialer, String type, Integer startUge, Integer slutUge) {
+        Medarbejder medarbejder = findMedarbejder(initialer);
+        return medarbejder.harFravaer(type, startUge, slutUge);
     }
 
     // =====================
@@ -358,4 +416,5 @@ public class Planlaegningsvaerktoej {
         }
         return null;
     }
+
 }

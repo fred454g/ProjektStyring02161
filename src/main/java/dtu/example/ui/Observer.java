@@ -48,6 +48,10 @@ public class Observer implements PropertyChangeListener {
             int foer = (Integer) event.getOldValue();
             int efter = (Integer) event.getNewValue();
             System.out.println(">>> SYSTEM BESKED: HR-liste synkroniseret (" + foer + " -> " + efter + " medarbejdere)");
+        } else if ("TID_REGISTRERET".equals(eventName)) {
+            System.out.println(">>> SYSTEM BESKED: Tid registreret");
+        } else if ("FRAVAER_REGISTRERET".equals(eventName)) {
+            System.out.println(">>> SYSTEM BESKED: Fravær registreret");
         }
     }
 }

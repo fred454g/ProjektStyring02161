@@ -83,12 +83,30 @@ public class Aktivitet {
         this.tilknyttedeMedarbejdere.remove(medarbejder);
     }
 
-    public void registrerTid(String initialer, LocalDate dato, double antalArbejdstimer) {
+    public void registrerTid(Medarbejder medarbejder, Double timer) throws OperationNotAllowedException {
+        if (!isMedarbejderInAktivitet(medarbejder)) {
+            throw new OperationNotAllowedException("Medarbejder er ikke tilknyttet aktiviteten");
+        }
+
+        // 1. opretter ny tidsregistrering
+        Tidsregistrering registrering = new Tidsregistrering(LocalDate.now(), timer, medarbejder.getInitialer());
+        
+        // 2. tilføjer til liste af tidsregistreringer inden for aktivitet
+        this.tidsregistreringer.add(registrering);
 
     }
 
-    public float visMedarbejdersTimer(String initialer) {
-        return 0.0f;
+    public double getRegistreretTidForMedarbejder(String initialer) {
+        double total = 0;
+
+        // løb liste igennem af registreringer og akkumeler baseret på match af initialer
+        for (Tidsregistrering t : this.tidsregistreringer) {
+            if (t.getInitialer().equals(initialer)) { // match!
+                total += t.getAntalArbejdstimer();
+            }
+        }
+
+        return total;
     }
 
     public void overbliksRapport(LocalDate starttidspunkt, LocalDate sluttidspunkt) {
@@ -110,4 +128,5 @@ public class Aktivitet {
         }
         return false;
     }
+
 }

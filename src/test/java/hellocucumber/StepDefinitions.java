@@ -16,6 +16,7 @@ public class StepDefinitions {
 
     private ErrorMessageHolder errorMessageHolder;
     private Planlaegningsvaerktoej planlaegningsvaerktoej;
+    private double totalTimer;
     private static final Path HR_LISTE_PATH = Paths.get("src", "main", "java", "dtu", "example", "hr_liste.txt");
     private String hrListeOriginalIndhold;
     private boolean hrListeBackupTaget;
@@ -324,7 +325,79 @@ public class StepDefinitions {
     }
 
     // =============================
-    // ??
+    // registrer_tid.feature
     // =============================
 
+    @Given("at medarbejderen {string} er logget ud")
+    public void atMedarbejderenErLoggetUd(String initialer) {
+        planlaegningsvaerktoej.userLogout();
+    }
+
+    @When("medarbejderen registrerer {double} timer på aktiviteten {string} på projekt {string} for dags dato")
+    public void medarbejderenRegistrererTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
+        try {
+            planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("er {double} timer tilføjet til det samlede tidsforbrug for {string} på aktiviteten {string} på projekt {string}")
+    public void erTimerTilføjetTilDetSamledeTidsforbrugForPåAktivitetenPåProjekt(Double timer, String initialer, String aktivitetsNavn, String projektNr) {
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
+        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
+        assertEquals(timer, registreret);
+    }
+
+    // =============================
+    // vis_egne_timer.feature
+    // =============================
+    @When("medarbejderen anmoder om at se sine egne tidsregistreringer")
+    public void medarbejderenAnmoderOmAtSeSineEgneTidsregistreringer() {
+        try {
+            totalTimer = planlaegningsvaerktoej.visEgneTimer();
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("viser systemet {double} timer totalt for medarbejderen")
+    public void viserSystemetTimerTotaltForMedarbejderen(Double timer) {
+        assertEquals(timer, totalTimer);
+    }
+
+    @Then("systemet viser {double} timer på aktiviteten {string} på projekt {string}")
+    public void systemetViserTimerPåAktivitetenPåProjekt(Double timer, String aktivitetsNavn, String projektNr) {
+        String initialer = planlaegningsvaerktoej.getLoggedinUserInitials();
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
+        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
+
+        assertEquals(timer, registreret);
+    }
+
+    // =============================
+    // registrer_fravaer.feature
+    // =============================
+
+    @When("medarbejderen registrerer fravær af typen {string} fra uge {int} til uge {int}")
+    public void medarbejderenRegistrererFraværAfTypenFraUgeTilUge(String type, Integer startUge, Integer slutUge) {
+        try {
+            planlaegningsvaerktoej.registrerFravaer(type, startUge, slutUge);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("er medarbejderen markeret som fraværende med typen {string} fra uge {int} til uge {int}")
+    public void erMedarbejderenMarkeretSomFraværendeMedTypenFraUgeTilUge(String type, Integer startUge, Integer slutUge) {
+        String initialer = planlaegningsvaerktoej.getLoggedinUserInitials();
+        assertTrue(planlaegningsvaerktoej.harFravaer(initialer, type, startUge, slutUge));
+    }
+    
+    // =============================
+    // ??
+    // =============================
 }
+
