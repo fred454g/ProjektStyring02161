@@ -3,6 +3,11 @@ package dtu.example.domain;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.io.IOException;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -14,6 +19,7 @@ public class Planlaegningsvaerktoej {
     private Medarbejder loggedInUser = null;
     private int hoejesteProjektnummer = 1;
     private int hoejesteAktivitetsnummer = 1;
+    private long sidsteHrListeOpdatering = -1L;
 
 
     // ====================
@@ -41,8 +47,10 @@ public class Planlaegningsvaerktoej {
                 throw new OperationNotAllowedException("Initialer er allerede i brug");
             }
         }
-        
-        medarbejdere.add(new Medarbejder(navn, initialer)); // !! SKAL DER LAVES TJEK FOR OM DER ER LOGGED IN FOR AT LAVE BRUGER? (KAN ANTAGES AT SYSTEMET f.eks. KUN ER TILGÆNGELIGT PÅ SPECIFIKKE PORT) !!
+
+        Medarbejder nyMedarbejder = new Medarbejder(navn, initialer);
+        medarbejdere.add(nyMedarbejder); // !! SKAL DER LAVES TJEK FOR OM DER ER LOGGED IN FOR AT LAVE BRUGER? (KAN ANTAGES AT SYSTEMET f.eks. KUN ER TILGÆNGELIGT PÅ SPECIFIKKE PORT) !!
+        observers.firePropertyChange("MEDARBEJDER_OPRETTET", null, nyMedarbejder);
     }
 
     // ====================
@@ -93,7 +101,12 @@ public class Planlaegningsvaerktoej {
 
         // Opdater navn og return true
         Projekt projekt = findProjekt(projektNummer);
-        return projekt.opdaterNavn(nytNavn);
+        String gammeltNavn = projekt.getProjektNavn();
+        boolean opdateret = projekt.opdaterNavn(nytNavn);
+        if (opdateret) {
+            observers.firePropertyChange("PROJEKT_OMDOEBT", gammeltNavn, projekt);
+        }
+        return opdateret;
     }
 
     public boolean opdaterProjektMedProjektleder(String projektNummer, String medarbejderInitialer) throws OperationNotAllowedException {
@@ -102,8 +115,10 @@ public class Planlaegningsvaerktoej {
         }
         
         Projekt projekt = findProjekt(projektNummer);
+        Medarbejder tidligereProjektleder = projekt.getProjektleder();
         Medarbejder nyProjektleder = findMedarbejder(medarbejderInitialer);
         projekt.opdaterProjektleder(nyProjektleder);
+        observers.firePropertyChange("PROJEKTLEDER_OPDATERET", tidligereProjektleder, projekt);
         return true;
     }
 
@@ -121,6 +136,7 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Medarbejder med initialer " + medarbejderInfo + " findes ikke i systemet");
         }
         projekt.tilknytMedarbejder(medarbejder);
+        observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
         return true;
     }
 
@@ -156,6 +172,7 @@ public class Planlaegningsvaerktoej {
         String nytAktivitetsnr = String.valueOf(26000 + this.hoejesteProjektnummer);
         projekt.opretAktivitet(nytAktivitetsnr, aktivitetsNavn, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
         this.hoejesteAktivitetsnummer++;
+        observers.firePropertyChange("AKTIVITET_OPRETTET", null, projekt.findAktivitet(nytAktivitetsnr));
         return true;
     }
 
@@ -171,6 +188,7 @@ public class Planlaegningsvaerktoej {
         String nytAktivitetsnr = String.valueOf(26000 + this.hoejesteProjektnummer);
         projekt.opretAktivitet(nytAktivitetsnr, aktivitetsNavn);
         this.hoejesteAktivitetsnummer++;
+        observers.firePropertyChange("AKTIVITET_OPRETTET", null, projekt.findAktivitet(nytAktivitetsnr));
         return true;
     }
 
@@ -191,7 +209,9 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
 
+        Aktivitet aktivitetFoerOpdatering = projekt.findAktivitet(aktivitetsNummer);
         projekt.opdaterAktivitet(aktivitetsNummer, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
+        observers.firePropertyChange("AKTIVITET_OPDATERET", null, aktivitetFoerOpdatering);
         return true;
     }
 
@@ -211,6 +231,7 @@ public class Planlaegningsvaerktoej {
         }
 
         projekt.tilknytMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
+        observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_AKTIVITET", null, projekt.findAktivitet(aktivitetsNavn));
         return true;
     }
 
@@ -230,6 +251,7 @@ public class Planlaegningsvaerktoej {
         }
 
         projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
+        observers.firePropertyChange("MEDARBEJDER_FJERNET_AKTIVITET", medarbejder, projekt.findAktivitet(aktivitetsNavn));
         return true;
     }
 
@@ -265,7 +287,55 @@ public class Planlaegningsvaerktoej {
     // Filindløsning
     // =======================
     public void indlaesFil() {
-        // Logik til at indlæse HR fil
+        Path hrListePath = Paths.get("src", "main", "java", "dtu", "example", "hr_liste.txt");
+
+        try {
+            FileTime fileTime = Files.getLastModifiedTime(hrListePath);
+            long nuvaerendeOpdatering = fileTime.toMillis();
+
+            if (nuvaerendeOpdatering <= this.sidsteHrListeOpdatering) {
+                return;
+            }
+
+            int antalMedarbejdereFoer = this.medarbejdere.size();
+            List<String> linjer = Files.readAllLines(hrListePath);
+            List<Medarbejder> opdateredeMedarbejdere = new ArrayList<>();
+
+            for (String linje : linjer) {
+                if (linje == null || linje.trim().isEmpty()) {
+                    continue;
+                }
+
+                String[] dele = linje.split(",", 2);
+                if (dele.length < 2) {
+                    continue;
+                }
+
+                String initialer = dele[0].trim();
+                String navn = dele[1].trim();
+
+                boolean findesAllerede = false;
+                for (Medarbejder medarbejder : opdateredeMedarbejdere) {
+                    if (medarbejder.getInitialer().equals(initialer)) {
+                        findesAllerede = true;
+                        break;
+                    }
+                }
+
+                if (!findesAllerede) {
+                    opdateredeMedarbejdere.add(new Medarbejder(navn, initialer));
+                }
+            }
+
+            this.medarbejdere = opdateredeMedarbejdere;
+            if (this.loggedInUser != null) {
+                this.loggedInUser = findMedarbejder(this.loggedInUser.getInitialer());
+            }
+            this.sidsteHrListeOpdatering = nuvaerendeOpdatering;
+            observers.firePropertyChange("HR_LISTE_SYNKRONISERET", antalMedarbejdereFoer, this.medarbejdere.size());
+        } catch (IOException e) {
+            throw new RuntimeException("Kunne ikke indlæse HR-liste", e);
+        }
     }
 
     // =====================
