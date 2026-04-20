@@ -31,6 +31,10 @@ public class Projekt {
         return this.projektleder;
     }
 
+    public List<Aktivitet> getAktiviteter() {
+        return this.aktiviteter;
+    }
+
     // ====================
     // Projekt Metoder
     // ====================

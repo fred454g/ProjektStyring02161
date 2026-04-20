@@ -56,7 +56,27 @@ public class Planlaegningsvaerktoej {
     // ====================
     // Projekt Metoder
     // ====================
+    public void gemProjekter() {
+        Path sti = Paths.get("src", "main", "java", "dtu", "example", "projekter.txt");
+        List<String> linjer = new ArrayList<>();
 
+        for (Projekt p : this.projekter) {
+            // Gem projekt: P,Nummer,Navn
+            linjer.add("P," + p.getProjektNummer() + "," + p.getProjektNavn());
+
+            // Gem projektets aktiviteter: A,Nummer,Navn,Budget,Start,Slut
+            for (Aktivitet a : p.getAktiviteter()) {
+                linjer.add("A," + a.getAktivitetsnummer() + "," + a.getAktivitetsNavn() + "," +
+                        a.getForventedeAntalArbejdsTimer() + "," + a.getStartstidspunkt() + "," + a.getSluttidspunkt());
+            }
+        }
+
+        try {
+            Files.write(sti, linjer);
+        } catch (IOException e) {
+            System.err.println("Kunne ikke gemme projekter: " + e.getMessage());
+        }
+    }
     /**
     * Logik til at oprette projekt og tildele automatisk nummer
     * 
@@ -77,7 +97,9 @@ public class Planlaegningsvaerktoej {
         projekter.add(nytProjekt);
         this.hoejesteProjektnummer++;
         observers.firePropertyChange("PROJECT_OPRETTET", null, nytProjekt);
+        gemProjekter();
     }
+
 
     public boolean setProjekt(String projektNummer) throws OperationNotAllowedException {
         if (this.loggedInUser == null) {
@@ -204,6 +226,7 @@ public class Planlaegningsvaerktoej {
         projekt.opretAktivitet(nytAktivitetsnr, aktivitetsNavn, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
         this.hoejesteAktivitetsnummer++;
         observers.firePropertyChange("AKTIVITET_OPRETTET", null, projekt.findAktivitet(nytAktivitetsnr));
+        gemProjekter();
         return true;
     }
 
@@ -394,6 +417,46 @@ public class Planlaegningsvaerktoej {
         } catch (IOException e) {
             throw new RuntimeException("Kunne ikke indlæse HR-liste", e);
         }
+        Path projektSti = Paths.get("src", "main", "java", "dtu", "example", "projekter.txt");
+        if (Files.exists(projektSti)) {
+            try {
+                List<String> projektLinjer = Files.readAllLines(projektSti);
+                Projekt nuvaerendeProjekt = null;
+
+                for (String linje : projektLinjer) {
+                    String[] dele = linje.split(",");
+                    if (dele[0].equals("P")) {
+                        // Genskab projektet (ID, Navn)
+                        nuvaerendeProjekt = new Projekt(dele[1], dele[2]);
+                        this.projekter.add(nuvaerendeProjekt);
+                        // Opdater tælleren så vi ikke genbruger numre
+                        this.hoejesteProjektnummer = Math.max(this.hoejesteProjektnummer, Integer.parseInt(dele[1]) - 26000 + 1);
+                    } else if (dele[0].equals("A") && nuvaerendeProjekt != null) {
+                        // Genskab aktiviteten til det aktuelle projekt
+                        nuvaerendeProjekt.opretAktivitet(dele[1], dele[2], Double.parseDouble(dele[3]),
+                                Integer.parseInt(dele[4]), Integer.parseInt(dele[5]));
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Fejl ved indlæsning af projekter: " + e.getMessage());
+            }
+        }
+    }
+
+    // ====================
+    // Rapport Generering
+    // ====================
+    public String genererRapport(String projektInfo) throws OperationNotAllowedException {
+        // 1. Find projektet (helper)
+        Projekt p = findProjekt(projektInfo);
+
+        // 2. Validering
+        if (p == null) {
+            throw new OperationNotAllowedException("Projektet findes ikke i systemet.");
+        }
+
+        // 3. formatering og returnering af rapport
+        return RapportGenerator.genererProjektRapport(p);
     }
 
     // =====================

@@ -1,5 +1,6 @@
 package dtu.example.ui;
 
+import dtu.example.domain.Planlaegningsvaerktoej;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,10 +16,20 @@ public class App extends Application {
 
     private static Scene scene;
 
+    private static Planlaegningsvaerktoej facade = new Planlaegningsvaerktoej();
+
+    public static Planlaegningsvaerktoej getFacade() {
+        return facade;
+    }
+
+
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
+        facade.indlaesFil();
+
+        scene = new Scene(loadFXML("primary"), 800, 600);
         stage.setScene(scene);
+        stage.setTitle("Softwarehuset A/S - Projektstyring");
         stage.show();
     }
 
