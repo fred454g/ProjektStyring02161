@@ -4,8 +4,8 @@ Feature: Vis medarbejders egne timer
     Vil jeg gerne kunne se en oversigt over mine egne registrerede timer
 
     Background:
-        Given at medarbejderen "jfk" med navn "John F. Kennedy" tilfoejes til systemet
-        And at medarbejderen "huba" med navn "Hubert Baumeister" tilfoejes til systemet
+        Given at medarbejderen "jfk" tilfoejes til systemet
+        And at medarbejderen "huba" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
         And at medarbejderen "huba" er tilknyttet projekt "26001"

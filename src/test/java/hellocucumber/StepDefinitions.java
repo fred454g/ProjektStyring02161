@@ -20,6 +20,7 @@ public class StepDefinitions {
     private static final Path HR_LISTE_PATH = Paths.get("src", "main", "java", "dtu", "example", "hr_liste.txt");
     private String hrListeOriginalIndhold;
     private boolean hrListeBackupTaget;
+    private String sidsteObserverEvent;
 
     /*
      * The only purpose of this constructor is to test
@@ -28,6 +29,7 @@ public class StepDefinitions {
     public StepDefinitions(ErrorMessageHolder errorMessageHolder, Planlaegningsvaerktoej planlaegningsvaerktoej) {
         this.errorMessageHolder = errorMessageHolder;
         this.planlaegningsvaerktoej = planlaegningsvaerktoej;
+        this.planlaegningsvaerktoej.addPropertyChangeListener(event -> this.sidsteObserverEvent = event.getPropertyName());
     }
 
     // =============================
@@ -101,9 +103,9 @@ public class StepDefinitions {
     // =============================
     // tilknyt_projektleder.feature
     // =============================
-    @Given("at medarbejderen {string} med navn {string} tilfoejes til systemet")
-    public void atMedarbejderenTilfoejesTilSystemet(String initialer, String navn) throws OperationNotAllowedException {
-        planlaegningsvaerktoej.nyMedarbejder(navn, initialer);
+    @Given("at medarbejderen {string} tilfoejes til systemet")
+    public void atMedarbejderenTilfoejesTilSystemet(String initialer) throws OperationNotAllowedException {
+        planlaegningsvaerktoej.nyMedarbejder(initialer);
     }
 
     @Given("at projektet {string} findes i systemet")
@@ -151,9 +153,8 @@ public class StepDefinitions {
     // =============================
     @When("medarbejderen opretter aktiviteten {string} på projekt {string}")
     public void medarbejderenOpretterAktivitetenPåProjekt(String aktivitetsNavn, String projektNr) {
-        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
         try {
-            projekt.opretAktivitet(projektNr, aktivitetsNavn);
+            planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
@@ -177,8 +178,7 @@ public class StepDefinitions {
     }
 
     @Then("aktiviteten {string} på projekt {string} har startuge {int}, slutuge {int} og estimeret tid {double} timer")
-    public void aktivitetenPåProjektHarStartugeSlutugeOgEstimeretTidTimer(String aktivitetsNavn, String projektNr,
-            Integer startuge, Integer slutuge, Double forventetTid) {
+    public void aktivitetenPåProjektHarStartugeSlutugeOgEstimeretTidTimer(String aktivitetsNavn, String projektNr, Integer startuge, Integer slutuge, Double forventetTid) {
         Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
         Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
         assertEquals(startuge, aktivitet.getStartstidspunkt());
@@ -186,29 +186,53 @@ public class StepDefinitions {
         assertEquals(forventetTid, aktivitet.getForventedeAntalArbejdsTimer());
     }
 
+    @Given("at aktiviteten {string} er oprettet på projekt {string}")
+    public void atAktivitetenErOprettetPåProjekt(String aktivitetsnavn, String projektnummer) {
+        try {
+            planlaegningsvaerktoej.opretAktivitet(projektnummer, aktivitetsnavn);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @When("medarbejderen fjerner aktiviteten {string} på projekt {string}")
+    public void medarbejderenFjernerAktivitetenPåProjekt(String aktivitetsnavn, String projektnummer) {
+        try {
+            planlaegningsvaerktoej.sletAktivitet(projektnummer, aktivitetsnavn);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("er aktiviteten {string} ikke tilknyttet projekt {string}")
+    public void erAktivitetenIkkeTilknyttetProjekt(String aktivitetsnavn, String projektnummer) {
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektnummer);
+        assertNull(projekt.findAktivitet(aktivitetsnavn), "FEJL: aktivitet er ikke fjernet");
+    }
+
     // =============================
     // administrer_medarbejder_aktivitet
     // =============================
     @Given("at medarbejderen {string} er tilknyttet aktiviteten {string} på projekt {string}")
-    public void atMedarbejderenErTilknyttetAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn,
+    public void atMedarbejderenErTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
             String projektNr) throws OperationNotAllowedException {
-        planlaegningsvaerktoej.tilknytMedarbejderTilAktivitet(projektNr, aktivitetsNavn, medarbejderInfo);
+        planlaegningsvaerktoej.tilknytMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
     }
 
     @When("medarbejderen fjerner {string} fra aktiviteten {string} på projekt {string}")
-    public void medarbejderenFjernerFraAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn,
+    public void medarbejderenFjernerFraAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
             String projektNr) {
         try {
-            planlaegningsvaerktoej.fjernMedarbejderFraAktivitet(projektNr, aktivitetsNavn, medarbejderInfo);
+            planlaegningsvaerktoej.fjernMedarbejderFraAktivitet(projektNr, aktivitetsNavn, initialer);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
 
     @Then("er {string} ikke længere tilknyttet aktiviteten {string} på projekt {string}")
-    public void erIkkeLængereTilknyttetAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn,
+    public void erIkkeLængereTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
             String projektNr) {
-        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(medarbejderInfo);
+        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(initialer);
         assertFalse(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn)
                 .isMedarbejderInAktivitet(medarbejder));
     }
@@ -220,24 +244,24 @@ public class StepDefinitions {
     }
 
     @Given("at medarbejderen {string} er tilknyttet projekt {string}")
-    public void atMedarbejderenErTilknyttetProjekt(String medarbejderInfo, String projektNr)
+    public void atMedarbejderenErTilknyttetProjekt(String initialer, String projektNr)
             throws OperationNotAllowedException {
-        planlaegningsvaerktoej.tilknytMedarbejderTilProjekt(projektNr, medarbejderInfo);
+        planlaegningsvaerktoej.tilknytMedarbejderTilProjekt(projektNr, initialer);
     }
 
     @When("medarbejderen tilknytter {string} til aktiviteten {string} på projekt {string}")
-    public void medarbejderenTilknytterTilAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn,
+    public void medarbejderenTilknytterTilAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
             String projektNr) {
         try {
-            planlaegningsvaerktoej.tilknytMedarbejderTilAktivitet(projektNr, aktivitetsNavn, medarbejderInfo);
+            planlaegningsvaerktoej.tilknytMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
 
     @Then("er {string} tilknyttet aktiviteten {string} på projekt {string}")
-    public void erTilknyttetAktivitetenPåProjekt(String medarbejderInfo, String aktivitetsNavn, String projektNr) {
-        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(medarbejderInfo);
+    public void erTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn, String projektNr) {
+        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(initialer);
         assertTrue(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn)
                 .isMedarbejderInAktivitet(medarbejder));
     }
@@ -248,14 +272,14 @@ public class StepDefinitions {
     @Given("at en ny HR-fil med medarbejderinitialer er tilgængelig")
     public void atEnNyHRFilMedMedarbejderinitialerErTilgængelig() {
         try {
-            planlaegningsvaerktoej.nyMedarbejder("Outdated JFK", "jfk");
-            planlaegningsvaerktoej.nyMedarbejder("Skal Fjernes", "temp");
+            planlaegningsvaerktoej.nyMedarbejder("jfk");
+            planlaegningsvaerktoej.nyMedarbejder("temp");
         } catch (OperationNotAllowedException e) {
             fail("Kunne ikke oprette testdata: " + e.getMessage());
         }
 
-        String hrIndhold = "jfk, John F. Kennedy\n" +
-                "huba, Hubert Baumeister\n";
+        String hrIndhold = "jfk\n" +
+                "huba\n";
 
         try {
             if (!hrListeBackupTaget) {
@@ -317,8 +341,6 @@ public class StepDefinitions {
 
         assertNotNull(jfk, "jfk skulle eksistere efter HR-fil load");
         assertNotNull(huba, "huba skulle eksistere efter HR-fil load");
-        assertEquals("John F. Kennedy", jfk.getNavn());
-        assertEquals("Hubert Baumeister", huba.getNavn());
 
         // Bekræfter at sync-logik fjerner medarbejdere, der ikke længere er i filen.
         assertNull(planlaegningsvaerktoej.findMedarbejder("temp"), "temp skulle fjernes ved HR-sync");
@@ -397,7 +419,31 @@ public class StepDefinitions {
     }
     
     // =============================
+    // fjern_medarbejder_projekt.feature
+    // =============================
+    @When("medarbejderen fjerner {string} fra projekt {string}")
+    public void medarbejderenFjernerFraProjekt(String medarbejderInitialer, String projektNummer) {
+        try {
+            planlaegningsvaerktoej.fjernMedarbejderFraProjekt(projektNummer, medarbejderInitialer);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("fremgår {string} ikke længere af listen over tilknyttede medarbejdere på projekt {string}")
+    public void fremgårIkkeLængereAfListenOverTilknyttedeMedarbejderePåProjekt(String medarbejderInitialer, String projektNummer) {
+        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(medarbejderInitialer);
+        assertFalse(planlaegningsvaerktoej.findProjekt(projektNummer).isMedarbejderInProjekt(medarbejder));
+    }
+
+    @Then("udsendes observer-eventen {string}")
+    public void udsendesObserverEventen(String eventNavn) {
+        assertEquals(eventNavn, this.sidsteObserverEvent);
+    }
+
+    // =============================
     // ??
     // =============================
+
 }
 

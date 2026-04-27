@@ -84,10 +84,7 @@ public class Aktivitet {
     }
 
     public void registrerTid(Medarbejder medarbejder, Double timer) throws OperationNotAllowedException {
-        if (!isMedarbejderInAktivitet(medarbejder)) {
-            throw new OperationNotAllowedException("Medarbejder er ikke tilknyttet aktiviteten");
-        }
-
+        // NOTE: En medarbejder kan godt registrere timer på en aktivitet selvom de ikke er tilknyttet (ved at hjælpe en kollega)
         // 1. opretter ny tidsregistrering
         Tidsregistrering registrering = new Tidsregistrering(LocalDate.now(), timer, medarbejder.getInitialer());
         

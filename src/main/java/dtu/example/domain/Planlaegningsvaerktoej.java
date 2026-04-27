@@ -18,7 +18,6 @@ public class Planlaegningsvaerktoej {
     private PropertyChangeSupport observers = new PropertyChangeSupport(this);
     private Medarbejder loggedInUser = null;
     private int hoejesteProjektnummer = 1;
-    private int hoejesteAktivitetsnummer = 1;
     private long sidsteHrListeOpdatering = -1L;
 
 
@@ -41,14 +40,14 @@ public class Planlaegningsvaerktoej {
         this.loggedInUser = null;
     }
 
-    public void nyMedarbejder(String navn, String initialer) throws OperationNotAllowedException {
+    public void nyMedarbejder(String initialer) throws OperationNotAllowedException {
         for (Medarbejder m: this.medarbejdere) {
             if (m.getInitialer().equals(initialer)) {
                 throw new OperationNotAllowedException("Initialer er allerede i brug");
             }
         }
 
-        Medarbejder nyMedarbejder = new Medarbejder(navn, initialer);
+        Medarbejder nyMedarbejder = new Medarbejder(initialer);
         medarbejdere.add(nyMedarbejder); // !! SKAL DER LAVES TJEK FOR OM DER ER LOGGED IN FOR AT LAVE BRUGER? (KAN ANTAGES AT SYSTEMET f.eks. KUN ER TILGÆNGELIGT PÅ SPECIFIKKE PORT) !!
         observers.firePropertyChange("MEDARBEJDER_OPRETTET", null, nyMedarbejder);
     }
@@ -122,7 +121,7 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean tilknytMedarbejderTilProjekt(String projektNummer, String medarbejderInfo) throws OperationNotAllowedException {
+    public boolean tilknytMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
@@ -131,9 +130,9 @@ public class Planlaegningsvaerktoej {
         if (projekt == null) {
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
-        Medarbejder medarbejder = findMedarbejder(medarbejderInfo);
+        Medarbejder medarbejder = findMedarbejder(initialer);
         if (medarbejder == null) {
-            throw new OperationNotAllowedException("Medarbejder med initialer " + medarbejderInfo + " findes ikke i systemet");
+            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
         }
         projekt.tilknytMedarbejder(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
@@ -145,7 +144,20 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
 
-        return false;
+        Projekt projekt = findProjekt(projektNummer);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+
+        Medarbejder medarbejder = findMedarbejder(initialer);
+        if (medarbejder == null) {
+            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
+        }
+
+        projekt.fjernMedarbejder(medarbejder);
+        observers.firePropertyChange("MEDARBEJDER_FJERNET_PROJEKT", medarbejder, projekt);
+
+        return true;
     }
 
     public void registrerTid(String projektNr, String aktivitetsNavn, Double timer) throws OperationNotAllowedException {
@@ -200,9 +212,9 @@ public class Planlaegningsvaerktoej {
         if (projekt == null) {
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
-        String nytAktivitetsnr = String.valueOf(26000 + this.hoejesteProjektnummer);
+        String nytAktivitetsnr = String.valueOf(projekt.getProjektNummer() + "-" + projekt.getHoejesteAktivitetsnummer());
         projekt.opretAktivitet(nytAktivitetsnr, aktivitetsNavn, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
-        this.hoejesteAktivitetsnummer++;
+        projekt.hoejesteAktivitetsnummerPlusEn();
         observers.firePropertyChange("AKTIVITET_OPRETTET", null, projekt.findAktivitet(nytAktivitetsnr));
         return true;
     }
@@ -216,9 +228,9 @@ public class Planlaegningsvaerktoej {
         if (projekt == null) {
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
-        String nytAktivitetsnr = String.valueOf(26000 + this.hoejesteProjektnummer);
+        String nytAktivitetsnr = String.valueOf(projekt.getProjektNummer() + "-" + projekt.getHoejesteAktivitetsnummer());
         projekt.opretAktivitet(nytAktivitetsnr, aktivitetsNavn);
-        this.hoejesteAktivitetsnummer++;
+        projekt.hoejesteAktivitetsnummerPlusEn();
         observers.firePropertyChange("AKTIVITET_OPRETTET", null, projekt.findAktivitet(nytAktivitetsnr));
         return true;
     }
@@ -227,7 +239,16 @@ public class Planlaegningsvaerktoej {
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
-        return false;
+
+        Projekt projekt = findProjekt(projektNummer);
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+
+        projekt.sletAktivitet(aktivitetsNummer);
+        observers.firePropertyChange("AKTIVITET_SLETTET", projekt.findAktivitet(aktivitetsNummer), projekt);
+
+        return true;
     }
 
     public boolean opdaterAktivitet(String projektNummer, String aktivitetsNummer, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
@@ -246,7 +267,7 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean tilknytMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String medarbejderInfo) throws OperationNotAllowedException {
+    public boolean tilknytMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
@@ -256,9 +277,9 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
 
-        Medarbejder medarbejder = findMedarbejder(medarbejderInfo);
+        Medarbejder medarbejder = findMedarbejder(initialer);
         if (medarbejder == null) {
-            throw new OperationNotAllowedException("Medarbejder med initialer " + medarbejderInfo + " findes ikke i systemet");
+            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
         }
 
         projekt.tilknytMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
@@ -266,7 +287,7 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean fjernMedarbejderFraAktivitet(String projektNummer, String aktivitetsNavn, String medarbejderInfo) throws OperationNotAllowedException {
+    public boolean fjernMedarbejderFraAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
@@ -276,9 +297,9 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
 
-        Medarbejder medarbejder = findMedarbejder(medarbejderInfo);
+        Medarbejder medarbejder = findMedarbejder(initialer);
         if (medarbejder == null) {
-            throw new OperationNotAllowedException("Medarbejder med initialer " + medarbejderInfo + " findes ikke i systemet");
+            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
         }
 
         projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
@@ -364,13 +385,7 @@ public class Planlaegningsvaerktoej {
                     continue;
                 }
 
-                String[] dele = linje.split(",", 2);
-                if (dele.length < 2) {
-                    continue;
-                }
-
-                String initialer = dele[0].trim();
-                String navn = dele[1].trim();
+                String initialer = linje.trim();
 
                 boolean findesAllerede = false;
                 for (Medarbejder medarbejder : opdateredeMedarbejdere) {
@@ -381,7 +396,7 @@ public class Planlaegningsvaerktoej {
                 }
 
                 if (!findesAllerede) {
-                    opdateredeMedarbejdere.add(new Medarbejder(navn, initialer));
+                    opdateredeMedarbejdere.add(new Medarbejder(initialer));
                 }
             }
 
@@ -408,9 +423,9 @@ public class Planlaegningsvaerktoej {
         return null;
     }
 
-    public Medarbejder findMedarbejder(String medarbejderInfo) {
+    public Medarbejder findMedarbejder(String initialer) {
         for (Medarbejder m: this.medarbejdere) {
-            if (m.getInitialer().equals(medarbejderInfo) || m.getNavn().equals(medarbejderInfo)) {
+            if (m.getInitialer().equals(initialer)) {
                 return m;
             }
         }

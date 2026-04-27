@@ -10,6 +10,7 @@ public class Projekt {
     private Medarbejder projektleder;
     private List<Medarbejder> tilknyttedeMedarbejdere = new ArrayList<>();
     private List<Aktivitet> aktiviteter = new ArrayList<>();
+    private int hoejesteAktivitetsnummer = 1;
 
     public Projekt(String projektnummer, String projektNavn) {
         this.projektnummer = projektnummer;
@@ -31,6 +32,17 @@ public class Projekt {
         return this.projektleder;
     }
 
+    public int getHoejesteAktivitetsnummer() {
+        return this.hoejesteAktivitetsnummer;
+    }
+
+    // ====================
+    // Aktivitetsnummer opdater
+    // ====================
+    public void hoejesteAktivitetsnummerPlusEn() {
+        this.hoejesteAktivitetsnummer++;
+    }
+
     // ====================
     // Projekt Metoder
     // ====================
@@ -44,8 +56,12 @@ public class Projekt {
         return true;
     }
 
-    public void fjernMedarbejder(String initialer) {
-
+    public void fjernMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+        if (isMedarbejderInProjekt(medarbejder)) {
+            this.tilknyttedeMedarbejdere.remove(medarbejder);
+        } else {
+            throw new OperationNotAllowedException("Medarbejder er ikke tilknyttet projekt");
+        }
     }
 
     public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
@@ -86,12 +102,26 @@ public class Projekt {
         return true;
     }
 
-    public boolean opdaterForventedeAntalArbejdstimer(float timer, int starttidspunkt, int sluttidspunkt) {
-        return false;
+    public boolean opdaterForventedeAntalArbejdstimer(String aktivitetsInfo, float timer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke");
+        }
+
+        aktivitet.setForventedeAntalArbejdstimer(timer);
+        aktivitet.setStarttidspunkt(starttidspunkt);
+        aktivitet.setSluttidspunkt(sluttidspunkt);
+        
+        return true;
     }
 
-    public void sletAktivitet(String aktivitetsNummer) {
+    public void sletAktivitet(String aktivitetsNummer) throws OperationNotAllowedException {
+        Aktivitet aktivitet = findAktivitet(aktivitetsNummer);
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke");
+        }
 
+        this.aktiviteter.remove(aktivitet);
     }
 
     public void opdaterAktivitet(String aktivitetsInfo, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
