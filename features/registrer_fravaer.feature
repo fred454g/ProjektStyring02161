@@ -4,8 +4,8 @@ Feature: Registrer fravær (Ikke tilstede)
     Vil jeg gerne kunne registrere fravær (fx ferie eller sygdom)
 
     Background:
-        Given at medarbejderen "jfk" med navn "John F. Kennedy" tilfoejes til systemet
-        And at medarbejderen "huba" med navn "Hubert Baumeister" tilfoejes til systemet
+        Given at medarbejderen "jfk" tilfoejes til systemet
+        And at medarbejderen "huba" tilfoejes til systemet
         And at medarbejderen "huba" er logget ind i systemet
 
     Scenario: Hovedscenarie - Registrering af ferie

@@ -3,7 +3,7 @@ Feature: Opret projekt og tildel projektnummer
     Som en medarbejder
     Vil jeg gerne kunne oprette et nyt projekt og få tildelt et automatisk projektnummer
     Background: Tilføj jfk
-        Given at medarbejderen "jfk" med navn "John F. Kennedy" tilfoejes til systemet
+        Given at medarbejderen "jfk" tilfoejes til systemet
 
     Scenario: Hovedscenarie - Oprettelse af projekt lykkes
         Given at medarbejderen "jfk" er logget ind i systemet

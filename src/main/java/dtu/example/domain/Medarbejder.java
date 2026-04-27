@@ -7,12 +7,10 @@ import java.util.Objects;
 
 public class Medarbejder {
     
-    private String navn;
     private String initialer;
     private List<Fravaer> fravaersliste = new ArrayList<>();
 
-    public Medarbejder(String navn, String initialer) {
-        this.navn = navn;
+    public Medarbejder(String initialer) {
         this.initialer = initialer;
     }
 
@@ -41,9 +39,6 @@ public class Medarbejder {
     // =================
     // Get Methods
     // =================
-    public String getNavn() {
-        return this.navn;
-    }
 
     public String getInitialer() {
         return this.initialer;

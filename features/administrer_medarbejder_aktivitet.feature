@@ -3,8 +3,8 @@ Feature: Tilknyt og fjern medarbejder på aktivitet
     Som en medarbejder
     Vil jeg gerne kunne slå medarbejdere til og fra på en specifik aktivitet
     Background: Tilføj jfk og huba
-        Given at medarbejderen "jfk" med navn "John F. Kennedy" tilfoejes til systemet
-        And at medarbejderen "huba" med navn "Hubert Baumeister" tilfoejes til systemet
+        Given at medarbejderen "jfk" tilfoejes til systemet
+        And at medarbejderen "huba" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
         And at medarbejderen "huba" er tilknyttet projekt "26001"
