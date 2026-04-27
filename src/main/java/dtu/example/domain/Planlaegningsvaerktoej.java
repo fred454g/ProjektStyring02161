@@ -53,6 +53,9 @@ public class Planlaegningsvaerktoej {
         observers.firePropertyChange("MEDARBEJDER_OPRETTET", null, nyMedarbejder);
     }
 
+    public List<Medarbejder> getMedarbejdere() {
+        return this.medarbejdere;
+    }
     // ====================
     // Projekt Metoder
     // ====================
@@ -68,6 +71,9 @@ public class Planlaegningsvaerktoej {
             for (Aktivitet a : p.getAktiviteter()) {
                 linjer.add("A," + a.getAktivitetsnummer() + "," + a.getAktivitetsNavn() + "," +
                         a.getForventedeAntalArbejdsTimer() + "," + a.getStartstidspunkt() + "," + a.getSluttidspunkt());
+
+                for (Tidsregistrering t : a.getTidsregistreringerForPersistens()) {
+                    linjer.add("T," + t.getAntalArbejdstimer() + "," + t.getDato() + "," + t.getInitialer());                }
             }
         }
 
@@ -81,7 +87,7 @@ public class Planlaegningsvaerktoej {
     * Logik til at oprette projekt og tildele automatisk nummer
     * 
     * @param projektNavn Navn på nyoprettede projekt
-    * @param OperationNotAllowedException Indikere at systemets krav ikke opfyldes
+    * @param \OperationNotAllowedException Indikere at systemets krav ikke opfyldes
     */
     public void opretProjekt(String projektNavn) throws OperationNotAllowedException {
         if (this.loggedInUser == null) {
@@ -425,6 +431,9 @@ public class Planlaegningsvaerktoej {
 
                 for (String linje : projektLinjer) {
                     String[] dele = linje.split(",");
+                    if (dele.length == 0) {
+                        continue;
+                    }
                     if (dele[0].equals("P")) {
                         // Genskab projektet (ID, Navn)
                         nuvaerendeProjekt = new Projekt(dele[1], dele[2]);
@@ -435,6 +444,13 @@ public class Planlaegningsvaerktoej {
                         // Genskab aktiviteten til det aktuelle projekt
                         nuvaerendeProjekt.opretAktivitet(dele[1], dele[2], Double.parseDouble(dele[3]),
                                 Integer.parseInt(dele[4]), Integer.parseInt(dele[5]));
+                    } else if (dele[0].equals("T") && nuvaerendeProjekt != null) {
+                        List<Aktivitet> aktiviteter = nuvaerendeProjekt.getAktiviteter();
+
+                        if (!aktiviteter.isEmpty()) {
+                            Aktivitet nuvaerendeAktivitet = aktiviteter.get(aktiviteter.size() - 1);
+                            nuvaerendeAktivitet.tilfoejGenskabtTid(Double.parseDouble(dele[1]), dele[2], dele[3]);
+                        }
                     }
                 }
             } catch (Exception e) {

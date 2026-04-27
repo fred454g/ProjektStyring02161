@@ -57,8 +57,17 @@ public class Aktivitet {
         }
         return total;
     }
+    public List<Tidsregistrering> getTidsregistreringerForPersistens() {
+        return this.tidsregistreringer;
+    }
 
-    // =======================
+    public void tilfoejGenskabtTid(double timer, String datoStreng, String initialer) {
+        LocalDate dato = LocalDate.parse(datoStreng);
+        Tidsregistrering registrering = new Tidsregistrering(dato, timer, initialer);
+        this.tidsregistreringer.add(registrering);
+    }
+
+     // ==================
 
     public boolean setStarttidspunkt(int startstidspunkt) {
         this.starttidspunkt = startstidspunkt;
