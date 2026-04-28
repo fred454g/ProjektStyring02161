@@ -28,4 +28,8 @@ public class Tidsregistrering {
     public String getInitialer() {
         return this.initialer;
     }
+
+    public String getDatoForPersistens() {
+        return this.dato.toString(); // Returnerer formatet YYYY-MM-DD
+    }
 }

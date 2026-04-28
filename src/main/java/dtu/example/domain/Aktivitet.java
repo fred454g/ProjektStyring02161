@@ -22,11 +22,6 @@ public class Aktivitet {
         this.sluttidspunkt = sluttidspunkt;
     }
 
-    public Aktivitet(String aktivitetsnummer, String aktivitetsNavn) {
-        this.aktivitetsnummer = aktivitetsnummer;
-        this.aktivitetsNavn = aktivitetsNavn;
-    }
-
     // ==================
     // GET methods
     // ==================
@@ -50,7 +45,28 @@ public class Aktivitet {
         return this.sluttidspunkt;
     }
 
-    // =======================
+    public double getTotalRegistreretTid() {
+        double total = 0;
+        for (Tidsregistrering t : this.tidsregistreringer) {
+            total += t.getAntalArbejdstimer();
+        }
+        return total;
+    }
+    public List<Tidsregistrering> getTidsregistreringerForPersistens() {
+        return this.tidsregistreringer;
+    }
+
+    public void tilfoejGenskabtTid(double timer, String datoStreng, String initialer) {
+        LocalDate dato = LocalDate.parse(datoStreng);
+        Tidsregistrering registrering = new Tidsregistrering(dato, timer, initialer);
+        this.tidsregistreringer.add(registrering);
+    }
+
+    public List<Medarbejder> getTilknyttedeMedarbejdere() {
+        return this.tilknyttedeMedarbejdere;
+    }
+
+     // ==================
 
     public boolean setStarttidspunkt(int startstidspunkt) {
         this.starttidspunkt = startstidspunkt;
@@ -84,13 +100,30 @@ public class Aktivitet {
     }
 
     public void registrerTid(Medarbejder medarbejder, Double timer) throws OperationNotAllowedException {
-        // NOTE: En medarbejder kan godt registrere timer på en aktivitet selvom de ikke er tilknyttet (ved at hjælpe en kollega)
-        // 1. opretter ny tidsregistrering
+        // PRE-CONDITIONS (Design by Contract)
+        // Tjekker at de logiske grundbetingelser for metoden er opfyldt
+        assert medarbejder != null : "Pre-condition fejlede: Medarbejder må ikke være null";
+        assert timer > 0 : "Pre-condition fejlede: Timer skal være større end 0";
+
+        // Gemmer den gamle tilstand til brug i post-condition
+        double gammelTotalTid = getTotalRegistreretTid();
+
+        // FORRETNINGSLOGIK (niko)
+
+        if (timer <= 0) {
+            throw new OperationNotAllowedException("Tid skal være positiv"); // Kaster exception over for brugeren
+        }
+
+        // 1. Opretter ny tidsregistrering
         Tidsregistrering registrering = new Tidsregistrering(LocalDate.now(), timer, medarbejder.getInitialer());
-        
-        // 2. tilføjer til liste af tidsregistreringer inden for aktivitet
+
+        // 2. Tilføjer til liste af tidsregistreringer inden for aktivitet
         this.tidsregistreringer.add(registrering);
 
+        // POST-CONDITIONS (Design by Contract)
+        // Beviser at tilstanden faktisk ændrede sig korrekt
+        assert getTotalRegistreretTid() == gammelTotalTid + timer : "Post-condition fejlede: Total tid blev ikke opdateret";
+        assert this.tidsregistreringer.contains(registrering) : "Post-condition fejlede: Registreringen blev ikke gemt";
     }
 
     public double getRegistreretTidForMedarbejder(String initialer) {
@@ -106,13 +139,6 @@ public class Aktivitet {
         return total;
     }
 
-    public void overbliksRapport(LocalDate starttidspunkt, LocalDate sluttidspunkt) {
-
-    }
-
-    public void givAktivitetsStatus() {
-
-    }
 
     // =====================
     // Helpers

@@ -1,0 +1,8 @@
+P,26001,Nyt IT System
+M,huba
+M,jfk
+A,26001-1,Frontend,0.0,1,1
+AM,26001-1,huba
+AM,26001-1,jfk
+A,26001-2,Backend,0.0,1,1
+AM,26001-2,huba

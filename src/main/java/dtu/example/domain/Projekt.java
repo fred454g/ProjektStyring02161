@@ -32,9 +32,18 @@ public class Projekt {
         return this.projektleder;
     }
 
+    public List<Aktivitet> getAktiviteter() {
+        return this.aktiviteter;
+    }
+
+    public List<Medarbejder> getTilknyttedeMedarbejdere() {
+        return this.tilknyttedeMedarbejdere;
+    }
+
     public int getHoejesteAktivitetsnummer() {
         return this.hoejesteAktivitetsnummer;
     }
+
 
     // ====================
     // Aktivitetsnummer opdater
@@ -72,13 +81,6 @@ public class Projekt {
         }
     }
 
-    public void overbliksRapport(int starttidspunkt, int sluttidspunkt) {
-
-    }
-
-    public void givProjektStatus() {
-
-    }
 
     // ===================
     // Aktivitet metoder
@@ -93,14 +95,6 @@ public class Projekt {
         return true;
     }
 
-    public boolean opretAktivitet(String aktivitetsNr, String aktivitetsNavn) throws OperationNotAllowedException {
-        if (findAktivitet(aktivitetsNavn) != null) {
-            throw new OperationNotAllowedException("Aktivitetsnavn er i brug");
-        }
-        Aktivitet nyAktivitet = new Aktivitet(aktivitetsNr, aktivitetsNavn);
-        this.aktiviteter.add(nyAktivitet);
-        return true;
-    }
 
     public boolean opdaterForventedeAntalArbejdstimer(String aktivitetsInfo, float timer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
         Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
@@ -111,7 +105,7 @@ public class Projekt {
         aktivitet.setForventedeAntalArbejdstimer(timer);
         aktivitet.setStarttidspunkt(starttidspunkt);
         aktivitet.setSluttidspunkt(sluttidspunkt);
-        
+
         return true;
     }
 

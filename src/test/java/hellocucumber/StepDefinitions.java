@@ -1,5 +1,7 @@
 package hellocucumber;
 
+import dtu.example.domain.Planlaegningsvaerktoej;
+import dtu.example.ui.App;
 import io.cucumber.java.After;
 import io.cucumber.java.en.*;
 
@@ -16,11 +18,13 @@ public class StepDefinitions {
 
     private ErrorMessageHolder errorMessageHolder;
     private Planlaegningsvaerktoej planlaegningsvaerktoej;
+    private String genereretRapport = "";
     private double totalTimer;
     private static final Path HR_LISTE_PATH = Paths.get("src", "main", "java", "dtu", "example", "hr_liste.txt");
     private String hrListeOriginalIndhold;
     private boolean hrListeBackupTaget;
     private String sidsteObserverEvent;
+    private Planlaegningsvaerktoej app = new Planlaegningsvaerktoej();
 
     /*
      * The only purpose of this constructor is to test
@@ -154,7 +158,7 @@ public class StepDefinitions {
     @When("medarbejderen opretter aktiviteten {string} på projekt {string}")
     public void medarbejderenOpretterAktivitetenPåProjekt(String aktivitetsNavn, String projektNr) {
         try {
-            planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn);
+            planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
@@ -189,7 +193,7 @@ public class StepDefinitions {
     @Given("at aktiviteten {string} er oprettet på projekt {string}")
     public void atAktivitetenErOprettetPåProjekt(String aktivitetsnavn, String projektnummer) {
         try {
-            planlaegningsvaerktoej.opretAktivitet(projektnummer, aktivitetsnavn);
+            planlaegningsvaerktoej.opretAktivitet(projektnummer, aktivitetsnavn, 0.0, 1, 1);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
@@ -240,7 +244,7 @@ public class StepDefinitions {
     @Given("at aktiviteten {string} findes på projekt {string}")
     public void atAktivitetenFindesPåProjekt(String aktivitetsNavn, String projektNr)
             throws OperationNotAllowedException {
-        planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn);
+        planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
     }
 
     @Given("at medarbejderen {string} er tilknyttet projekt {string}")
@@ -417,7 +421,7 @@ public class StepDefinitions {
         String initialer = planlaegningsvaerktoej.getLoggedinUserInitials();
         assertTrue(planlaegningsvaerktoej.harFravaer(initialer, type, startUge, slutUge));
     }
-    
+
     // =============================
     // fjern_medarbejder_projekt.feature
     // =============================
@@ -445,5 +449,52 @@ public class StepDefinitions {
     // ??
     // =============================
 
+
+    // ==========================================
+    // STEPS TIL RAPPORTGENERERING
+    // ==========================================
+
+    @Given("at medarbejderen er logget ind i systemet")
+    public void at_medarbejderen_er_logget_ind_i_systemet() throws Exception {
+        // Sikrer at systemet har data og logger ind
+        app.indlaesFil();
+        app.userLogin("huba"); // Sørg for at "huba" er i HR-listen, ellers skal du oprette ham først
+    }
+
+    @Given("at projekt {string} med navnet {string} eksisterer")
+    public void at_projekt_med_navnet_eksisterer(String projektNummer, String projektNavn) throws Exception {
+        // Vi simulerer at brugeren har oprettet projektet gennem systemet
+        // Ret eventuelt metodens parametre, så de matcher jeres faktiske app.opretProjekt()
+        app.opretProjekt(projektNavn);
+    }
+
+    @Given("at projektet har en aktivitet {string} med budget på {int} timer")
+    public void at_projektet_har_en_aktivitet_med_budget_paa_timer(String aktivitetsNavn, Integer budget) throws Exception {
+        // Simulerer oprettelse af aktivitet i det netop oprettede projekt "26001"
+        // Bemærk: '10' og '12' er bare dummy start/slut uger for at få metoden til at køre
+        app.opretAktivitet("26001", aktivitetsNavn, (double) budget, 10, 12);
+    }
+
+    @When("medarbejderen anmoder om en rapport for projekt {string}")
+    public void medarbejderen_anmoder_om_en_rapport_for_projekt(String projektNummer) throws Exception {
+        // Her trækker vi data ud af facaden, præcis som UI'en vil gøre det!
+        genereretRapport = app.genererRapport(projektNummer);
+    }
+
+    @Then("modtager systemet en rapport, der indeholder projektnavnet {string}")
+    public void modtager_systemet_en_rapport_der_indeholder_projektnavnet(String forventetNavn) {
+        // Vi bruger JUnit's assertTrue til at bevise, at strengen indeholder det rigtige
+        assertTrue(genereretRapport.contains(forventetNavn), "Rapporten mangler projektnavnet");
+    }
+
+    @Then("rapporten viser at totalt budget er {int} timer")
+    public void rapporten_viser_at_totalt_budget_er_timer(Integer timer) {
+        assertTrue(
+                genereretRapport.contains("Budgetteret tid: " + timer + ".0 timer")
+                        || genereretRapport.contains("Total Budget: " + timer + ".0 timer")
+                        || genereretRapport.contains("Total Budget: " + timer + " timer"),
+                "Rapporten har forkert budget"
+        );
+    }
 }
 
