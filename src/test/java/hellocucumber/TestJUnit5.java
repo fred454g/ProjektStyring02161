@@ -14,7 +14,7 @@ public class TestJUnit5 {
 	public void setUp() throws Exception {
 		// Klargør data inden hver test
 		aktivitet = new Aktivitet("A1", "Frontend", 50.0, 10, 12);
-		medarbejder = new Medarbejder("Hubert Baumeister", "huba");
+		medarbejder = new Medarbejder("huba");
 		aktivitet.tilknytMedarbejder(medarbejder); // Sørg for at huba er på aktiviteten
 	}
 
@@ -45,16 +45,12 @@ public class TestJUnit5 {
 	}
 
 	@Test
-	public void testRegistrerTid_Fejl_IkkeTilknyttetAktivitet() {
-		// A (Arrange)
-		Medarbejder wilo = new Medarbejder("William Lopez", "wilo");
-		// BEMÆRK: Vi tilknytter IKKE wilo til aktiviteten
 
-		// A (Act & Assert)
-		Exception exception = assertThrows(OperationNotAllowedException.class, () -> {
-			aktivitet.registrerTid(wilo, 5.0);
-		});
+	public void testRegistrerTid_Succes_IkkeTilknyttetAktivitet() throws Exception {
+		Medarbejder wilo = new Medarbejder("wilo");
+		aktivitet.registrerTid(wilo, 5.0);
+		assertEquals(5.0, aktivitet.getTotalRegistreretTid(), 0.01);
+		assertEquals(5.0, aktivitet.getRegistreretTidForMedarbejder("wilo"), 0.01);
 
-		assertEquals("Medarbejder er ikke tilknyttet aktiviteten", exception.getMessage());
 	}
 }

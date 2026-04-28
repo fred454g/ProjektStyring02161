@@ -10,6 +10,7 @@ public class Projekt {
     private Medarbejder projektleder;
     private List<Medarbejder> tilknyttedeMedarbejdere = new ArrayList<>();
     private List<Aktivitet> aktiviteter = new ArrayList<>();
+    private int hoejesteAktivitetsnummer = 1;
 
     public Projekt(String projektnummer, String projektNavn) {
         this.projektnummer = projektnummer;
@@ -35,6 +36,22 @@ public class Projekt {
         return this.aktiviteter;
     }
 
+    public List<Medarbejder> getTilknyttedeMedarbejdere() {
+        return this.tilknyttedeMedarbejdere;
+    }
+
+    public int getHoejesteAktivitetsnummer() {
+        return this.hoejesteAktivitetsnummer;
+    }
+
+
+    // ====================
+    // Aktivitetsnummer opdater
+    // ====================
+    public void hoejesteAktivitetsnummerPlusEn() {
+        this.hoejesteAktivitetsnummer++;
+    }
+
     // ====================
     // Projekt Metoder
     // ====================
@@ -48,8 +65,12 @@ public class Projekt {
         return true;
     }
 
-    public void fjernMedarbejder(String initialer) {
-
+    public void fjernMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+        if (isMedarbejderInProjekt(medarbejder)) {
+            this.tilknyttedeMedarbejdere.remove(medarbejder);
+        } else {
+            throw new OperationNotAllowedException("Medarbejder er ikke tilknyttet projekt");
+        }
     }
 
     public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
@@ -60,13 +81,6 @@ public class Projekt {
         }
     }
 
-    public void overbliksRapport(int starttidspunkt, int sluttidspunkt) {
-
-    }
-
-    public void givProjektStatus() {
-
-    }
 
     // ===================
     // Aktivitet metoder
@@ -81,21 +95,27 @@ public class Projekt {
         return true;
     }
 
-    public boolean opretAktivitet(String aktivitetsNr, String aktivitetsNavn) throws OperationNotAllowedException {
-        if (findAktivitet(aktivitetsNavn) != null) {
-            throw new OperationNotAllowedException("Aktivitetsnavn er i brug");
+
+    public boolean opdaterForventedeAntalArbejdstimer(String aktivitetsInfo, float timer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke");
         }
-        Aktivitet nyAktivitet = new Aktivitet(aktivitetsNr, aktivitetsNavn);
-        this.aktiviteter.add(nyAktivitet);
+
+        aktivitet.setForventedeAntalArbejdstimer(timer);
+        aktivitet.setStarttidspunkt(starttidspunkt);
+        aktivitet.setSluttidspunkt(sluttidspunkt);
+
         return true;
     }
 
-    public boolean opdaterForventedeAntalArbejdstimer(float timer, int starttidspunkt, int sluttidspunkt) {
-        return false;
-    }
+    public void sletAktivitet(String aktivitetsNummer) throws OperationNotAllowedException {
+        Aktivitet aktivitet = findAktivitet(aktivitetsNummer);
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke");
+        }
 
-    public void sletAktivitet(String aktivitetsNummer) {
-
+        this.aktiviteter.remove(aktivitet);
     }
 
     public void opdaterAktivitet(String aktivitetsInfo, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {

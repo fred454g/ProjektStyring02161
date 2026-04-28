@@ -22,11 +22,6 @@ public class Aktivitet {
         this.sluttidspunkt = sluttidspunkt;
     }
 
-    public Aktivitet(String aktivitetsnummer, String aktivitetsNavn) {
-        this.aktivitetsnummer = aktivitetsnummer;
-        this.aktivitetsNavn = aktivitetsNavn;
-    }
-
     // ==================
     // GET methods
     // ==================
@@ -65,6 +60,10 @@ public class Aktivitet {
         LocalDate dato = LocalDate.parse(datoStreng);
         Tidsregistrering registrering = new Tidsregistrering(dato, timer, initialer);
         this.tidsregistreringer.add(registrering);
+    }
+
+    public List<Medarbejder> getTilknyttedeMedarbejdere() {
+        return this.tilknyttedeMedarbejdere;
     }
 
      // ==================
@@ -110,9 +109,7 @@ public class Aktivitet {
         double gammelTotalTid = getTotalRegistreretTid();
 
         // FORRETNINGSLOGIK (niko)
-        if (!isMedarbejderInAktivitet(medarbejder)) {
-            throw new OperationNotAllowedException("Medarbejder er ikke tilknyttet aktiviteten");
-        }
+
         if (timer <= 0) {
             throw new OperationNotAllowedException("Tid skal være positiv"); // Kaster exception over for brugeren
         }
@@ -142,13 +139,6 @@ public class Aktivitet {
         return total;
     }
 
-    public void overbliksRapport(LocalDate starttidspunkt, LocalDate sluttidspunkt) {
-
-    }
-
-    public void givAktivitetsStatus() {
-
-    }
 
     // =====================
     // Helpers

@@ -6,18 +6,26 @@ import java.util.Objects;
 
 
 public class Medarbejder {
-    
-    private String navn;
+
     private String initialer;
     private List<Fravaer> fravaersliste = new ArrayList<>();
 
-    public Medarbejder(String navn, String initialer) {
-        this.navn = navn;
+    public Medarbejder(String initialer) {
+        if (initialer == null || initialer.isBlank()) {
+            throw new IllegalArgumentException("Initialer må ikke være tomme");
+        }
+        if (initialer.length() > 4) {
+            throw new IllegalArgumentException("Initialer må ikke være længere end 4 tegn");
+        }
         this.initialer = initialer;
     }
 
     public void tilfoejFravaer(Fravaer fravaer) {
         this.fravaersliste.add(fravaer);
+    }
+
+    public void tilfoejGenskabtFravaer(String type, int startUge, int slutUge) {
+        this.fravaersliste.add(new Fravaer(type, startUge, slutUge));
     }
 
     public boolean harFravaer(String type, int startUge, int slutUge) {
@@ -41,12 +49,13 @@ public class Medarbejder {
     // =================
     // Get Methods
     // =================
-    public String getNavn() {
-        return this.navn;
-    }
 
     public String getInitialer() {
         return this.initialer;
+    }
+
+    public List<Fravaer> getFravaerslisteForPersistens() {
+        return this.fravaersliste;
     }
 
     @Override

@@ -1,142 +1,333 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dtu.example.ui.SecondaryController">
+<VBox prefHeight="720.0" prefWidth="1100.0"
+      xmlns="http://javafx.com/javafx/23"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="dtu.example.ui.SecondaryController">
+
     <children>
-        <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #f4f4f4; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;">
+
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0"
+              style="-fx-background-color: #f8f8f8; -fx-border-color: #d0d0d0; -fx-border-width: 0 0 1 0;">
             <children>
-                <Label text="Softwarehuset Projektstyring">
+                <Label text="Softwarehuset A/S - Projektstyring">
                     <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="15.0" />
                     </font>
-                    <HBox.margin>
-                        <Insets right="480.0" />
-                    </HBox.margin>
                 </Label>
-                <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="Log ud">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font></Button>
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Button onAction="#handleLogout"
+                        prefHeight="36.0"
+                        prefWidth="120.0"
+                        style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;"
+                        text="Log ud" />
             </children>
             <padding>
-                <Insets left="20.0" right="20.0" />
+                <Insets left="24.0" right="24.0" />
             </padding>
         </HBox>
 
-        <TabPane prefHeight="550.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <tabs>
+
                 <Tab text="Projekter">
                     <content>
-                        <VBox spacing="20.0">
-                            <children>
-                                <Label text="Projektstyring">
-                                    <font>
-                                        <Font name="System Bold" size="18.0" />
-                                    </font>
-                                </Label>
-                                <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-radius: 5;">
+                        <ScrollPane fitToWidth="true">
+                            <content>
+                                <VBox spacing="20.0">
+                                    <padding>
+                                        <Insets top="30.0" right="30.0" bottom="30.0" left="30.0" />
+                                    </padding>
+
                                     <children>
-                                        <Label text="Opret nyt projekt" />
-                                        <TextField fx:id="nytProjektNavnInput" prefHeight="35.0" promptText="Indtast projektnavn (f.eks. Nyt IT System)" />
-                                        <Button mnemonicParsing="false" onAction="#handleOpretProjekt" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: #2ecc71; -fx-text-fill: white;" text="Opret Projekt">
+                                        <Label text="Projekter">
                                             <font>
-                                                <Font name="System Bold" size="12.0" />
-                                            </font></Button>
+                                                <Font name="System Bold" size="20.0" />
+                                            </font>
+                                        </Label>
+
+                                        <FlowPane hgap="24.0" vgap="24.0">
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Opret projekt">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <TextField fx:id="nytProjektNavnInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projektnavn" />
+                                                    <Button onAction="#handleOpretProjekt" prefHeight="38.0" maxWidth="Infinity" text="Opret projekt"
+                                                            style="-fx-background-color: #2ecc71; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Omdøb projekt">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForOmdobInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <TextField fx:id="nytProjektNavnOmdobInput" prefHeight="36.0" maxWidth="Infinity" promptText="Nyt projektnavn" />
+                                                    <Button onAction="#handleOmdobProjekt" prefHeight="38.0" maxWidth="Infinity" text="Omdøb projekt"
+                                                            style="-fx-background-color: #f39c12; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Tilknyt projektleder">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForLederInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <ComboBox fx:id="projektlederInitialerVaelger" prefHeight="36.0" maxWidth="Infinity" promptText="Projektleder" />
+                                                    <Button onAction="#handleTilknytProjektleder" prefHeight="38.0" maxWidth="Infinity" text="Tilknyt projektleder"
+                                                            style="-fx-background-color: #34495e; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Tilknyt medarbejder til projekt">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForProjektMedarbejderInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <ComboBox fx:id="medarbejderTilProjektVaelger" prefHeight="36.0" maxWidth="Infinity" promptText="Medarbejder" />
+                                                    <Button onAction="#handleTilknytMedarbejderTilProjekt" prefHeight="38.0" maxWidth="Infinity" text="Tilknyt medarbejder"
+                                                            style="-fx-background-color: #34495e; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Fjern medarbejder fra projekt">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForFjernProjektMedarbejderInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <ComboBox fx:id="medarbejderFraProjektVaelger" prefHeight="36.0" maxWidth="Infinity" promptText="Medarbejder" />
+                                                    <Button onAction="#handleFjernMedarbejderFraProjekt" prefHeight="38.0" maxWidth="Infinity" text="Fjern medarbejder"
+                                                            style="-fx-background-color: #7f8c8d; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                        </FlowPane>
                                     </children>
                                 </VBox>
-                            </children>
-                            <padding>
-                                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-                            </padding>
-                        </VBox>
+                            </content>
+                        </ScrollPane>
                     </content>
                 </Tab>
 
                 <Tab text="Aktiviteter">
                     <content>
-                        <VBox spacing="20.0">
-                            <children>
-                                <Label text="Aktiviteter &amp; Ressourcer">
-                                    <font>
-                                        <Font name="System Bold" size="18.0" />
-                                    </font>
-                                </Label>
-                                <GridPane hgap="20.0" vgap="15.0" VBox.vgrow="ALWAYS">
-                                    <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    </columnConstraints>
-                                    <rowConstraints>
-                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                    </rowConstraints>
+                        <ScrollPane fitToWidth="true">
+                            <content>
+                                <VBox spacing="20.0">
+                                    <padding>
+                                        <Insets top="30.0" right="30.0" bottom="30.0" left="30.0" />
+                                    </padding>
+
                                     <children>
-                                        <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-radius: 5;">
-                                            <children>
-                                                <Label text="1. Definer Aktivitet" style="-fx-font-weight: bold;" />
-                                                <TextField fx:id="projektIdForAktivitetInput" prefHeight="30.0" promptText="Projekt ID (fx 26001)" />
-                                                <TextField fx:id="aktivitetsNavnInput" prefHeight="30.0" promptText="Navn på aktivitet" />
-                                                <TextField fx:id="budgetInput" prefHeight="30.0" promptText="Budget i timer" />
-                                                <Button mnemonicParsing="false" onAction="#handleOpretAktivitet" prefHeight="35.0" prefWidth="Infinity" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Gem Aktivitet" />
-                                            </children>
-                                        </VBox>
-                                        <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="1">
-                                            <children>
-                                                <Label text="2. Tilknyt Medarbejder" style="-fx-font-weight: bold;" />
-                                                <Label text="Vælg hvem der skal arbejde på opgaven" textFill="#7c7c7c" />
-                                                <ComboBox fx:id="medarbejderInitialerVælger" prefHeight="30.0" prefWidth="Infinity" promptText="Vælg fra HR-liste" />
-                                                <Button mnemonicParsing="false" onAction="#handleTilknytMedarbejder" prefHeight="35.0" prefWidth="Infinity" style="-fx-background-color: #34495e; -fx-text-fill: white;" text="Tilknyt til Aktivitet" />
-                                            </children>
-                                        </VBox>
+                                        <Label text="Aktiviteter">
+                                            <font>
+                                                <Font name="System Bold" size="20.0" />
+                                            </font>
+                                        </Label>
+
+                                        <FlowPane hgap="24.0" vgap="24.0">
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Opret aktivitet">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForAktivitetInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <TextField fx:id="aktivitetsNavnInput" prefHeight="36.0" maxWidth="Infinity" promptText="Navn" />
+                                                    <TextField fx:id="budgetInput" prefHeight="36.0" maxWidth="Infinity" promptText="Budget i timer" />
+                                                    <TextField fx:id="startUgeAktivitetInput" prefHeight="36.0" maxWidth="Infinity" promptText="Start uge" />
+                                                    <TextField fx:id="slutUgeAktivitetInput" prefHeight="36.0" maxWidth="Infinity" promptText="Slut uge" />
+                                                    <Button onAction="#handleOpretAktivitet" prefHeight="38.0" maxWidth="Infinity" text="Opret aktivitet"
+                                                            style="-fx-background-color: #3498db; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Find ledige medarbejdere">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <Label text="Viser medarbejdere uden fravær og uden overlappende aktivitet." wrapText="true" textFill="#666666" />
+                                                    <TextField fx:id="ledigStartUgeInput" prefHeight="36.0" maxWidth="Infinity" promptText="Start uge" />
+                                                    <TextField fx:id="ledigSlutUgeInput" prefHeight="36.0" maxWidth="Infinity" promptText="Slut uge" />
+                                                    <Button onAction="#handleVisLedige" prefHeight="38.0" maxWidth="Infinity" text="Find ledige"
+                                                            style="-fx-background-color: #16a085; -fx-text-fill: white;" />
+                                                    <TextArea fx:id="ledigeOutput" editable="false" prefHeight="120.0" maxWidth="Infinity"
+                                                              style="-fx-font-family: monospace;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Opdater aktivitet">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForOpdaterAktivitetInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <ComboBox fx:id="aktivitetForOpdateringInput" prefHeight="36.0" maxWidth="Infinity" promptText="Aktivitet" />
+                                                    <TextField fx:id="nytBudgetInput" prefHeight="36.0" maxWidth="Infinity" promptText="Nyt budget" />
+                                                    <TextField fx:id="nyStartUgeInput" prefHeight="36.0" maxWidth="Infinity" promptText="Ny start uge" />
+                                                    <TextField fx:id="nySlutUgeInput" prefHeight="36.0" maxWidth="Infinity" promptText="Ny slut uge" />
+                                                    <Button onAction="#handleOpdaterAktivitet" prefHeight="38.0" maxWidth="Infinity" text="Opdater aktivitet"
+                                                            style="-fx-background-color: #2980b9; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Slet aktivitet">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForSletAktivitetInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <ComboBox fx:id="aktivitetForSletningInput" prefHeight="36.0" maxWidth="Infinity" promptText="Aktivitet" />
+                                                    <Button onAction="#handleSletAktivitet" prefHeight="38.0" maxWidth="Infinity" text="Slet aktivitet"
+                                                            style="-fx-background-color: #c0392b; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Tilknyt medarbejder til aktivitet">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForTilknytningInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <ComboBox fx:id="aktivitetForTilknytningInput" prefHeight="36.0" maxWidth="Infinity" promptText="Aktivitet" />
+                                                    <ComboBox fx:id="medarbejderInitialerVaelger" prefHeight="36.0" maxWidth="Infinity" promptText="Medarbejder" />
+                                                    <Button onAction="#handleTilknytMedarbejder" prefHeight="38.0" maxWidth="Infinity" text="Tilknyt medarbejder"
+                                                            style="-fx-background-color: #34495e; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
+                                                    <Label text="Fjern medarbejder fra aktivitet">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForFjernMedarbejderInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <ComboBox fx:id="aktivitetForFjernMedarbejderInput" prefHeight="36.0" maxWidth="Infinity" promptText="Aktivitet" />
+                                                    <ComboBox fx:id="medarbejderForFjernelseVaelger" prefHeight="36.0" maxWidth="Infinity" promptText="Medarbejder" />
+                                                    <Button onAction="#handleFjernMedarbejderFraAktivitet" prefHeight="38.0" maxWidth="Infinity" text="Fjern medarbejder"
+                                                            style="-fx-background-color: #7f8c8d; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                        </FlowPane>
                                     </children>
-                                </GridPane>
-                            </children>
-                            <padding>
-                                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-                            </padding>
-                        </VBox>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
                     </content>
                 </Tab>
 
                 <Tab text="Tidsregistrering">
                     <content>
-                        <VBox alignment="TOP_CENTER" spacing="15.0">
+                        <VBox alignment="CENTER" spacing="15.0">
+                            <padding>
+                                <Insets top="30.0" right="30.0" bottom="30.0" left="30.0" />
+                            </padding>
+
                             <children>
-                                <VBox maxWidth="400.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 30; -fx-border-color: #ddd; -fx-border-radius: 10;">
+                                <Label text="Registrer tid">
+                                    <font>
+                                        <Font name="System Bold" size="18.0" />
+                                    </font>
+                                </Label>
+
+                                <VBox prefWidth="420.0" spacing="12.0"
+                                      style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
                                     <children>
-                                        <Label text="Registrer Arbejdstid">
-                                            <font>
-                                                <Font name="System Bold" size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <TextField fx:id="projektIdTidInput" prefHeight="35.0" promptText="Projekt ID" />
-                                        <TextField fx:id="aktivitetsNavnTidInput" prefHeight="35.0" promptText="Navn på aktivitet" />
-                                        <TextField fx:id="timerInput" prefHeight="35.0" promptText="Antal timer" />
-                                        <Button mnemonicParsing="false" onAction="#handleRegistrerTid" prefHeight="40.0" prefWidth="Infinity" style="-fx-background-color: #2ecc71; -fx-text-fill: white;" text="Gem Registrering">
-                                            <font>
-                                                <Font name="System Bold" size="13.0" />
-                                            </font>
-                                        </Button>
+                                        <ComboBox fx:id="projektIdTidInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                        <ComboBox fx:id="aktivitetsNavnTidInput" prefHeight="36.0" maxWidth="Infinity" promptText="Aktivitet" />
+                                        <TextField fx:id="timerInput" prefHeight="36.0" maxWidth="Infinity" promptText="Timer" />
+
+                                        <Button onAction="#handleRegistrerTid" prefHeight="38.0" maxWidth="Infinity" text="Gem tidsregistrering"
+                                                style="-fx-background-color: #2ecc71; -fx-text-fill: white;" />
+
+                                        <Separator />
+
+                                        <Button onAction="#handleVisEgneTimer" prefHeight="38.0" maxWidth="Infinity" text="Vis egne timer"
+                                                style="-fx-background-color: #34495e; -fx-text-fill: white;" />
+
+                                        <TextArea fx:id="egneTimerOutput" editable="false" prefHeight="80.0" maxWidth="Infinity"
+                                                  style="-fx-font-family: monospace;" />
                                     </children>
                                 </VBox>
                             </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <Tab text="Fravær">
+                    <content>
+                        <VBox alignment="CENTER" spacing="15.0">
                             <padding>
-                                <Insets top="50.0" />
+                                <Insets top="30.0" right="30.0" bottom="30.0" left="30.0" />
                             </padding>
+
+                            <children>
+                                <Label text="Registrer fravær">
+                                    <font>
+                                        <Font name="System Bold" size="18.0" />
+                                    </font>
+                                </Label>
+
+                                <VBox prefWidth="420.0" spacing="12.0"
+                                      style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                    <children>
+                                        <TextField fx:id="fravaerTypeInput" prefHeight="36.0" maxWidth="Infinity" promptText="Type" />
+                                        <TextField fx:id="startUgeInput" prefHeight="36.0" maxWidth="Infinity" promptText="Start uge" />
+                                        <TextField fx:id="slutUgeInput" prefHeight="36.0" maxWidth="Infinity" promptText="Slut uge" />
+
+                                        <Button onAction="#handleRegistrerFravaer" prefHeight="38.0" maxWidth="Infinity" text="Gem fravær"
+                                                style="-fx-background-color: #e67e22; -fx-text-fill: white;" />
+                                    </children>
+                                </VBox>
+                            </children>
                         </VBox>
                     </content>
                 </Tab>
@@ -144,22 +335,34 @@
                 <Tab text="Statusrapport">
                     <content>
                         <VBox spacing="15.0">
+                            <padding>
+                                <Insets top="30.0" right="30.0" bottom="30.0" left="30.0" />
+                            </padding>
+
                             <children>
-                                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                <Label text="Statusrapport">
+                                    <font>
+                                        <Font name="System Bold" size="18.0" />
+                                    </font>
+                                </Label>
+
+                                <HBox spacing="10.0">
                                     <children>
-                                        <TextField fx:id="rapportProjektIdInput" prefHeight="35.0" prefWidth="250.0" promptText="Indtast Projekt ID (fx 26001)" />
-                                        <Button mnemonicParsing="false" onAction="#handleGenererRapport" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" text="Generer Status" />
+                                        <ComboBox fx:id="rapportProjektIdInput" prefHeight="36.0" prefWidth="260.0" promptText="Projekt" />
+                                        <Button onAction="#handleGenererRapport" prefHeight="36.0" prefWidth="160.0" text="Generer"
+                                                style="-fx-background-color: #9b59b6; -fx-text-fill: white;" />
                                     </children>
                                 </HBox>
-                                <TextArea fx:id="rapportOutput" editable="false" prefHeight="200.0" prefWidth="200.0" style="-fx-font-family: 'Courier New'; -fx-font-size: 13;" VBox.vgrow="ALWAYS" />
+
+                                <TextArea fx:id="rapportOutput" prefHeight="360.0" maxWidth="Infinity"
+                                          style="-fx-font-family: monospace;" />
                             </children>
-                            <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                            </padding>
                         </VBox>
                     </content>
                 </Tab>
+
             </tabs>
         </TabPane>
+
     </children>
 </VBox>

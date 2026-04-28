@@ -17,7 +17,7 @@ public class Observer implements PropertyChangeListener {
             System.out.println(">>> SYSTEM BESKED: Nyt projekt oprettet med navn: " + projekt.getProjektNavn());
         } else if ("MEDARBEJDER_OPRETTET".equals(eventName)) {
             Medarbejder medarbejder = (Medarbejder) event.getNewValue();
-            System.out.println(">>> SYSTEM BESKED: Ny medarbejder oprettet: " + medarbejder.getInitialer() + " - " + medarbejder.getNavn());
+            System.out.println(">>> SYSTEM BESKED: Ny medarbejder oprettet: " + medarbejder.getInitialer());
         } else if ("PROJEKT_OMDOEBT".equals(eventName)) {
             Projekt projekt = (Projekt) event.getNewValue();
             String gammeltNavn = (String) event.getOldValue();
@@ -30,9 +30,18 @@ public class Observer implements PropertyChangeListener {
         } else if ("MEDARBEJDER_TILKNYTTET_PROJEKT".equals(eventName)) {
             Projekt projekt = (Projekt) event.getNewValue();
             System.out.println(">>> SYSTEM BESKED: Medarbejder tilknyttet projekt " + projekt.getProjektNummer());
+        } else if ("MEDARBEJDER_FJERNET_PROJEKT".equals(eventName)) {
+            Medarbejder medarbejder = (Medarbejder) event.getOldValue();
+            Projekt projekt = (Projekt) event.getNewValue();
+            System.out.println(">>> SYSTEM BESKED: Medarbejder " + medarbejder.getInitialer()
+                    + " fjernet fra projekt " + projekt.getProjektNummer());
         } else if ("AKTIVITET_OPRETTET".equals(eventName)) {
             Aktivitet aktivitet = (Aktivitet) event.getNewValue();
             System.out.println(">>> SYSTEM BESKED: Ny aktivitet oprettet: " + aktivitet.getAktivitetsNavn());
+        } else if ("AKTIVITET_SLETTET".equals(eventName)) {
+            Aktivitet aktivitet = (Aktivitet) event.getOldValue();
+            Projekt projekt = (Projekt) event.getNewValue();
+            System.out.println(">>> SYSTEM BESKED: Aktivitet: " + aktivitet.getAktivitetsNavn() + " slettet fra projekt " + projekt.getProjektNummer());
         } else if ("AKTIVITET_OPDATERET".equals(eventName)) {
             Aktivitet aktivitet = (Aktivitet) event.getNewValue();
             System.out.println(">>> SYSTEM BESKED: Aktivitet opdateret: " + aktivitet.getAktivitetsNavn());

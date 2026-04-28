@@ -25,6 +25,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        facade.addPropertyChangeListener(new Observer());
         facade.indlaesFil();
 
         scene = new Scene(loadFXML("primary"), 800, 600);
@@ -32,7 +33,6 @@ public class App extends Application {
         stage.setTitle("Softwarehuset A/S - Projektstyring");
         stage.show();
     }
-
     static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
     }

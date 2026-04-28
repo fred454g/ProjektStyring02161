@@ -4,8 +4,8 @@ Feature: Registrer tid (dagligt)
     Vil jeg gerne kunne registrere mine brugte timer på en aktivitet dagligt
 
     Background:
-        Given at medarbejderen "jfk" med navn "John F. Kennedy" tilfoejes til systemet
-        And at medarbejderen "huba" med navn "Hubert Baumeister" tilfoejes til systemet
+        Given at medarbejderen "jfk" tilfoejes til systemet
+        And at medarbejderen "huba" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
         And at medarbejderen "huba" er tilknyttet projekt "26001"
@@ -22,9 +22,9 @@ Feature: Registrer tid (dagligt)
         When medarbejderen registrerer 4.5 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
         Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
 
-    Scenario: Fejlscenarie - Tidsregistrering på aktivitet man ikke er tilknyttet
+    Scenario: Medarbejder kan registrere tid uden direkte aktivitetstilknytning
         When medarbejderen registrerer 2.0 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
-        Then giver systemet fejlmeddelelsen "Medarbejder er ikke tilknyttet aktiviteten"
+        Then er 2.0 timer tilføjet til det samlede tidsforbrug for "jfk" på aktiviteten "Frontend" på projekt "26001"
 
     Scenario: Fejlscenarie - Tidsregistrering på ikke-eksisterende aktivitet
         Given at medarbejderen "huba" er logget ind i systemet
