@@ -1,5 +1,7 @@
 package dtu.example.domain;
 
+import java.util.Locale;
+
 public class RapportGenerator {
 
     public static String genererProjektRapport(Projekt p) {
@@ -206,7 +208,7 @@ public class RapportGenerator {
     }
 
     private static String formatTimer(double timer) {
-        return String.format("%.1f", timer);
+        return String.format(Locale.US, "%.1f", timer);
     }
 
     private static String formatProcent(double brugt, double budget) {
@@ -214,6 +216,6 @@ public class RapportGenerator {
             return "N/A";
         }
 
-        return String.format("%.1f%%", (brugt / budget) * 100);
+        return String.format(Locale.US, "%.1f%%", (brugt / budget) * 100);
     }
 }
