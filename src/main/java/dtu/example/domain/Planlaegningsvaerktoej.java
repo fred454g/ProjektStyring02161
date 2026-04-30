@@ -72,11 +72,11 @@ public class Planlaegningsvaerktoej {
     * @param \OperationNotAllowedException Indikere at systemets krav ikke opfyldes
     */
     public void opretProjekt(String projektNavn) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
+        if (this.loggedInUser == null) { // White-box - 1
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
 
-        if (projektNavn == null || projektNavn.isEmpty()) {
+        if (projektNavn == null || projektNavn.isEmpty()) { // White-box - 2
             throw new OperationNotAllowedException("Projektnavnet må ikke være tomt");
         }
 
