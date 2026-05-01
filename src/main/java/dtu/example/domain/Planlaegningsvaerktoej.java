@@ -72,11 +72,13 @@ public class Planlaegningsvaerktoej {
     * @param \OperationNotAllowedException Indikere at systemets krav ikke opfyldes
     */
     public void opretProjekt(String projektNavn) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) { // White-box - 1
+        // Der bliver udført struktureret white-box test på denne metode
+        
+        if (this.loggedInUser == null) { // 1
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
 
-        if (projektNavn == null || projektNavn.isEmpty()) { // White-box - 2
+        if (projektNavn == null || projektNavn.isEmpty()) { // 2 (2a || 2b)
             throw new OperationNotAllowedException("Projektnavnet må ikke være tomt");
         }
 
@@ -90,35 +92,45 @@ public class Planlaegningsvaerktoej {
 
 
     public boolean omdoebProjekt(String projektNummer, String nytNavn) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
+        // Der bliver udført struktureret white-box test på denne metode
+
+        if (this.loggedInUser == null) { // 1
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
-        if (projektNummer == null || projektNummer.isBlank()) {
+
+        if (projektNummer == null || projektNummer.isBlank()) { // 2 (2a || 2b)
             throw new OperationNotAllowedException("Projekt skal vælges");
         }
-        if (nytNavn == null || nytNavn.isBlank()) {
+
+        if (nytNavn == null || nytNavn.isBlank()) { // 3 (3a || 3b)
             throw new OperationNotAllowedException("Nyt projektnavn må ikke være tomt");
         }
+
         // Tjek om navnet allerede er i brug
-        for (Projekt p: this.projekter) {
-            if (p.getProjektNavn().equals(nytNavn)) {
+        for (Projekt p: this.projekter) { // 4
+
+            if (p.getProjektNavn().equals(nytNavn)) { // 5
                 throw new OperationNotAllowedException("Projektnavn findes allerede");
             }
         }
 
-
         // Opdater navn og return true
         Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
+
+        if (projekt == null) { // 6
             throw new OperationNotAllowedException("Projekt findes ikke");
+        
         }
+
         String gammeltNavn = projekt.getProjektNavn();
         boolean opdateret = projekt.opdaterNavn(nytNavn);
+        
         if (opdateret) {
             observers.firePropertyChange("PROJEKT_OMDOEBT", gammeltNavn, projekt);
         }
+
         gemProjekter();
-        return opdateret;
+        return opdateret; // 7
     }
 
     public boolean opdaterProjektMedProjektleder(String projektNummer, String medarbejderInitialer)
@@ -165,16 +177,21 @@ public class Planlaegningsvaerktoej {
     }
 
     public boolean tilknytMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
+        // Der bliver udført struktureret white-box test på denne metode
+
+        if (this.loggedInUser == null) { // 1
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
         
         Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
+
+        if (projekt == null) { // 2
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
+
         Medarbejder medarbejder = findMedarbejder(initialer);
-        if (medarbejder == null) {
+
+        if (medarbejder == null) { // 3
             throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
         }
         projekt.tilknytMedarbejder(medarbejder);
@@ -208,28 +225,31 @@ public class Planlaegningsvaerktoej {
     public void registrerTid(String projektNr, String aktivitetsNavn, Double timer)
             throws OperationNotAllowedException {
 
-        if (this.loggedInUser == null) {
+        // Der bliver udført struktureret white-box test på denne metode
+
+        if (this.loggedInUser == null) { // 1
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
 
-        if (projektNr == null || projektNr.isBlank()) {
+        if (projektNr == null || projektNr.isBlank()) { // 2 (2a || 2b)
             throw new OperationNotAllowedException("Projekt skal vælges");
         }
 
-        if (aktivitetsNavn == null || aktivitetsNavn.isBlank()) {
+        if (aktivitetsNavn == null || aktivitetsNavn.isBlank()) { // 3 (3a || 3b)
             throw new OperationNotAllowedException("Aktivitet skal vælges");
         }
 
-        if (timer == null || timer <= 0) {
+        if (timer == null || timer <= 0) { // 4 (4a || 4b)
             throw new OperationNotAllowedException("Antal timer skal være større end 0");
         }
 
-        if (timer > 24) {
+        if (timer > 24) { // 5
             throw new OperationNotAllowedException("Antal timer kan ikke overstige 24 timer per dag");
         }
 
         Projekt projekt = findProjekt(projektNr);
-        if (projekt == null) {
+
+        if (projekt == null) { // 6
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
 
