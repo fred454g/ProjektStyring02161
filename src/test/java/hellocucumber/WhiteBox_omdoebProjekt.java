@@ -171,6 +171,10 @@ public class WhiteBox_omdoebProjekt {
         }
 
         assertTrue(resultat);
+
+        Projekt projekt = planlaegningsvaerktoej.findProjekt("26001");
+
+        assertEquals("Projekt A omdøbt", projekt.getProjektNavn());
     }
 
     /*
@@ -195,6 +199,10 @@ public class WhiteBox_omdoebProjekt {
         }
 
         assertTrue(resultat);
+
+        Projekt projekt = planlaegningsvaerktoej.findProjekt("26001");
+
+        assertEquals("Projekt A omdøbt", projekt.getProjektNavn());
     }
 
     private void logIndSomJfk() throws Exception {

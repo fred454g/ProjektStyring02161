@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 public class WhiteBox_tilknytMedarbejderTilProjekt {
 
     private Planlaegningsvaerktoej planlaegningsvaerktoej;
@@ -83,6 +85,7 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
      */
     @Test
     public void testSetD_MedarbejderTilknyttesProjekt() throws Exception {
+        
         logIndSomJfk();
 
         planlaegningsvaerktoej.opretProjekt("Projekt A");
@@ -97,6 +100,20 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
         }
 
         assertTrue(resultat);
+
+        Projekt projekt = planlaegningsvaerktoej.findProjekt("26001");
+
+        List<Medarbejder> ProjektetsTilknyttedeMedarbejdere = projekt.getTilknyttedeMedarbejdere();
+
+        for (Medarbejder medarbejder : ProjektetsTilknyttedeMedarbejdere) {
+
+            if (medarbejder.getInitialer().equals("jfk")) {
+                
+                return;
+            }
+        }
+
+        fail("Medarbejderen blev ikke tilkynttet korrekt til prjektet");
     }
 
     private void logIndSomJfk() throws Exception {
