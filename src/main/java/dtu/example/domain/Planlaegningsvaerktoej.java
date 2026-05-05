@@ -493,8 +493,8 @@ public class Planlaegningsvaerktoej {
 
         return ledige;
     }
-    public String visLedigeMedarbejdere(int startUge, int slutUge)
-            throws OperationNotAllowedException {
+    
+    public String visLedigeMedarbejdere(int startUge, int slutUge) throws OperationNotAllowedException {
 
         List<Medarbejder> ledige = findLedigeMedarbejdere(startUge, slutUge);
 
