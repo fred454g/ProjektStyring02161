@@ -1,3 +1,1 @@
-P,26001,Projekt A
-A,26001-1,Analyse,10.0,1,50
-T,26001-1,2.0,2026-05-05,jfk
+P,26001,Nyt IT System

@@ -29,7 +29,7 @@ public class WhiteBox_opretProjekt {
 
         } catch (OperationNotAllowedException exception) {
             assertEquals("Ingen bruger logged in", exception.getMessage());
-        }
+        }   
     }
 
     @Test

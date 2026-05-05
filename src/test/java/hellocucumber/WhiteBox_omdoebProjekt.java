@@ -200,9 +200,9 @@ public class WhiteBox_omdoebProjekt {
 
         assertTrue(resultat);
 
-        Projekt projekt = planlaegningsvaerktoej.findProjekt("26001");
+        Projekt projekt = planlaegningsvaerktoej.findProjekt("26002");
 
-        assertEquals("Projekt A omdøbt", projekt.getProjektNavn());
+        assertEquals("Projekt B omdøbt", projekt.getProjektNavn());
     }
 
     private void logIndSomJfk() throws Exception {
