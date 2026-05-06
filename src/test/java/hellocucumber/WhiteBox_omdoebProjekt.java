@@ -3,8 +3,9 @@ package hellocucumber;
 import dtu.example.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+
+// This Class is used to perfrom systematic whitebox test in the method planlaegningsvaerktoej.omdoebProjekt() 
 
 public class WhiteBox_omdoebProjekt {
 
