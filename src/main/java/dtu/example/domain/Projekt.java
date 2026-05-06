@@ -130,16 +130,13 @@ public class Projekt {
     }
 
     public void tilfoejMedarbejderTilAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
-        if (!isMedarbejderInProjekt(medarbejder)) {
-            throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
-        }
+        // Jacob
 
-        Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
-        }
+        tjek_MedarbejderenErTilfoejetTilProjektet(medarbejder);
 
-        aktivitet.tilknytMedarbejder(medarbejder);
+        Aktivitet aktivitet = tjek_AktivotetenFindesIProjektet(aktivitetsNavn);
+
+        aktivitet.tilfoejMedarbejder(medarbejder);
     }
 
     

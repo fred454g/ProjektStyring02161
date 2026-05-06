@@ -83,11 +83,15 @@ public class Aktivitet {
         return true;
     }
 
-    public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
-        
+    public void tilfoejMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+        // Jacob
+
         if (!isMedarbejderInAktivitet(medarbejder)) {
+
             this.tilknyttedeMedarbejdere.add(medarbejder);
+        
         } else {
+
             throw new OperationNotAllowedException("Medarbejder er allerede tilknyttet aktivitet");
         }
     }
