@@ -391,33 +391,27 @@ public class Planlaegningsvaerktoej {
     }
 
     public boolean tilfoejMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
-        
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
-        
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        // Jacob
 
-        Medarbejder medarbejder = findMedarbejder(initialer);
-        if (medarbejder == null) {
-            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
-        }
+        tjek_BrugerErLoggedInd();
+        
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
-        projekt.tilknytMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
+
+        projekt.tilfoejMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
+
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_AKTIVITET", null, projekt.findAktivitet(aktivitetsNavn));
+
         gemProjekter();
+
         return true;
     }
 
     public boolean fjernMedarbejderFraAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
         // Jacob
 
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd();
   
         Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
@@ -709,7 +703,6 @@ public class Planlaegningsvaerktoej {
         }
 
         return projekt;
-
     }
 
     public Medarbejder tjek_MedarbejderenFindes(String initialer) throws OperationNotAllowedException {
@@ -722,7 +715,13 @@ public class Planlaegningsvaerktoej {
         }
 
         return medarbejder;
+    }
 
+    private void tjek_BrugerErLoggedInd() throws OperationNotAllowedException {
+        
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
     }
 
 }

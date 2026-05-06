@@ -138,7 +138,7 @@ public class ProjektRepository {
                             if (!nuvaerendeProjekt.isMedarbejderInProjekt(medarbejder)) {
                                 nuvaerendeProjekt.tilknytMedarbejder(medarbejder);
                             }
-                            nuvaerendeProjekt.tilknytMedarbejderTilAktivitet(aktivitetsNummer, medarbejder);
+                            nuvaerendeProjekt.tilfoejMedarbejderTilAktivitet(aktivitetsNummer, medarbejder);
 
                         } catch (OperationNotAllowedException ignored) {
                         }

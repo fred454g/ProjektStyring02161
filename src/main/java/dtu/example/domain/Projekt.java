@@ -129,7 +129,7 @@ public class Projekt {
         aktivitet.setSluttidspunkt(sluttidspunkt);
     }
 
-    public void tilknytMedarbejderTilAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
+    public void tilfoejMedarbejderTilAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
         if (!isMedarbejderInProjekt(medarbejder)) {
             throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
         }

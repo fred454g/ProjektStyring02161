@@ -214,21 +214,12 @@ public class StepDefinitions {
     }
 
     // =============================
-    // administrer_medarbejder_aktivitet
+    // Background tilfoej & fjern_medarbejder_fra_aktivitet
     // =============================
     @Given("at medarbejderen {string} er tilknyttet aktiviteten {string} på projekt {string}")
     public void atMedarbejderenErTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
             String projektNr) throws OperationNotAllowedException {
         planlaegningsvaerktoej.tilfoejMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
-    }
-
-
-    @Then("er {string} ikke længere tilknyttet aktiviteten {string} på projekt {string}")
-    public void erIkkeLængereTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
-            String projektNr) {
-        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(initialer);
-        assertFalse(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn)
-                .isMedarbejderInAktivitet(medarbejder));
     }
 
     @Given("at aktiviteten {string} findes på projekt {string}")
@@ -243,7 +234,12 @@ public class StepDefinitions {
         planlaegningsvaerktoej.tilknytMedarbejderTilProjekt(projektNr, initialer);
     }
 
-    @When("medarbejderen tilknytter {string} til aktiviteten {string} på projekt {string}")
+
+    // =============================
+    // tilfoej_medarbejder_fra_aktivitet
+    // =============================
+
+    @When("medarbejderen tilfoejer {string} til aktiviteten {string} paa projekt {string}")
     public void medarbejderenTilknytterTilAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
             String projektNr) {
         try {
@@ -255,10 +251,13 @@ public class StepDefinitions {
 
     @Then("er {string} tilknyttet aktiviteten {string} på projekt {string}")
     public void erTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn, String projektNr) {
+        
         Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(initialer);
+        
         assertTrue(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn)
                 .isMedarbejderInAktivitet(medarbejder));
     }
+
 
     // =============================
     // fjern_medarbejder_fra_aktivitet
@@ -273,6 +272,13 @@ public class StepDefinitions {
         }
     }
 
+    @Then("er {string} ikke længere tilknyttet aktiviteten {string} på projekt {string}")
+    public void erIkkeLængereTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
+            String projektNr) {
+        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(initialer);
+        assertFalse(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn)
+                .isMedarbejderInAktivitet(medarbejder));
+    }
 
 
 

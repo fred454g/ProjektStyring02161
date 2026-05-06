@@ -11,11 +11,11 @@ Feature: Tilknyt og fjern medarbejder på aktivitet
         And at aktiviteten "Backend API" findes på projekt "26001"
 
 
-    Scenario: Hovedscenarie - Tilknyt medarbejder til aktivitet
-        When medarbejderen tilknytter "huba" til aktiviteten "Backend API" på projekt "26001"
-        Then er "huba" tilknyttet aktiviteten "Backend API" på projekt "26001"
+   # Scenario: Hovedscenarie - Tilknyt medarbejder til aktivitet
+       # When medarbejderen tilknytter "huba" til aktiviteten "Backend API" på projekt "26001"
+    #    Then er "huba" tilknyttet aktiviteten "Backend API" på projekt "26001"
 
-    Scenario: Hovedscenarie - Fjern medarbejder fra aktivitet
-        And at medarbejderen "huba" er tilknyttet aktiviteten "Backend API" på projekt "26001"
-        When medarbejderen fjerner "huba" fra aktiviteten "Backend API" på projekt "26001"
-        Then er "huba" ikke længere tilknyttet aktiviteten "Backend API" på projekt "26001"
+    #Scenario: Hovedscenarie - Fjern medarbejder fra aktivitet
+    #    And at medarbejderen "huba" er tilknyttet aktiviteten "Backend API" på projekt "26001"
+   #     When medarbejderen fjerner "huba" fra aktiviteten "Backend API" på projekt "26001"
+    #    Then er "huba" ikke længere tilknyttet aktiviteten "Backend API" på projekt "26001"
