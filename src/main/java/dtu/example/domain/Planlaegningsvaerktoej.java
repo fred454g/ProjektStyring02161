@@ -177,6 +177,7 @@ public class Planlaegningsvaerktoej {
     }
 
     public boolean tilføjMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
+        // Jacob
         // Der bliver udført struktureret white-box test på denne metode
 
         tjek_BrugerErLoggedInd(); // 1
@@ -344,30 +345,19 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean sletAktivitet(String projektNummer, String aktivitetsNummer)
+    public boolean sletAktivitet(String projektNummer, String aktivitetsNummer) throws OperationNotAllowedException {
+        
+        tjek_BrugerErLoggedInd();
+        
+        tjek_ProjektErValgt(projektNummer);
+    
+		tjek_AktivitetErValgt(aktivitetsNummer);
 
-        throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
-        if (projektNummer == null || projektNummer.isBlank()) {
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
-        if (aktivitetsNummer == null || aktivitetsNummer.isBlank()) {
-            throw new OperationNotAllowedException("Aktivitet skal vælges");
-        }
+	    Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Aktivitet aktivitet = tjek_AktivitetFindes(projekt, aktivitetsNummer);
 
-        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNummer);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke");
-        }
-
-        projekt.sletAktivitet(aktivitetsNummer);
+        projekt.sletAktivitet(aktivitet);
         observers.firePropertyChange("AKTIVITET_SLETTET", aktivitet, projekt);
         gemProjekter();
         return true;
@@ -413,10 +403,8 @@ public class Planlaegningsvaerktoej {
     }
 
     public List<String> getAktivitetsNavneForProjekt(String projektNummer) throws OperationNotAllowedException {
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         List<String> navne = new ArrayList<>();
         for (Aktivitet a : projekt.getAktiviteter()) {
@@ -696,11 +684,39 @@ public class Planlaegningsvaerktoej {
         return medarbejder;
     }
 
+    private Aktivitet tjek_AktivitetFindes(Projekt projekt, String aktivitetsNummer) throws OperationNotAllowedException {
+        // Jacob
+
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNummer);
+        
+         if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke");
+        }
+
+        return aktivitet;
+    }
+
     private void tjek_BrugerErLoggedInd() throws OperationNotAllowedException {
         // Jacob
 
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+    }
+
+    private void tjek_AktivitetErValgt(String aktivitetsNummer) throws OperationNotAllowedException {
+        // Jacob
+
+        if (aktivitetsNummer == null || aktivitetsNummer.isBlank()) {
+            throw new OperationNotAllowedException("Aktivitet skal vælges");
+        }
+    }
+
+    private void tjek_ProjektErValgt(String projektNummer) throws OperationNotAllowedException {
+        // Jacob
+
+        if (projektNummer == null || projektNummer.isBlank()) {
+            throw new OperationNotAllowedException("Projekt skal vælges");
         }
     }
 

@@ -112,11 +112,7 @@ public class Projekt {
         return true;
     }
 
-    public void sletAktivitet(String aktivitetsNummer) throws OperationNotAllowedException {
-        Aktivitet aktivitet = findAktivitet(aktivitetsNummer);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke");
-        }
+    public void sletAktivitet(Aktivitet aktivitet) throws OperationNotAllowedException {
 
         this.aktiviteter.remove(aktivitet);
     }

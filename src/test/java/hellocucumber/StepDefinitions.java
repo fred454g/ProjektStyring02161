@@ -134,7 +134,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // tilfoej_medarbejder_projekt
+    // tilfoej_medarbejder_til_projekt
     // =============================
     @When("medarbejderen tilfoejer {string} til projekt {string}")
     public void medarbejderenTilfoejerTilProjekt(String medarbejderInitialer, String projektNr) {
@@ -435,7 +435,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // fjern_medarbejder_projekt.feature
+    // fjern_medarbejder_fra_projekt.feature
     // =============================
     @When("medarbejderen fjerner {string} fra projekt {string}")
     public void medarbejderenFjernerFraProjekt(String medarbejderInitialer, String projektNummer) {

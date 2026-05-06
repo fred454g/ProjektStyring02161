@@ -1,7 +1,10 @@
+# Jaocb - Hele filen
+
 Feature: Opret aktivitet og angiv estimater
     For at kunne nedbryde et projekt og planlægge arbejdet
     Som en medarbejder
     Vil jeg gerne kunne oprette en aktivitet og angive start/slut uge samt estimeret tid
+    
     Background: Tilføj jfk
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
