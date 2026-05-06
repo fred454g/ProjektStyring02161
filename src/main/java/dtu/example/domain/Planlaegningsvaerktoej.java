@@ -161,7 +161,7 @@ public class Planlaegningsvaerktoej {
         Medarbejder tidligereProjektleder = projekt.getProjektleder();
 
         try {
-            projekt.tilfoejMedarbejderTilProjekt(nyProjektleder);
+            projekt.tilfoeMedarbejderTilProjekt(nyProjektleder);
         } catch (OperationNotAllowedException e) {
             if (!"Medarbejder er allerede tilknyttet projekt".equals(e.getMessage())) {
                 throw e;
@@ -185,7 +185,7 @@ public class Planlaegningsvaerktoej {
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // 3
 
-        projekt.tilfoejMedarbejderTilProjekt(medarbejder);
+        projekt.tilfoeMedarbejderTilProjekt(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
         gemProjekter();
         return true;
@@ -381,7 +381,8 @@ public class Planlaegningsvaerktoej {
         Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
-     
+
+        
         projekt.tilfoejMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_AKTIVITET", null, projekt.findAktivitet(aktivitetsNavn));
         gemProjekter();
@@ -576,6 +577,7 @@ public class Planlaegningsvaerktoej {
     }
     
     public float visProjektStatus(String projektNummer) throws OperationNotAllowedException {
+        
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
@@ -585,9 +587,9 @@ public class Planlaegningsvaerktoej {
         }
 
         Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        // if (projekt == null) {
+        //      throw new OperationNotAllowedException("Projekt findes ikke");
+        // }
 
         double totalRegistreretTid = 0.0;
 

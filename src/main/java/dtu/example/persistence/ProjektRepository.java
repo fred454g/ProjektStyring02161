@@ -87,7 +87,7 @@ public class ProjektRepository {
                     if (leder != null) {
                         try {
                             if (!nuvaerendeProjekt.isMedarbejderInProjekt(leder)) {
-                                nuvaerendeProjekt.tilfoejMedarbejderTilProjekt(leder);
+                                nuvaerendeProjekt.tilfoeMedarbejderTilProjekt(leder);
                             }
                         } catch (OperationNotAllowedException ignored) {
                         }
@@ -103,7 +103,7 @@ public class ProjektRepository {
                         try {
                             if (!nuvaerendeProjekt.isMedarbejderInProjekt(medarbejder)) {
 
-                                nuvaerendeProjekt.tilfoejMedarbejderTilProjekt(medarbejder);
+                                nuvaerendeProjekt.tilfoeMedarbejderTilProjekt(medarbejder);
                             }
 
                         } catch (OperationNotAllowedException ignored) {
@@ -136,7 +136,7 @@ public class ProjektRepository {
                     if (medarbejder != null) {
                         try {
                             if (!nuvaerendeProjekt.isMedarbejderInProjekt(medarbejder)) {
-                                nuvaerendeProjekt.tilfoejMedarbejderTilProjekt(medarbejder);
+                                nuvaerendeProjekt.tilfoeMedarbejderTilProjekt(medarbejder);
                             }
                             nuvaerendeProjekt.tilfoejMedarbejderTilAktivitet(aktivitetsNummer, medarbejder);
 

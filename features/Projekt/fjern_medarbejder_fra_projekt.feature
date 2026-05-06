@@ -12,7 +12,7 @@ Feature: Fjern medarbejder fra projekt
 
     # Jacob
     Scenario: Fejlscenarie - Projektet findes ikke
-        When medarbejderen fjerner "huba" fra projekt "26002"
+        When medarbejderen fjerner "huba" fra projekt "96001"
         Then giver systemet fejlmeddelelsen "Projekt findes ikke"
     
     # Jacob

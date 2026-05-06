@@ -75,7 +75,7 @@ public class Projekt {
         }
     }
 
-    public void tilfoejMedarbejderTilProjekt(Medarbejder medarbejder) throws OperationNotAllowedException {
+    public void tilfoeMedarbejderTilProjekt(Medarbejder medarbejder) throws OperationNotAllowedException {
 
         if (!isMedarbejderInProjekt(medarbejder)) {
             this.tilknyttedeMedarbejdere.add(medarbejder);
