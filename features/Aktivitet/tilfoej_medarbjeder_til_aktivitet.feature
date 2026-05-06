@@ -1,7 +1,8 @@
-Feature: Tilknyt og fjern medarbejder på aktivitet
-    For at fordele specifikke opgaver i projektet
-    Som en medarbejder
-    Vil jeg gerne kunne slå medarbejdere til og fra på en specifik aktivitet
+
+# Jacob - Hele filen
+
+Feature: Tilknyt medarbejder på aktivitet
+
     Background: Tilføj jfk og huba
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "huba" tilfoejes til systemet

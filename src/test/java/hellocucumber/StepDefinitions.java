@@ -219,18 +219,9 @@ public class StepDefinitions {
     @Given("at medarbejderen {string} er tilknyttet aktiviteten {string} på projekt {string}")
     public void atMedarbejderenErTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
             String projektNr) throws OperationNotAllowedException {
-        planlaegningsvaerktoej.tilknytMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
+        planlaegningsvaerktoej.tilfoejMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
     }
 
-    @When("medarbejderen fjerner {string} fra aktiviteten {string} på projekt {string}")
-    public void medarbejderenFjernerFraAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
-            String projektNr) {
-        try {
-            planlaegningsvaerktoej.fjernMedarbejderFraAktivitet(projektNr, aktivitetsNavn, initialer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
 
     @Then("er {string} ikke længere tilknyttet aktiviteten {string} på projekt {string}")
     public void erIkkeLængereTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
@@ -256,7 +247,7 @@ public class StepDefinitions {
     public void medarbejderenTilknytterTilAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
             String projektNr) {
         try {
-            planlaegningsvaerktoej.tilknytMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
+            planlaegningsvaerktoej.tilfoejMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
@@ -268,6 +259,22 @@ public class StepDefinitions {
         assertTrue(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn)
                 .isMedarbejderInAktivitet(medarbejder));
     }
+
+    // =============================
+    // fjern_medarbejder_fra_aktivitet
+    // =============================
+    @When("medarbejderen fjerner {string} fra aktiviteten {string} på projekt {string}")
+    public void medarbejderenFjernerFraAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
+            String projektNr) {
+        try {
+            planlaegningsvaerktoej.fjernMedarbejderFraAktivitet(projektNr, aktivitetsNavn, initialer);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+
+
 
     // =============================
     // indlaes_hr_liste
@@ -443,11 +450,6 @@ public class StepDefinitions {
     public void udsendesObserverEventen(String eventNavn) {
         assertEquals(eventNavn, this.sidsteObserverEvent);
     }
-
-    // =============================
-    // ??
-    // =============================
-
 
     // ==========================================
     // STEPS TIL RAPPORTGENERERING

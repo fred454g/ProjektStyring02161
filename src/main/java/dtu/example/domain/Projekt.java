@@ -142,9 +142,10 @@ public class Projekt {
         aktivitet.tilknytMedarbejder(medarbejder);
     }
 
-    // Jacob
+    
     public void fjernMedarbejderFraAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
-        
+        // Jacob
+
         if (!isMedarbejderInProjekt(medarbejder)) {
             throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
         }

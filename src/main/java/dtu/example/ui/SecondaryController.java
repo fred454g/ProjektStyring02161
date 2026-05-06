@@ -307,7 +307,7 @@ public class SecondaryController implements PropertyChangeListener {
             String aktivitetsNavn = aktivitetForTilknytningInput.getValue();
             String initialer = medarbejderInitialerVaelger.getValue();
 
-            App.getFacade().tilknytMedarbejderTilAktivitet(projektId, aktivitetsNavn, initialer);
+            App.getFacade().tilfoejMedarbejderTilAktivitet(projektId, aktivitetsNavn, initialer);
 
             visInfo("Medarbejder tilknyttet",
                     initialer + " er tilknyttet aktiviteten " + aktivitetsNavn + ".");

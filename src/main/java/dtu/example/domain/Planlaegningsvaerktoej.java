@@ -194,6 +194,7 @@ public class Planlaegningsvaerktoej {
         if (medarbejder == null) { // 3
             throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
         }
+
         projekt.tilknytMedarbejder(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
         gemProjekter();
@@ -362,7 +363,7 @@ public class Planlaegningsvaerktoej {
 
     public boolean sletAktivitet(String projektNummer, String aktivitetsNummer)
 
-            throws OperationNotAllowedException {
+        throws OperationNotAllowedException {
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
@@ -389,7 +390,8 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean tilknytMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
+    public boolean tilfoejMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
+        
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
@@ -411,25 +413,22 @@ public class Planlaegningsvaerktoej {
     }
 
     public boolean fjernMedarbejderFraAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
-        
+        // Jacob
+
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
-        
-        Projekt projekt = findProjekt(projektNummer);
-        
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+  
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
-        Medarbejder medarbejder = findMedarbejder(initialer);
-        if (medarbejder == null) {
-            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
-        }
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
         projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
+
         observers.firePropertyChange("MEDARBEJDER_FJERNET_AKTIVITET", medarbejder, projekt.findAktivitet(aktivitetsNavn));
+        
         gemProjekter();
+        
         return true;
     }
 
@@ -694,6 +693,36 @@ public class Planlaegningsvaerktoej {
             }
         }
         return null;
+    }
+
+    // =====================
+    // Tjek hjaepler metoder
+    // =====================
+
+    public Projekt tjek_ProjektetFindes(String projektNummer) throws OperationNotAllowedException {
+        // Jacob
+
+        Projekt projekt = findProjekt(projektNummer);
+
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+
+        return projekt;
+
+    }
+
+    public Medarbejder tjek_MedarbejderenFindes(String initialer) throws OperationNotAllowedException {
+        // Jacob
+
+        Medarbejder medarbejder = findMedarbejder(initialer);
+
+        if (medarbejder == null) {
+            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
+        }
+
+        return medarbejder;
+
     }
 
 }

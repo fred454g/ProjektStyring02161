@@ -11,10 +11,9 @@ Feature: fjern medarbejder fra aktivitet
         And at medarbejderen "huba" er tilknyttet projekt "26001"
         And at aktiviteten "Backend API" findes på projekt "26001"
 
-    Scenario: Hovedscenarie - Fjern medarbejder fra aktivitet
-        And at medarbejderen "huba" er tilknyttet aktiviteten "Backend API" på projekt "26001"
-        When medarbejderen fjerner "huba" fra aktiviteten "Backend API" på projekt "26001"
-        Then er "huba" ikke længere tilknyttet aktiviteten "Backend API" på projekt "26001"
+    Scenario: Fejlscenarie - Projektet findes ikke
+        When medarbejderen fjerner "huba" fra aktiviteten "Backend API" på projekt "96001"
+        Then giver systemet fejlmeddelelsen "Projekt findes ikke"
 
     Scenario: Fejlscenarie - Medarbejederen findes ikke
         When medarbejderen fjerner "Ukendt" fra aktiviteten "Backend API" på projekt "26001"
@@ -33,3 +32,9 @@ Feature: fjern medarbejder fra aktivitet
         And at medarbejderen "jfk" er tilknyttet projekt "26001"
         When medarbejderen fjerner "jfk" fra aktiviteten "Backend API" på projekt "26001"
         Then giver systemet fejlmeddelelsen "Medarbejder er ikke i aktivitet"
+
+    Scenario: Hovedscenarie - Fjern medarbejder fra aktivitet
+        And at medarbejderen "huba" er tilknyttet aktiviteten "Backend API" på projekt "26001"
+        When medarbejderen fjerner "huba" fra aktiviteten "Backend API" på projekt "26001"
+        Then er "huba" ikke længere tilknyttet aktiviteten "Backend API" på projekt "26001"
+
