@@ -587,9 +587,9 @@ public class Planlaegningsvaerktoej {
         }
 
         Projekt projekt = findProjekt(projektNummer);
-        // if (projekt == null) {
-        //      throw new OperationNotAllowedException("Projekt findes ikke");
-        // }
+        if (projekt == null) {
+             throw new OperationNotAllowedException("Projekt findes ikke");
+        }
 
         double totalRegistreretTid = 0.0;
 
