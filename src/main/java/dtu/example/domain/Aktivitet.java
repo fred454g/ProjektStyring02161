@@ -91,8 +91,11 @@ public class Aktivitet {
         }
     }
 
+    // Jacob
     public void fjernMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+        
         if (!isMedarbejderInAktivitet(medarbejder)) {
+
             throw new OperationNotAllowedException("Medarbejder er ikke i aktivitet");
         }
 

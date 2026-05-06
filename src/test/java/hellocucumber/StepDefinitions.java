@@ -1,6 +1,5 @@
 package hellocucumber;
 
-import dtu.example.domain.Planlaegningsvaerktoej;
 import dtu.example.ui.App;
 import io.cucumber.java.After;
 import io.cucumber.java.en.*;

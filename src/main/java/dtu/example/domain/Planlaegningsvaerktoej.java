@@ -411,11 +411,13 @@ public class Planlaegningsvaerktoej {
     }
 
     public boolean fjernMedarbejderFraAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
+        
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
         
         Projekt projekt = findProjekt(projektNummer);
+        
         if (projekt == null) {
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
@@ -602,6 +604,7 @@ public class Planlaegningsvaerktoej {
 
         return (float) total;
     }
+    
     public float visProjektStatus(String projektNummer) throws OperationNotAllowedException {
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
