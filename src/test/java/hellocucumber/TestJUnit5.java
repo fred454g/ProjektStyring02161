@@ -15,7 +15,7 @@ public class TestJUnit5 {
 		// Klargør data inden hver test
 		aktivitet = new Aktivitet("A1", "Frontend", 50.0, 10, 12);
 		medarbejder = new Medarbejder("huba");
-		aktivitet.tilknytMedarbejder(medarbejder); // Sørg for at huba er på aktiviteten
+		aktivitet.tilfoejMedarbejder(medarbejder); // Sørg for at huba er på aktiviteten
 	}
 
 	@Test

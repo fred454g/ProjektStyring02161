@@ -199,24 +199,15 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean tilknytMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
+    public boolean tilfoejMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
         // Der bliver udført struktureret white-box test på denne metode
 
-        if (this.loggedInUser == null) { // 1
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd(); // 1
         
-        Projekt projekt = findProjekt(projektNummer);
+        Projekt projekt = tjek_ProjektetFindes(projektNummer); // 2
 
-        if (projekt == null) { // 2
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // 3
 
-        Medarbejder medarbejder = findMedarbejder(initialer);
-
-        if (medarbejder == null) { // 3
-            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
-        }
         projekt.tilknytMedarbejder(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
         gemProjekter();
@@ -224,23 +215,16 @@ public class Planlaegningsvaerktoej {
     }
 
     public boolean fjernMedarbejderFraProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        // Jacob
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        tjek_BrugerErLoggedInd();
 
-        Medarbejder medarbejder = findMedarbejder(initialer);
-        if (medarbejder == null) {
-            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
-        projekt.fjernMedarbejder(medarbejder);
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
+
+        projekt.fjernMedarbejderFraProjekt(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_FJERNET_PROJEKT", medarbejder, projekt);
-
         gemProjekter();
         return true;
     }
@@ -302,35 +286,19 @@ public class Planlaegningsvaerktoej {
     // Aktivitet Metoder
     // =========================
 
-    public boolean opretAktivitet(String projektNummer, String aktivitetsNavn,
-                                  double forventedeAntalArbejdstimer,
-                                  int starttidspunkt, int sluttidspunkt)
-            throws OperationNotAllowedException {
+    public boolean opretAktivitet(String projektNummer, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
 
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd();
 
-        if (projektNummer == null || projektNummer.isBlank()) {
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
+		tjek_ProjektErValgt(projektNummer);
 
-        if (aktivitetsNavn == null || aktivitetsNavn.isBlank()) {
-            throw new OperationNotAllowedException("Aktivitetsnavn må ikke være tomt");
-        }
+        tjek_AktivitetErValgt(aktivitetsNavn);
 
-        if (forventedeAntalArbejdstimer < 0) {
-            throw new OperationNotAllowedException("Budgetteret tid må ikke være negativ");
-        }
+        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
 
-        if (starttidspunkt > sluttidspunkt) {
-            throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
-        }
+        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt);
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         String nytAktivitetsnr =
                 projekt.getProjektNummer() + "-" + projekt.getHoejesteAktivitetsnummer();
@@ -350,32 +318,24 @@ public class Planlaegningsvaerktoej {
         observers.firePropertyChange("AKTIVITET_OPRETTET", null, nyAktivitet);
 
         gemProjekter();
+        
         return true;
     }
 
-    public boolean opdaterAktivitet(String projektNummer, String aktivitetsNummer, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
-        if (projektNummer == null || projektNummer.isBlank()) {
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
-        if (forventedeAntalArbejdstimer < 0) {
-            throw new OperationNotAllowedException("Budgetteret tid må ikke være negativ");
-        }
-        if (starttidspunkt > sluttidspunkt) {
-            throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
-        }
+    public boolean redigerAktivitet(String projektNummer, String aktivitetsNummer, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        
+        tjek_BrugerErLoggedInd();
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        tjek_ProjektErValgt(projektNummer);
 
-        Aktivitet aktivitetFoerOpdatering = projekt.findAktivitet(aktivitetsNummer);
-        if (aktivitetFoerOpdatering == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke");
-        }
+        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
+
+        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt);
+
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+
+        Aktivitet aktivitetFoerOpdatering = tjek_AktivitetFindes(projekt, aktivitetsNummer);
+
 
         projekt.opdaterAktivitet(aktivitetsNummer, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
         observers.firePropertyChange("AKTIVITET_OPDATERET", null, aktivitetFoerOpdatering);
@@ -383,73 +343,51 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean sletAktivitet(String projektNummer, String aktivitetsNummer)
+    public boolean sletAktivitet(String projektNummer, String aktivitetsNummer) throws OperationNotAllowedException {
+        
+        tjek_BrugerErLoggedInd();
+        
+        tjek_ProjektErValgt(projektNummer);
+    
+		tjek_AktivitetErValgt(aktivitetsNummer);
 
-            throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
-        if (projektNummer == null || projektNummer.isBlank()) {
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
-        if (aktivitetsNummer == null || aktivitetsNummer.isBlank()) {
-            throw new OperationNotAllowedException("Aktivitet skal vælges");
-        }
+	    Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Aktivitet aktivitet = tjek_AktivitetFindes(projekt, aktivitetsNummer);
 
-        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNummer);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke");
-        }
-
-        projekt.sletAktivitet(aktivitetsNummer);
+        projekt.sletAktivitet(aktivitet);
         observers.firePropertyChange("AKTIVITET_SLETTET", aktivitet, projekt);
         gemProjekter();
         return true;
     }
 
-    public boolean tilknytMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+    public boolean tilfoejMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
+        // Jacob
+
+        tjek_BrugerErLoggedInd();
         
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
-        Medarbejder medarbejder = findMedarbejder(initialer);
-        if (medarbejder == null) {
-            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
-        }
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
-        projekt.tilknytMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
+        
+        projekt.tilfoejMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_AKTIVITET", null, projekt.findAktivitet(aktivitetsNavn));
         gemProjekter();
         return true;
     }
 
     public boolean fjernMedarbejderFraAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
-        
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        // Jacob
 
-        Medarbejder medarbejder = findMedarbejder(initialer);
-        if (medarbejder == null) {
-            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
-        }
+        tjek_BrugerErLoggedInd();
+  
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
         projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
-        observers.firePropertyChange("MEDARBEJDER_FJERNET_AKTIVITET", medarbejder, projekt.findAktivitet(aktivitetsNavn));
+        observers.firePropertyChange("MEDARBEJDER_FJERNET_AKTIVITET", medarbejder, projekt.findAktivitet(aktivitetsNavn));   
         gemProjekter();
         return true;
     }
@@ -463,10 +401,8 @@ public class Planlaegningsvaerktoej {
     }
 
     public List<String> getAktivitetsNavneForProjekt(String projektNummer) throws OperationNotAllowedException {
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         List<String> navne = new ArrayList<>();
         for (Aktivitet a : projekt.getAktiviteter()) {
@@ -635,7 +571,9 @@ public class Planlaegningsvaerktoej {
 
         return (float) total;
     }
+    
     public float visProjektStatus(String projektNummer) throws OperationNotAllowedException {
+        
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
@@ -646,7 +584,7 @@ public class Planlaegningsvaerktoej {
 
         Projekt projekt = findProjekt(projektNummer);
         if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
+             throw new OperationNotAllowedException("Projekt findes ikke");
         }
 
         double totalRegistreretTid = 0.0;
@@ -729,6 +667,86 @@ public class Planlaegningsvaerktoej {
             }
         }
         return null;
+    }
+
+    // =====================
+    // Tjek hjaepler metoder
+    // =====================
+
+    private Projekt tjek_ProjektetFindes(String projektNummer) throws OperationNotAllowedException {
+        // Jacob
+
+        Projekt projekt = findProjekt(projektNummer);
+
+        if (projekt == null) {
+            throw new OperationNotAllowedException("Projekt findes ikke");
+        }
+
+        return projekt;
+    }
+
+    private Medarbejder tjek_MedarbejderenFindes(String initialer) throws OperationNotAllowedException {
+        // Jacob
+
+        Medarbejder medarbejder = findMedarbejder(initialer);
+
+        if (medarbejder == null) {
+            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
+        }
+
+        return medarbejder;
+    }
+
+    private Aktivitet tjek_AktivitetFindes(Projekt projekt, String aktivitetsNummer) throws OperationNotAllowedException {
+        // Jacob
+
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNummer);
+        
+         if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke");
+        }
+
+        return aktivitet;
+    }
+
+    private void tjek_BrugerErLoggedInd() throws OperationNotAllowedException {
+        // Jacob
+
+        if (this.loggedInUser == null) {
+            throw new OperationNotAllowedException("Ingen bruger logged in");
+        }
+    }
+
+    private void tjek_AktivitetErValgt(String aktivitetsNummer) throws OperationNotAllowedException {
+        // Jacob
+
+        if (aktivitetsNummer == null || aktivitetsNummer.isBlank()) {
+            throw new OperationNotAllowedException("Aktivitet skal vælges");
+        }
+    }
+
+    private void tjek_ProjektErValgt(String projektNummer) throws OperationNotAllowedException {
+        // Jacob
+
+        if (projektNummer == null || projektNummer.isBlank()) {
+            throw new OperationNotAllowedException("Projekt skal vælges");
+        }
+    }
+
+    private void tjek_forventedeAntalArbejdstimer(double forventedeAntalArbejdstimer) throws OperationNotAllowedException {
+        // Jacob
+
+        if (forventedeAntalArbejdstimer < 0) {
+            throw new OperationNotAllowedException("Budgetteret tid må ikke være negativ");
+        }
+    }
+
+    private void tjek_StartOgSluttidspunkt(double starttidspunkt, double sluttidspunkt) throws OperationNotAllowedException {
+        // Jacob
+        
+        if (starttidspunkt > sluttidspunkt) {
+            throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
+        }
     }
 
 }

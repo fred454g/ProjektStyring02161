@@ -65,10 +65,12 @@ public class Projekt {
         return true;
     }
 
-    public void fjernMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+    public void fjernMedarbejderFraProjekt(Medarbejder medarbejder) throws OperationNotAllowedException {
+        
         if (isMedarbejderInProjekt(medarbejder)) {
             this.tilknyttedeMedarbejdere.remove(medarbejder);
         } else {
+
             throw new OperationNotAllowedException("Medarbejder er ikke tilknyttet projekt");
         }
     }
@@ -85,6 +87,7 @@ public class Projekt {
             assert this.tilknyttedeMedarbejdere.size() == antalFoer + 1 : "Post-condition: Listen med tilknyttede medarbejdere voksede ikke";
             assert isMedarbejderInProjekt(medarbejder) : "Post-condition: Medarbejder blev ikke korrekt gemt i projektet";
         } else {
+
             throw new OperationNotAllowedException("Medarbejder er allerede tilknyttet projekt");
         }
     }
@@ -103,7 +106,9 @@ public class Projekt {
         if (findAktivitet(aktivitetsNavn) != null) {
             throw new OperationNotAllowedException("Aktivitetsnavn er i brug");
         }
+        
         Aktivitet nyAktivitet = new Aktivitet(aktivitetsNr, aktivitetsNavn, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
+        
         this.aktiviteter.add(nyAktivitet);
 
         // DbC - POST-CONDITIONS
@@ -112,7 +117,6 @@ public class Projekt {
 
         return true;
     }
-
 
     public boolean opdaterForventedeAntalArbejdstimer(String aktivitetsInfo, float timer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
         Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
@@ -127,48 +131,36 @@ public class Projekt {
         return true;
     }
 
-    public void sletAktivitet(String aktivitetsNummer) throws OperationNotAllowedException {
-        Aktivitet aktivitet = findAktivitet(aktivitetsNummer);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke");
-        }
+    public void sletAktivitet(Aktivitet aktivitet) throws OperationNotAllowedException {
 
         this.aktiviteter.remove(aktivitet);
     }
 
     public void opdaterAktivitet(String aktivitetsInfo, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        
         Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke");
-        }
 
         aktivitet.setForventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
         aktivitet.setStarttidspunkt(starttidspunkt);
         aktivitet.setSluttidspunkt(sluttidspunkt);
     }
 
-    public void tilknytMedarbejderTilAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
-        if (!isMedarbejderInProjekt(medarbejder)) {
-            throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
-        }
+    public void tilfoejMedarbejderTilAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
+        // Jacob
 
-        Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
-        }
+        tjek_MedarbejderenErTilfoejetTilProjektet(medarbejder);
 
-        aktivitet.tilknytMedarbejder(medarbejder);
+        Aktivitet aktivitet = tjek_AktivotetenFindesIProjektet(aktivitetsNavn);
+
+        aktivitet.tilfoejMedarbejder(medarbejder);
     }
 
     public void fjernMedarbejderFraAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
-        if (!isMedarbejderInProjekt(medarbejder)) {
-            throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
-        }
+        // Jacob
 
-        Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
-        }
+        tjek_MedarbejderenErTilfoejetTilProjektet(medarbejder);
+
+        Aktivitet aktivitet = tjek_AktivotetenFindesIProjektet(aktivitetsNavn);
 
         aktivitet.fjernMedarbejder(medarbejder);
     }
@@ -215,5 +207,28 @@ public class Projekt {
         return null;
     }
 
+    // =====================
+    // Tjek hjaepler metoder
+    // =====================
     
+    private void tjek_MedarbejderenErTilfoejetTilProjektet(Medarbejder medarbejder) throws OperationNotAllowedException {
+        // Jacob
+
+        if (!isMedarbejderInProjekt(medarbejder)) {
+            throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
+        }
+    }
+
+    private Aktivitet tjek_AktivotetenFindesIProjektet(String aktivitetsNavn) throws OperationNotAllowedException {
+        // Jacob
+
+        Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
+        
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
+        }
+
+        return aktivitet;
+    } 
+
 }

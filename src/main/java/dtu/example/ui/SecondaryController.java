@@ -215,7 +215,7 @@ public class SecondaryController implements PropertyChangeListener {
             String projektId = projektIdForProjektMedarbejderInput.getValue();
             String initialer = medarbejderTilProjektVaelger.getValue();
 
-            App.getFacade().tilknytMedarbejderTilProjekt(projektId, initialer);
+            App.getFacade().tilfoejMedarbejderTilProjekt(projektId, initialer);
 
             visInfo("Medarbejder tilknyttet",
                     initialer + " er tilknyttet projekt " + projektId + ".");
@@ -272,7 +272,7 @@ public class SecondaryController implements PropertyChangeListener {
             int start = Integer.parseInt(nyStartUgeInput.getText());
             int slut = Integer.parseInt(nySlutUgeInput.getText());
 
-            App.getFacade().opdaterAktivitet(projektId, aktivitet, budget, start, slut);
+            App.getFacade().redigerAktivitet(projektId, aktivitet, budget, start, slut);
 
             nytBudgetInput.clear();
             nyStartUgeInput.clear();
@@ -307,7 +307,7 @@ public class SecondaryController implements PropertyChangeListener {
             String aktivitetsNavn = aktivitetForTilknytningInput.getValue();
             String initialer = medarbejderInitialerVaelger.getValue();
 
-            App.getFacade().tilknytMedarbejderTilAktivitet(projektId, aktivitetsNavn, initialer);
+            App.getFacade().tilfoejMedarbejderTilAktivitet(projektId, aktivitetsNavn, initialer);
 
             visInfo("Medarbejder tilknyttet",
                     initialer + " er tilknyttet aktiviteten " + aktivitetsNavn + ".");

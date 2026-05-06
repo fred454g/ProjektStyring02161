@@ -5,8 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.List;
+
+// This Class is used to perfrom systematic whitebox test in the method planlaegningsvaerktoej.tilknytMedarbejderTilProjekt()
 
 public class WhiteBox_tilknytMedarbejderTilProjekt {
 
@@ -26,7 +27,7 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
     public void testSetA_IngenBrugerLoggedIn() throws Exception {
 
         try {
-            planlaegningsvaerktoej.tilknytMedarbejderTilProjekt("26001", "jfk");
+            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt("26001", "jfk");
 
             fail("Forventede at OperationNotAllowedException blev kastet");
 
@@ -45,7 +46,7 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
         logIndSomJfk();
 
         try {
-            planlaegningsvaerktoej.tilknytMedarbejderTilProjekt("26099", "jfk");
+            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt("26099", "jfk");
 
             fail("Forventede at OperationNotAllowedException blev kastet");
 
@@ -66,7 +67,7 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
         planlaegningsvaerktoej.opretProjekt("Projekt A");
 
         try {
-            planlaegningsvaerktoej.tilknytMedarbejderTilProjekt("26001", "xxx");
+            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt("26001", "xxx");
 
             fail("Forventede at OperationNotAllowedException blev kastet");
 
@@ -93,7 +94,7 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
         boolean resultat = false;
 
         try {
-            resultat = planlaegningsvaerktoej.tilknytMedarbejderTilProjekt("26001", "jfk");
+            resultat = planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt("26001", "jfk");
 
         } catch (OperationNotAllowedException exception) {
             fail("Der skulle ikke kastes OperationNotAllowedException");
