@@ -202,20 +202,15 @@ public class Planlaegningsvaerktoej {
     }
 
     public boolean fjernMedarbejderFraProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        // Jacob
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        tjek_BrugerErLoggedInd();
 
-        Medarbejder medarbejder = findMedarbejder(initialer);
-        if (medarbejder == null) {
-            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
+
+        
         projekt.fjernMedarbejder(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_FJERNET_PROJEKT", medarbejder, projekt);
 
@@ -399,6 +394,7 @@ public class Planlaegningsvaerktoej {
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
+        
         projekt.tilfoejMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
 
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_AKTIVITET", null, projekt.findAktivitet(aktivitetsNavn));
@@ -416,6 +412,7 @@ public class Planlaegningsvaerktoej {
         Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
+
 
         projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
 

@@ -10,6 +10,17 @@ Feature: Fjern medarbejder fra projekt
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
         And medarbejderen tilfoejer "huba" til projekt "26001"
 
+    # Jacob
+    Scenario: Fejlscenarie - Projektet findes ikke
+        When medarbejderen fjerner "huba" fra projekt "26002"
+        Then giver systemet fejlmeddelelsen "Projekt findes ikke"
+    
+    # Jacob
+    Scenario: Fejlscenarie - Medarbejederen findes ikke
+        When medarbejderen fjerner "Ukendt" fra projekt "26001"
+        Then giver systemet fejlmeddelelsen "Medarbejder med initialer Ukendt findes ikke i systemet"
+    
+    
     Scenario: Hovedscenarie - Fjern medarbejder fra projekt
         Given at projektet "26001" findes i systemet
         And at medarbejderen med initialerne "huba" findes i systemet
