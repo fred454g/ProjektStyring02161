@@ -65,18 +65,22 @@ public class Projekt {
         return true;
     }
 
-    public void fjernMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+    public void fjernMedarbejderFraProjekt(Medarbejder medarbejder) throws OperationNotAllowedException {
+        
         if (isMedarbejderInProjekt(medarbejder)) {
             this.tilknyttedeMedarbejdere.remove(medarbejder);
         } else {
+
             throw new OperationNotAllowedException("Medarbejder er ikke tilknyttet projekt");
         }
     }
 
-    public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+    public void tilfoeMedarbejderTilProjekt(Medarbejder medarbejder) throws OperationNotAllowedException {
+
         if (!isMedarbejderInProjekt(medarbejder)) {
             this.tilknyttedeMedarbejdere.add(medarbejder);
         } else {
+
             throw new OperationNotAllowedException("Medarbejder er allerede tilknyttet projekt");
         }
     }
@@ -94,7 +98,6 @@ public class Projekt {
         this.aktiviteter.add(nyAktivitet);
         return true;
     }
-
 
     public boolean opdaterForventedeAntalArbejdstimer(String aktivitetsInfo, float timer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
         Aktivitet aktivitet = findAktivitet(aktivitetsInfo);

@@ -161,7 +161,7 @@ public class Planlaegningsvaerktoej {
         Medarbejder tidligereProjektleder = projekt.getProjektleder();
 
         try {
-            projekt.tilknytMedarbejder(nyProjektleder);
+            projekt.tilfoeMedarbejderTilProjekt(nyProjektleder);
         } catch (OperationNotAllowedException e) {
             if (!"Medarbejder er allerede tilknyttet projekt".equals(e.getMessage())) {
                 throw e;
@@ -195,7 +195,7 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
         }
 
-        projekt.tilknytMedarbejder(medarbejder);
+        projekt.tilfoeMedarbejderTilProjekt(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
         gemProjekter();
         return true;
@@ -210,8 +210,8 @@ public class Planlaegningsvaerktoej {
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
-        
-        projekt.fjernMedarbejder(medarbejder);
+
+        projekt.fjernMedarbejderFraProjekt(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_FJERNET_PROJEKT", medarbejder, projekt);
 
         gemProjekter();

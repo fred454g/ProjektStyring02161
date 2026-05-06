@@ -20,6 +20,10 @@ Feature: Fjern medarbejder fra projekt
         When medarbejderen fjerner "Ukendt" fra projekt "26001"
         Then giver systemet fejlmeddelelsen "Medarbejder med initialer Ukendt findes ikke i systemet"
     
+    # Jacob
+    Scenario: Fejlscenarie - Medarbejederen er ikke tilknyttet projekt
+        When medarbejderen fjerner "jfk" fra projekt "26001"
+        Then giver systemet fejlmeddelelsen "Medarbejder er ikke tilknyttet projekt"
     
     Scenario: Hovedscenarie - Fjern medarbejder fra projekt
         Given at projektet "26001" findes i systemet
