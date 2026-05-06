@@ -161,7 +161,9 @@ public class Planlaegningsvaerktoej {
         Medarbejder tidligereProjektleder = projekt.getProjektleder();
 
         try {
+            
             projekt.tilfoeMedarbejderTilProjekt(nyProjektleder);
+        
         } catch (OperationNotAllowedException e) {
             if (!"Medarbejder er allerede tilknyttet projekt".equals(e.getMessage())) {
                 throw e;
