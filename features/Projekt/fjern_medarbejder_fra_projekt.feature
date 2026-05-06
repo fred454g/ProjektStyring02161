@@ -32,3 +32,21 @@ Feature: Fjern medarbejder fra projekt
         When medarbejderen fjerner "huba" fra projekt "26001"
         Then fremgår "huba" ikke længere af listen over tilknyttede medarbejdere på projekt "26001"
         And udsendes observer-eventen "MEDARBEJDER_FJERNET_PROJEKT"
+
+    Scenario: Fejlscenarie - Medarbejder ikke tilknyttet projekt
+        Given at medarbejderen "anda" tilfoejes til systemet
+        When medarbejderen forsoeger at fjerne "anda" fra projekt "26001"
+        Then giver systemet fejlmeddelelsen "Medarbejder er ikke tilknyttet projekt"
+
+    Scenario: Fejlscenarie - Projekt findes ikke
+        When medarbejderen forsoeger at fjerne "huba" fra projekt "99999"
+        Then giver systemet fejlmeddelelsen "Projekt findes ikke"
+
+    Scenario: Fejlscenarie - Medarbejder findes ikke
+        When medarbejderen forsoeger at fjerne "xxxx" fra projekt "26001"
+        Then giver systemet fejlmeddelelsen "Medarbejder med initialer xxxx findes ikke i systemet"
+
+    Scenario: Fejlscenarie - Fjernelse uden at være logget ind
+        Given at medarbejderen "jfk" er logget ud
+        When medarbejderen forsoeger at fjerne "huba" fra projekt "26001"
+        Then giver systemet fejlmeddelelsen "Ingen bruger logged in"

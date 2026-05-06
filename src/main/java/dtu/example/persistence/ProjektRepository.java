@@ -87,7 +87,7 @@ public class ProjektRepository {
                     if (leder != null) {
                         try {
                             if (!nuvaerendeProjekt.isMedarbejderInProjekt(leder)) {
-                                nuvaerendeProjekt.tilfoeMedarbejderTilProjekt(leder);
+                                nuvaerendeProjekt.tilknytMedarbejder(leder);
                             }
                         } catch (OperationNotAllowedException ignored) {
                         }
@@ -103,7 +103,7 @@ public class ProjektRepository {
                         try {
                             if (!nuvaerendeProjekt.isMedarbejderInProjekt(medarbejder)) {
 
-                                nuvaerendeProjekt.tilfoeMedarbejderTilProjekt(medarbejder);
+                                nuvaerendeProjekt.tilknytMedarbejder(medarbejder);
                             }
 
                         } catch (OperationNotAllowedException ignored) {
@@ -115,7 +115,7 @@ public class ProjektRepository {
                     if (dele.length < 6) {
                         continue;
                     }
-                    nuvaerendeProjekt.redigerAktivitet(
+                    nuvaerendeProjekt.opretAktivitet(
                             dele[1],
                             dele[2],
                             Double.parseDouble(dele[3]),
@@ -136,7 +136,7 @@ public class ProjektRepository {
                     if (medarbejder != null) {
                         try {
                             if (!nuvaerendeProjekt.isMedarbejderInProjekt(medarbejder)) {
-                                nuvaerendeProjekt.tilfoeMedarbejderTilProjekt(medarbejder);
+                                nuvaerendeProjekt.tilknytMedarbejder(medarbejder);
                             }
                             nuvaerendeProjekt.tilfoejMedarbejderTilAktivitet(aktivitetsNummer, medarbejder);
 

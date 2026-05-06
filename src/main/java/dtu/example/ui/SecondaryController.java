@@ -215,7 +215,7 @@ public class SecondaryController implements PropertyChangeListener {
             String projektId = projektIdForProjektMedarbejderInput.getValue();
             String initialer = medarbejderTilProjektVaelger.getValue();
 
-            App.getFacade().tilføjMedarbejderTilProjekt(projektId, initialer);
+            App.getFacade().tilfoejMedarbejderTilProjekt(projektId, initialer);
 
             visInfo("Medarbejder tilknyttet",
                     initialer + " er tilknyttet projekt " + projektId + ".");

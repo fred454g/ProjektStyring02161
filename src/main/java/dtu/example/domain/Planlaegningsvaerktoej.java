@@ -17,13 +17,28 @@ public class Planlaegningsvaerktoej {
     private PropertyChangeSupport observers = new PropertyChangeSupport(this);
     private Medarbejder loggedInUser = null;
     private int hoejesteProjektnummer = 1;
-    private ProjektRepository projektRepository =
-            new ProjektRepository(Paths.get("src", "main", "java", "dtu", "example", "projekter.txt"));
-    private MedarbejderRepository medarbejderRepository =
-            new MedarbejderRepository(Paths.get("src", "main", "java", "dtu", "example", "hr_liste.txt"));
-    private FravaerRepository fravaerRepository =
-            new FravaerRepository(Paths.get("src", "main", "java", "dtu", "example", "fravaer.txt"));
+    private ProjektRepository projektRepository;
+    private MedarbejderRepository medarbejderRepository;
+    private FravaerRepository fravaerRepository;
 
+    // ====================
+    // Constructor
+    // ====================
+    // For App.java
+    public Planlaegningsvaerktoej() {
+        this(
+            new ProjektRepository(Paths.get("src", "main", "java", "dtu", "example", "projekter.txt")),
+            new MedarbejderRepository(Paths.get("src", "main", "java", "dtu", "example", "hr_liste.txt")),
+            new FravaerRepository(Paths.get("src", "main", "java", "dtu", "example", "fravaer.txt"))
+        );
+    }
+
+    // For tests
+    public Planlaegningsvaerktoej(ProjektRepository pr, MedarbejderRepository mr, FravaerRepository fr) {
+        this.projektRepository = pr;
+        this.medarbejderRepository = mr;
+        this.fravaerRepository = fr;
+    }
 
     // ====================
     // User Methods
@@ -77,10 +92,13 @@ public class Planlaegningsvaerktoej {
         if (this.loggedInUser == null) { // 1
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
-
         if (projektNavn == null || projektNavn.isEmpty()) { // 2 (2a || 2b)
             throw new OperationNotAllowedException("Projektnavnet må ikke være tomt");
         }
+
+        // --- DbC PRE-CONDITION ---
+        int forventetAntalProjekter = this.projekter.size() + 1;
+        int forventetNytNummer = this.hoejesteProjektnummer + 1;
 
         String nytProjektnr = String.valueOf(26000 + this.hoejesteProjektnummer);
         Projekt nytProjekt = new Projekt(nytProjektnr, projektNavn);
@@ -88,6 +106,11 @@ public class Planlaegningsvaerktoej {
         this.hoejesteProjektnummer++;
         observers.firePropertyChange("PROJECT_OPRETTET", null, nytProjekt);
         gemProjekter();
+
+        // --- DbC POST-CHECK ---
+        assert this.projekter.size() == forventetAntalProjekter : "Post-condition: Projekt blev ikke tilføjet til listen";
+        assert this.hoejesteProjektnummer == forventetNytNummer : "Post-condition: højesteProjektnummer blev ikke talt op";
+        assert findProjekt(nytProjektnr) != null : "Post-condition: Kunne ikke genfinde det oprettede projekt";
     }
 
 
@@ -161,9 +184,7 @@ public class Planlaegningsvaerktoej {
         Medarbejder tidligereProjektleder = projekt.getProjektleder();
 
         try {
-            
-            projekt.tilfoeMedarbejderTilProjekt(nyProjektleder);
-        
+            projekt.tilknytMedarbejder(nyProjektleder);
         } catch (OperationNotAllowedException e) {
             if (!"Medarbejder er allerede tilknyttet projekt".equals(e.getMessage())) {
                 throw e;
@@ -178,8 +199,7 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean tilføjMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
-        // Jacob
+    public boolean tilfoejMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
         // Der bliver udført struktureret white-box test på denne metode
 
         tjek_BrugerErLoggedInd(); // 1
@@ -188,7 +208,7 @@ public class Planlaegningsvaerktoej {
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // 3
 
-        projekt.tilfoeMedarbejderTilProjekt(medarbejder);
+        projekt.tilknytMedarbejder(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
         gemProjekter();
         return true;
@@ -266,10 +286,7 @@ public class Planlaegningsvaerktoej {
     // Aktivitet Metoder
     // =========================
 
-    public boolean opretAktivitet(String projektNummer, String aktivitetsNavn,
-                                  double forventedeAntalArbejdstimer,
-                                  int starttidspunkt, int sluttidspunkt)
-            throws OperationNotAllowedException {
+    public boolean opretAktivitet(String projektNummer, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
 
         tjek_BrugerErLoggedInd();
 
@@ -286,7 +303,7 @@ public class Planlaegningsvaerktoej {
         String nytAktivitetsnr =
                 projekt.getProjektNummer() + "-" + projekt.getHoejesteAktivitetsnummer();
 
-        projekt.redigerAktivitet(
+        projekt.opretAktivitet(
                 nytAktivitetsnr,
                 aktivitetsNavn,
                 forventedeAntalArbejdstimer,
@@ -396,7 +413,12 @@ public class Planlaegningsvaerktoej {
 
     public List<Medarbejder> findLedigeMedarbejdere(int startUge, int slutUge)
             throws OperationNotAllowedException {
-
+        // --- DbC PRE-CONDITIONS ---
+        // Metoden fanger ikke null, så det ville være en fatal logisk fejl at kalde denne metode med start > slut
+        assert startUge > 0 && startUge <= 52 : "Pre-condition: Ugyldig startUge ("+startUge+")";
+        assert slutUge > 0 && slutUge <= 52 : "Pre-condition: Ugyldig slutUge ("+slutUge+")";
+        assert startUge <= slutUge : "Pre-condition: Startuge må ikke være efter slutuge";
+            
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
@@ -433,10 +455,15 @@ public class Planlaegningsvaerktoej {
             }
         }
 
+        // --- DbC POST-CHECK ---
+        assert ledige != null : "Post-condition: Returneret liste må ikke være null (skal være en tom liste i stedet)";
+        assert !ledige.contains(null) : "Post-condition: Listen indeholder null-referencer";
+
         return ledige;
     }
     
-    public String visLedigeMedarbejdere(int startUge, int slutUge) throws OperationNotAllowedException {
+    public String visLedigeMedarbejdere(int startUge, int slutUge)
+            throws OperationNotAllowedException {
 
         List<Medarbejder> ledige = findLedigeMedarbejdere(startUge, slutUge);
 
@@ -577,17 +604,22 @@ public class Planlaegningsvaerktoej {
         List<Medarbejder> indlaesteMedarbejdere = medarbejderRepository.indlaesMedarbejdere();
 
         if (indlaesteMedarbejdere != null) {
-            this.medarbejdere = indlaesteMedarbejdere;
+            if (!indlaesteMedarbejdere.isEmpty()) {
+                this.medarbejdere = indlaesteMedarbejdere;
 
-            if (this.loggedInUser != null) {
-                this.loggedInUser = findMedarbejder(this.loggedInUser.getInitialer());
+                if (this.loggedInUser != null) {
+                    this.loggedInUser = findMedarbejder(this.loggedInUser.getInitialer());
+                }
+
+                observers.firePropertyChange(
+                        "HR_LISTE_SYNKRONISERET",
+                        antalMedarbejdereFoer,
+                        this.medarbejdere.size()
+                );
+            } else {
+                // If HR-file yields no valid employees (empty list), keep existing employees
+                System.out.println("HR-fil var tom eller indeholdt ingen gyldige initialer; behold eksisterende medarbejdere.");
             }
-
-            observers.firePropertyChange(
-                    "HR_LISTE_SYNKRONISERET",
-                    antalMedarbejdereFoer,
-                    this.medarbejdere.size()
-            );
         }
         fravaerRepository.indlaesFravaer(this.medarbejdere);
 
