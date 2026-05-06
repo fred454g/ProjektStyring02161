@@ -1,5 +1,4 @@
-
-# Jacob - Hele filen
+# Jacob
 
 Feature: fjern medarbejder fra aktivitet
 

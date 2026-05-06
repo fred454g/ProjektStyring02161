@@ -1,5 +1,4 @@
-
-# Jacob - Hele filen
+# Jacob
 
 Feature: Tilknyt medarbejder på aktivitet
 

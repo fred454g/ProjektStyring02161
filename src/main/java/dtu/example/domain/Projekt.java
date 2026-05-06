@@ -91,11 +91,15 @@ public class Projekt {
     // ===================
 
     public boolean opretAktivitet(String aktivitetsNr, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        
         if (findAktivitet(aktivitetsNavn) != null) {
             throw new OperationNotAllowedException("Aktivitetsnavn er i brug");
         }
+        
         Aktivitet nyAktivitet = new Aktivitet(aktivitetsNr, aktivitetsNavn, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
+        
         this.aktiviteter.add(nyAktivitet);
+        
         return true;
     }
 

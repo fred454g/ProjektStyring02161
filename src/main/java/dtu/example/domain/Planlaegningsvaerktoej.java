@@ -269,17 +269,11 @@ public class Planlaegningsvaerktoej {
                                   int starttidspunkt, int sluttidspunkt)
             throws OperationNotAllowedException {
 
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd();
 
-        if (projektNummer == null || projektNummer.isBlank()) {
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
+		tjek_ProjektErValgt(projektNummer);
 
-        if (aktivitetsNavn == null || aktivitetsNavn.isBlank()) {
-            throw new OperationNotAllowedException("Aktivitetsnavn må ikke være tomt");
-        }
+        tjek_AktivitetErValgt(aktivitetsNavn);
 
         if (forventedeAntalArbejdstimer < 0) {
             throw new OperationNotAllowedException("Budgetteret tid må ikke være negativ");
@@ -289,10 +283,7 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
         }
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         String nytAktivitetsnr =
                 projekt.getProjektNummer() + "-" + projekt.getHoejesteAktivitetsnummer();
@@ -312,6 +303,7 @@ public class Planlaegningsvaerktoej {
         observers.firePropertyChange("AKTIVITET_OPRETTET", null, nyAktivitet);
 
         gemProjekter();
+        
         return true;
     }
 

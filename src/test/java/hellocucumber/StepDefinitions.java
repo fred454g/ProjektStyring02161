@@ -152,17 +152,8 @@ public class StepDefinitions {
     }
 
     // =============================
-    // opret_og_rediger_aktivitet
+    // Background opret & slet_aktivitet_til_projekt
     // =============================
-    @When("medarbejderen opretter aktiviteten {string} på projekt {string}")
-    public void medarbejderenOpretterAktivitetenPåProjekt(String aktivitetsNavn, String projektNr) {
-        try {
-            planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
     @When("medarbejderen angiver startuge {int}, slutuge {int} og estimeret tid {double} timer for aktiviteten {string} på projekt {string}")
     public void medarbejderenAngiverStartugeSlutugeOgEstimeretTidTimerForAktivitetenPåProjekt(Integer startuge,
             Integer slutuge, Double forventetTid, String aktivitetsNavn, String projektNr) {
@@ -198,6 +189,35 @@ public class StepDefinitions {
         }
     }
 
+
+    @Then("er aktiviteten {string} ikke tilknyttet projekt {string}")
+    public void erAktivitetenIkkeTilknyttetProjekt(String aktivitetsnavn, String projektnummer) {
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektnummer);
+        assertNull(projekt.findAktivitet(aktivitetsnavn), "FEJL: aktivitet er ikke fjernet");
+    }
+
+    // =============================
+    // Opret_aktivitet_til_projekt
+    // =============================
+    @When("medarbejderen opretter aktiviteten {string} paa projekt {string} med data FAA {string} Start {string} Slut {string}")
+    public void medarbejderenOpretterAktivitetenPaaProjektMedDataFAAStartSlut(String aktivitetsNavn, String projektNr, String faa_arg, String start_arg, String slut_arg) {
+        
+        double faa = Double.parseDouble(faa_arg);
+
+        int start = Integer.parseInt(start_arg);
+
+        int slut = Integer.parseInt(slut_arg);
+        
+        try {
+            planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, faa, start, slut);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    // =============================
+    // slet_aktivitet_fra_projekt
+    // =============================
     @When("medarbejderen fjerner aktiviteten {string} på projekt {string}")
     public void medarbejderenFjernerAktivitetenPåProjekt(String aktivitetsnavn, String projektnummer) {
         try {
@@ -207,11 +227,6 @@ public class StepDefinitions {
         }
     }
 
-    @Then("er aktiviteten {string} ikke tilknyttet projekt {string}")
-    public void erAktivitetenIkkeTilknyttetProjekt(String aktivitetsnavn, String projektnummer) {
-        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektnummer);
-        assertNull(projekt.findAktivitet(aktivitetsnavn), "FEJL: aktivitet er ikke fjernet");
-    }
 
     // =============================
     // Background tilfoej & fjern_medarbejder_fra_aktivitet
