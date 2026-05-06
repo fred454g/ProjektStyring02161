@@ -46,7 +46,12 @@ public class MedarbejderRepository {
                 }
 
                 if (!findesAllerede) {
-                    medarbejdere.add(new Medarbejder(initialer));
+                    try {
+                        medarbejdere.add(new Medarbejder(initialer));
+                    } catch (IllegalArgumentException e) {
+                        // Too long initials in HR file skips this line
+                        System.out.println("Skipping invalid initialer in HR-fil: " + initialer + " (" + e.getMessage() + ")");
+                    }
                 }
             }
 

@@ -74,8 +74,16 @@ public class Projekt {
     }
 
     public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+        // == DbC: PRE-CONDITIONS ==
+        assert medarbejder != null : "Pre-condition: Systemet forsøgte at tilføje null som medarbejder til projektet";
+        int antalFoer = this.tilknyttedeMedarbejdere.size();
+        
         if (!isMedarbejderInProjekt(medarbejder)) {
             this.tilknyttedeMedarbejdere.add(medarbejder);
+
+            // == DbC: POST-CONDITION ==
+            assert this.tilknyttedeMedarbejdere.size() == antalFoer + 1 : "Post-condition: Listen med tilknyttede medarbejdere voksede ikke";
+            assert isMedarbejderInProjekt(medarbejder) : "Post-condition: Medarbejder blev ikke korrekt gemt i projektet";
         } else {
             throw new OperationNotAllowedException("Medarbejder er allerede tilknyttet projekt");
         }
@@ -87,11 +95,21 @@ public class Projekt {
     // ===================
 
     public boolean opretAktivitet(String aktivitetsNr, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        // DbC - PRE-CONDITIONS
+        assert aktivitetsNr != null && !aktivitetsNr.isBlank() : "Pre-condition: Mangler internt aktivitetsNr";
+        assert starttidspunkt <= sluttidspunkt : "Pre-condition: Facaden tillod en startuge efter slutuge";
+        int forventetAntalAktiviteter = this.aktiviteter.size() + 1;
+
         if (findAktivitet(aktivitetsNavn) != null) {
             throw new OperationNotAllowedException("Aktivitetsnavn er i brug");
         }
         Aktivitet nyAktivitet = new Aktivitet(aktivitetsNr, aktivitetsNavn, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
         this.aktiviteter.add(nyAktivitet);
+
+        // DbC - POST-CONDITIONS
+        assert this.aktiviteter.size() == forventetAntalAktiviteter : "Post-condition: Aktivitet ikke tilføjet til listen";
+        assert findAktivitet(aktivitetsNr) != null : "Post-condition: Fandt ikke oprettet aktivitet";
+
         return true;
     }
 

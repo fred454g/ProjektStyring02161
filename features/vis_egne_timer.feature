@@ -42,3 +42,14 @@ Feature: Vis medarbejders egne timer
         Given at medarbejderen "jfk" er logget ud
         When medarbejderen anmoder om at se sine egne tidsregistreringer
         Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
+
+    Scenario: Visning af timer på tværs af flere projekter
+        Given medarbejderen opretter et projekt med navnet "Andet Projekt"
+        And at aktiviteten "Design" findes på projekt "26002"
+        And at medarbejderen "huba" er tilknyttet projekt "26002"
+        And at medarbejderen "huba" er tilknyttet aktiviteten "Design" på projekt "26002"
+        And at medarbejderen "huba" er logget ind i systemet
+        And medarbejderen registrerer 2.0 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
+        And medarbejderen registrerer 3.0 timer på aktiviteten "Design" på projekt "26002" for dags dato
+        When medarbejderen anmoder om at se sine egne tidsregistreringer
+        Then viser systemet 5.0 timer totalt for medarbejderen

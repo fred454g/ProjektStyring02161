@@ -40,3 +40,19 @@ Feature: Registrer tid (dagligt)
         Given at medarbejderen "huba" er logget ind i systemet
         When medarbejderen registrerer 25.0 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
         Then giver systemet fejlmeddelelsen "Antal timer kan ikke overstige 24 timer per dag"
+
+    Scenario: Tidsregistrering med halvtimes nøjagtighed
+        Given at medarbejderen "huba" er logget ind i systemet
+        When medarbejderen registrerer 0.5 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
+        Then er 0.5 timer tilføjet til det samlede tidsforbrug for "huba" på aktiviteten "Frontend" på projekt "26001"
+
+    Scenario: Fejlscenarie - Tidsregistrering på ikke-eksisterende projekt
+        Given at medarbejderen "huba" er logget ind i systemet
+        When medarbejderen registrerer 4.5 timer på aktiviteten "Frontend" på projekt "99999" for dags dato
+        Then giver systemet fejlmeddelelsen "Projekt findes ikke"
+
+    Scenario: Flere tidsregistreringer på samme aktivitet akkumuleres
+        Given at medarbejderen "huba" er logget ind i systemet
+        When medarbejderen registrerer 2.0 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
+        And medarbejderen registrerer 3.0 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
+        Then er 5.0 timer tilføjet til det samlede tidsforbrug for "huba" på aktiviteten "Frontend" på projekt "26001"
