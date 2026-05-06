@@ -84,6 +84,7 @@ public class Aktivitet {
     }
 
     public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
+        
         if (!isMedarbejderInAktivitet(medarbejder)) {
             this.tilknyttedeMedarbejdere.add(medarbejder);
         } else {

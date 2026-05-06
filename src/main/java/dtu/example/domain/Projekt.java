@@ -146,14 +146,9 @@ public class Projekt {
     public void fjernMedarbejderFraAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
         // Jacob
 
-        if (!isMedarbejderInProjekt(medarbejder)) {
-            throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
-        }
+        tjek_MedarbejderenErTilfoejetTilProjektet(medarbejder);
 
-        Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
-        }
+        Aktivitet aktivitet = tjek_AktivotetenFindesIProjektet(aktivitetsNavn);
 
         aktivitet.fjernMedarbejder(medarbejder);
     }
@@ -200,5 +195,28 @@ public class Projekt {
         return null;
     }
 
+    // =====================
+    // Tjek hjaepler metoder
+    // =====================
     
+    private void tjek_MedarbejderenErTilfoejetTilProjektet(Medarbejder medarbejder) throws OperationNotAllowedException {
+        // Jacob
+
+        if (!isMedarbejderInProjekt(medarbejder)) {
+            throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
+        }
+    }
+
+    private Aktivitet tjek_AktivotetenFindesIProjektet(String aktivitetsNavn) throws OperationNotAllowedException {
+        // Jacob
+
+        Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
+        
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
+        }
+
+        return aktivitet;
+    } 
+
 }
