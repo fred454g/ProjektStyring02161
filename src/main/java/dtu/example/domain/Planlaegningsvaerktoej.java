@@ -161,7 +161,7 @@ public class Planlaegningsvaerktoej {
         Medarbejder tidligereProjektleder = projekt.getProjektleder();
 
         try {
-            projekt.tilfoeMedarbejderTilProjekt(nyProjektleder);
+            projekt.tilfoejMedarbejderTilProjekt(nyProjektleder);
         } catch (OperationNotAllowedException e) {
             if (!"Medarbejder er allerede tilknyttet projekt".equals(e.getMessage())) {
                 throw e;
@@ -176,26 +176,16 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean tilknytMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
+    public boolean tilføjMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
         // Der bliver udført struktureret white-box test på denne metode
 
-        if (this.loggedInUser == null) { // 1
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd(); // 1
         
-        Projekt projekt = findProjekt(projektNummer);
+        Projekt projekt = tjek_ProjektetFindes(projektNummer); // 2
 
-        if (projekt == null) { // 2
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // 3
 
-        Medarbejder medarbejder = findMedarbejder(initialer);
-
-        if (medarbejder == null) { // 3
-            throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet");
-        }
-
-        projekt.tilfoeMedarbejderTilProjekt(medarbejder);
+        projekt.tilfoejMedarbejderTilProjekt(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
         gemProjekter();
         return true;
@@ -210,10 +200,8 @@ public class Planlaegningsvaerktoej {
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
-
         projekt.fjernMedarbejderFraProjekt(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_FJERNET_PROJEKT", medarbejder, projekt);
-
         gemProjekter();
         return true;
     }
@@ -393,14 +381,10 @@ public class Planlaegningsvaerktoej {
         Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
-
-        
+     
         projekt.tilfoejMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
-
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_AKTIVITET", null, projekt.findAktivitet(aktivitetsNavn));
-
         gemProjekter();
-
         return true;
     }
 
@@ -413,13 +397,9 @@ public class Planlaegningsvaerktoej {
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
-
         projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
-
-        observers.firePropertyChange("MEDARBEJDER_FJERNET_AKTIVITET", medarbejder, projekt.findAktivitet(aktivitetsNavn));
-        
+        observers.firePropertyChange("MEDARBEJDER_FJERNET_AKTIVITET", medarbejder, projekt.findAktivitet(aktivitetsNavn));   
         gemProjekter();
-        
         return true;
     }
 
@@ -715,7 +695,8 @@ public class Planlaegningsvaerktoej {
     }
 
     private void tjek_BrugerErLoggedInd() throws OperationNotAllowedException {
-        
+        // Jacob
+
         if (this.loggedInUser == null) {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }

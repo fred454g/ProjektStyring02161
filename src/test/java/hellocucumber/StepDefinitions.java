@@ -139,7 +139,7 @@ public class StepDefinitions {
     @When("medarbejderen tilfoejer {string} til projekt {string}")
     public void medarbejderenTilfoejerTilProjekt(String medarbejderInitialer, String projektNr) {
         try {
-            planlaegningsvaerktoej.tilknytMedarbejderTilProjekt(projektNr, medarbejderInitialer);
+            planlaegningsvaerktoej.tilføjMedarbejderTilProjekt(projektNr, medarbejderInitialer);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
@@ -231,7 +231,7 @@ public class StepDefinitions {
     @Given("at medarbejderen {string} er tilknyttet projekt {string}")
     public void atMedarbejderenErTilknyttetProjekt(String initialer, String projektNr)
             throws OperationNotAllowedException {
-        planlaegningsvaerktoej.tilknytMedarbejderTilProjekt(projektNr, initialer);
+        planlaegningsvaerktoej.tilføjMedarbejderTilProjekt(projektNr, initialer);
     }
 
 

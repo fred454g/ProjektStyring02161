@@ -27,7 +27,7 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
     public void testSetA_IngenBrugerLoggedIn() throws Exception {
 
         try {
-            planlaegningsvaerktoej.tilknytMedarbejderTilProjekt("26001", "jfk");
+            planlaegningsvaerktoej.tilføjMedarbejderTilProjekt("26001", "jfk");
 
             fail("Forventede at OperationNotAllowedException blev kastet");
 
@@ -46,7 +46,7 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
         logIndSomJfk();
 
         try {
-            planlaegningsvaerktoej.tilknytMedarbejderTilProjekt("26099", "jfk");
+            planlaegningsvaerktoej.tilføjMedarbejderTilProjekt("26099", "jfk");
 
             fail("Forventede at OperationNotAllowedException blev kastet");
 
@@ -67,7 +67,7 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
         planlaegningsvaerktoej.opretProjekt("Projekt A");
 
         try {
-            planlaegningsvaerktoej.tilknytMedarbejderTilProjekt("26001", "xxx");
+            planlaegningsvaerktoej.tilføjMedarbejderTilProjekt("26001", "xxx");
 
             fail("Forventede at OperationNotAllowedException blev kastet");
 
@@ -94,7 +94,7 @@ public class WhiteBox_tilknytMedarbejderTilProjekt {
         boolean resultat = false;
 
         try {
-            resultat = planlaegningsvaerktoej.tilknytMedarbejderTilProjekt("26001", "jfk");
+            resultat = planlaegningsvaerktoej.tilføjMedarbejderTilProjekt("26001", "jfk");
 
         } catch (OperationNotAllowedException exception) {
             fail("Der skulle ikke kastes OperationNotAllowedException");
