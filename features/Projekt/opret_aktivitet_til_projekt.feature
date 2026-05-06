@@ -15,18 +15,22 @@ Feature: Opret aktivitet til projekt
         When medarbejderen opretter aktiviteten "" paa projekt "26001" med data FAA "0.0" Start "1" Slut "2"
         Then giver systemet fejlmeddelelsen "Aktivitet skal vælges"
 
-    Scenario: Fejlscenarie - Forventede antal arbejdstimer er nagativt
-        When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med data FAA "-1.0" Start "1" Slut "2"
-        Then giver systemet fejlmeddelelsen "Budgetteret tid må ikke være negativ"
-
-    Scenario: Fejlscenarie - Projektet findes ikke
-        When medarbejderen opretter aktiviteten "Backend API" paa projekt "96001" med data FAA "1.0" Start "1" Slut "2"
-        Then giver systemet fejlmeddelelsen "Projekt findes ikke"
-
     Scenario: Fejlscenarie - Aktivitetsnavn er allerede i brug
         When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med data FAA "1.0" Start "1" Slut "2"
         When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med data FAA "1.0" Start "1" Slut "2"
         Then giver systemet fejlmeddelelsen "Aktivitetsnavn er i brug"
+
+    Scenario: Fejlscenarie - Forventede antal arbejdstimer er nagativt
+        When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med data FAA "-1.0" Start "1" Slut "2"
+        Then giver systemet fejlmeddelelsen "Budgetteret tid må ikke være negativ"
+
+    Scenario: Fejlscenarie - Start og slutuge er ikke korrekt angivet
+        When medarbejderen opretter aktiviteten "Backend API" paa projekt "96001" med data FAA "1.0" Start "2" Slut "1"
+        Then giver systemet fejlmeddelelsen "Startuge kan ikke være efter slutuge"
+
+    Scenario: Fejlscenarie - Projektet findes ikke
+        When medarbejderen opretter aktiviteten "Backend API" paa projekt "96001" med data FAA "1.0" Start "1" Slut "2"
+        Then giver systemet fejlmeddelelsen "Projekt findes ikke"
 
     Scenario: Hovedscenarie - Opret aktivitet til projekt
         Given at projektet "26001" findes i systemet

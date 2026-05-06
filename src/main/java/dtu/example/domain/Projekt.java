@@ -90,7 +90,7 @@ public class Projekt {
     // Aktivitet metoder
     // ===================
 
-    public boolean opretAktivitet(String aktivitetsNr, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+    public boolean redigerAktivitet(String aktivitetsNr, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
         
         if (findAktivitet(aktivitetsNavn) != null) {
             throw new OperationNotAllowedException("Aktivitetsnavn er i brug");
@@ -122,10 +122,8 @@ public class Projekt {
     }
 
     public void opdaterAktivitet(String aktivitetsInfo, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        
         Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
-        if (aktivitet == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke");
-        }
 
         aktivitet.setForventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
         aktivitet.setStarttidspunkt(starttidspunkt);
@@ -142,7 +140,6 @@ public class Projekt {
         aktivitet.tilfoejMedarbejder(medarbejder);
     }
 
-    
     public void fjernMedarbejderFraAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
         // Jacob
 

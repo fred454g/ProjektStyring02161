@@ -115,7 +115,7 @@ public class ProjektRepository {
                     if (dele.length < 6) {
                         continue;
                     }
-                    nuvaerendeProjekt.opretAktivitet(
+                    nuvaerendeProjekt.redigerAktivitet(
                             dele[1],
                             dele[2],
                             Double.parseDouble(dele[3]),

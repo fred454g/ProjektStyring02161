@@ -152,13 +152,13 @@ public class StepDefinitions {
     }
 
     // =============================
-    // Background opret & slet_aktivitet_til_projekt
+    // Background opret, slet & rediger_aktivitet_til/fra_projekt
     // =============================
     @When("medarbejderen angiver startuge {int}, slutuge {int} og estimeret tid {double} timer for aktiviteten {string} på projekt {string}")
     public void medarbejderenAngiverStartugeSlutugeOgEstimeretTidTimerForAktivitetenPåProjekt(Integer startuge,
             Integer slutuge, Double forventetTid, String aktivitetsNavn, String projektNr) {
         try {
-            planlaegningsvaerktoej.opdaterAktivitet(projektNr, aktivitetsNavn, forventetTid, startuge, slutuge);
+            planlaegningsvaerktoej.redigerAktivitet(projektNr, aktivitetsNavn, forventetTid, startuge, slutuge);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
@@ -226,6 +226,26 @@ public class StepDefinitions {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
+
+    // =============================
+    // rediger_aktivitet_fra_projekt
+    // =============================
+    @When("medarbejderen redigerer aktiviteten {string} paa projekt {string} til data FAA {string} Start {string} Slut {string}")
+    public void medarbejderenRedigererAktivitetenPaaProjektTilDataFAAStartSlut(String aktivitetsNavn, String projektNr, String faa_arg, String start_arg, String slut_arg) {
+        
+        double faa = Double.parseDouble(faa_arg);
+
+        int start = Integer.parseInt(start_arg);
+
+        int slut = Integer.parseInt(slut_arg);
+
+        try {
+            planlaegningsvaerktoej.redigerAktivitet(projektNr, aktivitetsNavn, faa, start, slut);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
 
 
     // =============================

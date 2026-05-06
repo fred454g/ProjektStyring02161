@@ -275,20 +275,16 @@ public class Planlaegningsvaerktoej {
 
         tjek_AktivitetErValgt(aktivitetsNavn);
 
-        if (forventedeAntalArbejdstimer < 0) {
-            throw new OperationNotAllowedException("Budgetteret tid må ikke være negativ");
-        }
+        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
 
-        if (starttidspunkt > sluttidspunkt) {
-            throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
-        }
+        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt);
 
         Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         String nytAktivitetsnr =
                 projekt.getProjektNummer() + "-" + projekt.getHoejesteAktivitetsnummer();
 
-        projekt.opretAktivitet(
+        projekt.redigerAktivitet(
                 nytAktivitetsnr,
                 aktivitetsNavn,
                 forventedeAntalArbejdstimer,
@@ -307,29 +303,20 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public boolean opdaterAktivitet(String projektNummer, String aktivitetsNummer, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
-        if (projektNummer == null || projektNummer.isBlank()) {
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
-        if (forventedeAntalArbejdstimer < 0) {
-            throw new OperationNotAllowedException("Budgetteret tid må ikke være negativ");
-        }
-        if (starttidspunkt > sluttidspunkt) {
-            throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
-        }
+    public boolean redigerAktivitet(String projektNummer, String aktivitetsNummer, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        
+        tjek_BrugerErLoggedInd();
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        tjek_ProjektErValgt(projektNummer);
 
-        Aktivitet aktivitetFoerOpdatering = projekt.findAktivitet(aktivitetsNummer);
-        if (aktivitetFoerOpdatering == null) {
-            throw new OperationNotAllowedException("Aktivitet findes ikke");
-        }
+        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
+
+        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt);
+
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+
+        Aktivitet aktivitetFoerOpdatering = tjek_AktivitetFindes(projekt, aktivitetsNummer);
+
 
         projekt.opdaterAktivitet(aktivitetsNummer, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
         observers.firePropertyChange("AKTIVITET_OPDATERET", null, aktivitetFoerOpdatering);
@@ -652,7 +639,7 @@ public class Planlaegningsvaerktoej {
     // Tjek hjaepler metoder
     // =====================
 
-    public Projekt tjek_ProjektetFindes(String projektNummer) throws OperationNotAllowedException {
+    private Projekt tjek_ProjektetFindes(String projektNummer) throws OperationNotAllowedException {
         // Jacob
 
         Projekt projekt = findProjekt(projektNummer);
@@ -664,7 +651,7 @@ public class Planlaegningsvaerktoej {
         return projekt;
     }
 
-    public Medarbejder tjek_MedarbejderenFindes(String initialer) throws OperationNotAllowedException {
+    private Medarbejder tjek_MedarbejderenFindes(String initialer) throws OperationNotAllowedException {
         // Jacob
 
         Medarbejder medarbejder = findMedarbejder(initialer);
@@ -709,6 +696,22 @@ public class Planlaegningsvaerktoej {
 
         if (projektNummer == null || projektNummer.isBlank()) {
             throw new OperationNotAllowedException("Projekt skal vælges");
+        }
+    }
+
+    private void tjek_forventedeAntalArbejdstimer(double forventedeAntalArbejdstimer) throws OperationNotAllowedException {
+        // Jacob
+
+        if (forventedeAntalArbejdstimer < 0) {
+            throw new OperationNotAllowedException("Budgetteret tid må ikke være negativ");
+        }
+    }
+
+    private void tjek_StartOgSluttidspunkt(double starttidspunkt, double sluttidspunkt) throws OperationNotAllowedException {
+        // Jacob
+        
+        if (starttidspunkt > sluttidspunkt) {
+            throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
         }
     }
 

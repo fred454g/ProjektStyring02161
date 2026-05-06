@@ -272,7 +272,7 @@ public class SecondaryController implements PropertyChangeListener {
             int start = Integer.parseInt(nyStartUgeInput.getText());
             int slut = Integer.parseInt(nySlutUgeInput.getText());
 
-            App.getFacade().opdaterAktivitet(projektId, aktivitet, budget, start, slut);
+            App.getFacade().redigerAktivitet(projektId, aktivitet, budget, start, slut);
 
             nytBudgetInput.clear();
             nyStartUgeInput.clear();
