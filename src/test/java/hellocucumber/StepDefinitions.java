@@ -144,7 +144,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // tilknyt_projektleder.feature
+    // opdater_projekt_med_projektleder.feature
     // =============================
     @Given("at medarbejderen {string} tilfoejes til systemet")
     public void atMedarbejderenTilfoejesTilSystemet(String initialer) throws OperationNotAllowedException {
@@ -161,17 +161,36 @@ public class StepDefinitions {
         assertEquals(initialer, planlaegningsvaerktoej.findMedarbejder(initialer).getInitialer());
     }
 
-    @When("medarbejderen tilknytter {string} som projektleder til projekt {string}")
-    public void medarbejderenTilknytterSomProjektlederTilProjekt(String initialer, String projektnummer)
-            throws OperationNotAllowedException {
-        planlaegningsvaerktoej.opdaterProjektMedProjektleder(projektnummer, initialer);
+    @When("medarbejderen forsoeger at tilknytte {string} som projektleder til projekt {string}")
+    public void medarbejderenForsoegerAtTilknytteSomProjektlederTilProjekt(String initialer, String projektnummer) {
+        try {
+            errorMessageHolder.setErrorMessage(null);
+            
+            planlaegningsvaerktoej.opdaterProjektMedProjektleder(projektnummer, initialer);
+        
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
     }
 
     @Then("er {string} registreret som projektleder for projekt {string}")
     public void erRegistreretSomProjektlederForProjekt(String initialer, String projektnummer) {
-        assertEquals(planlaegningsvaerktoej.findMedarbejder(initialer),
-                planlaegningsvaerktoej.findProjekt(projektnummer).getProjektleder());
+        
+        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank());
+
+        assertEquals(planlaegningsvaerktoej.findMedarbejder(initialer),planlaegningsvaerktoej.findProjekt(projektnummer).getProjektleder());
     }
+
+
+    @Then("er {string} ikke længere projektleder for projekt {string}")
+    public void erIkkeLængereProjektlederForProjekt(String initialer, String projektnummer) {
+        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(initialer);
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektnummer);
+        assertNotEquals(medarbejder, projekt.getProjektleder(), 
+            "Medarbejderen skal ikke længere være projektleder");
+    }
+
+
 
     // =============================
     // tilfoej_medarbejder_til_projekt
@@ -651,25 +670,7 @@ public class StepDefinitions {
         }
     }
 
-    // =============================
-    // tilknyt_projektleder.feature - error scenarios
-    // =============================
-    @When("medarbejderen forsoeger at tilknytte {string} som projektleder til projekt {string}")
-    public void medarbejderenForsoegerAtTilknytteSomProjektlederTilProjekt(String initialer, String projektnummer) {
-        try {
-            planlaegningsvaerktoej.opdaterProjektMedProjektleder(projektnummer, initialer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
 
-    @Then("er {string} ikke længere projektleder for projekt {string}")
-    public void erIkkeLængereProjektlederForProjekt(String initialer, String projektnummer) {
-        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(initialer);
-        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektnummer);
-        assertNotEquals(medarbejder, projekt.getProjektleder(), 
-            "Medarbejderen skal ikke længere være projektleder");
-    }
 
     // =============================
     // opret_og_rediger_aktivitet.feature - error scenarios

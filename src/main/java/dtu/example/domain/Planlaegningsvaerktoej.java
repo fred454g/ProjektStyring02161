@@ -195,22 +195,19 @@ public class Planlaegningsvaerktoej {
     public boolean opdaterProjektMedProjektleder(String projektNummer, String medarbejderInitialer)
             throws OperationNotAllowedException {
 
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
 
-        if (projektNummer == null || projektNummer.isBlank()) {
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
+        tjek_ProjektErValgt(projektNummer); // Fejlscenarie 2
 
-        if (medarbejderInitialer == null || medarbejderInitialer.isBlank()) {
+        if (medarbejderInitialer == null || medarbejderInitialer.isBlank()) { // Fejlscenarie 3
+
             throw new OperationNotAllowedException("Projektleder skal vælges");
         }
 
-        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 4
 
         Medarbejder nyProjektleder = findMedarbejder(medarbejderInitialer);
-        if (nyProjektleder == null) {
+        if (nyProjektleder == null) { // Fejlscenarie 5
             throw new OperationNotAllowedException("Medarbejder findes ikke");
         }
 
