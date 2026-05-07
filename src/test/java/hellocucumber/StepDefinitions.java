@@ -121,11 +121,6 @@ public class StepDefinitions {
         assertEquals(projektNavn, planlaegningsvaerktoej.findProjekt(projektNavn).getProjektNavn());
     }
 
-    // @When("medarbejderen ændrer navnet på projekt {string} til {string}")
-    // public void medarbejderenÆndrerNavnetPåProjektTil(String string, String string2) throws OperationNotAllowedException {    
-    //     planlaegningsvaerktoej.omdoebProjekt(string, string2);
-    // }
-
     @When("medarbejderen forsoeger at ændre navnet på projekt {string} til {string}")
     public void medarbejderenForsoegerAtÆndreNavnetPåProjektTil(String projektnummer, String nytNavn) {
         
@@ -149,6 +144,7 @@ public class StepDefinitions {
                                                                                      // med navnet
         assertEquals(string, projekt.getProjektNavn()); // Passser navnene
     }
+
 
     // =============================
     // opdater_projekt_med_projektleder.feature
@@ -215,6 +211,29 @@ public class StepDefinitions {
         Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(medarbejderInitialer);
         assertTrue(planlaegningsvaerktoej.findProjekt(projektNummer).isMedarbejderInProjekt(medarbejder));
     }
+
+
+    // =============================
+    // tilfoej_medarbejder_projekt.feature - error scenarios
+    // =============================
+    @When("medarbejderen forsoeger at tilfoejer {string} til projekt {string}")
+    public void medarbejderenForsoegerAtTilfoejerTilProjekt(String medarbejderInitialer, String projektNr) {
+        try {
+            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, medarbejderInitialer);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @When("medarbejderen forsoeger at tilfoejer {string} til projekt {string} igen")
+    public void medarbejderenForsoegerAtTilfoejerTilProjektIgen(String medarbejderInitialer, String projektNr) {
+        try {
+            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, medarbejderInitialer);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
 
     // =============================
     // Background opret, slet & rediger_aktivitet_til/fra_projekt
@@ -626,26 +645,7 @@ public class StepDefinitions {
         assertEquals(forventetTid, registreret);
     }
 
-    // =============================
-    // tilfoej_medarbejder_projekt.feature - error scenarios
-    // =============================
-    @When("medarbejderen forsoeger at tilfoejer {string} til projekt {string}")
-    public void medarbejderenForsoegerAtTilfoejerTilProjekt(String medarbejderInitialer, String projektNr) {
-        try {
-            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, medarbejderInitialer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
 
-    @When("medarbejderen forsoeger at tilfoejer {string} til projekt {string} igen")
-    public void medarbejderenForsoegerAtTilfoejerTilProjektIgen(String medarbejderInitialer, String projektNr) {
-        try {
-            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, medarbejderInitialer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
 
     // =============================
     // opret_projekt.feature - additional scenarios
