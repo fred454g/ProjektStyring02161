@@ -120,6 +120,7 @@ public class Planlaegningsvaerktoej {
         if (this.loggedInUser == null) { // 1
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
+        
         if (projektNavn == null || projektNavn.isEmpty()) { // 2 (2a || 2b)
             throw new OperationNotAllowedException("Projektnavnet må ikke være tomt");
         }
@@ -158,6 +159,9 @@ public class Planlaegningsvaerktoej {
         if (projektNummer == null || projektNummer.isBlank()) { // 2 (2a || 2b)
             throw new OperationNotAllowedException("Projekt skal vælges");
         }
+
+        //tjek_ProjektErValgt(projektNummer); // 2 (2a || 2b)
+
 
         if (nytNavn == null || nytNavn.isBlank()) { // 3 (3a || 3b)
             throw new OperationNotAllowedException("Nyt projektnavn må ikke være tomt");

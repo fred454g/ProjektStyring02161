@@ -122,8 +122,7 @@ public class StepDefinitions {
     }
 
     @When("medarbejderen ændrer navnet på projekt {string} til {string}")
-    public void medarbejderenÆndrerNavnetPåProjektTil(String string, String string2)
-            throws OperationNotAllowedException {
+    public void medarbejderenÆndrerNavnetPåProjektTil(String string, String string2) throws OperationNotAllowedException {    
         planlaegningsvaerktoej.omdoebProjekt(string, string2);
     }
 
