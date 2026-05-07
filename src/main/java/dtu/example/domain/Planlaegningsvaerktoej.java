@@ -152,9 +152,7 @@ public class Planlaegningsvaerktoej {
     public boolean omdoebProjekt(String projektNummer, String nytNavn) throws OperationNotAllowedException {
         // Der bliver udført struktureret white-box test på denne metode
 
-        if (this.loggedInUser == null) { // 1
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd(); // 1
 
         tjek_ProjektErValgt(projektNummer); // 2 (2a || 2b)
 

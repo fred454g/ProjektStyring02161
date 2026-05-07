@@ -121,26 +121,33 @@ public class StepDefinitions {
         assertEquals(projektNavn, planlaegningsvaerktoej.findProjekt(projektNavn).getProjektNavn());
     }
 
-    @When("medarbejderen ændrer navnet på projekt {string} til {string}")
-    public void medarbejderenÆndrerNavnetPåProjektTil(String string, String string2) throws OperationNotAllowedException {    
-        planlaegningsvaerktoej.omdoebProjekt(string, string2);
+    // @When("medarbejderen ændrer navnet på projekt {string} til {string}")
+    // public void medarbejderenÆndrerNavnetPåProjektTil(String string, String string2) throws OperationNotAllowedException {    
+    //     planlaegningsvaerktoej.omdoebProjekt(string, string2);
+    // }
+
+    @When("medarbejderen forsoeger at ændre navnet på projekt {string} til {string}")
+    public void medarbejderenForsoegerAtÆndreNavnetPåProjektTil(String projektnummer, String nytNavn) {
+        
+        try {
+            errorMessageHolder.setErrorMessage(null);
+            
+            planlaegningsvaerktoej.omdoebProjekt(projektnummer, nytNavn);
+        
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
     }
 
     @Then("er projektets navn opdateret til {string} i systemet")
     public void erProjektetsNavnOpdateretTilISystemet(String string) {
+
+        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank()); // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
+
         Projekt projekt = planlaegningsvaerktoej.findProjekt(string);
         assertNotNull(projekt, "Projektet med det nye navn findes ikke i systemet"); // Tjekker at der findes et projekt
                                                                                      // med navnet
         assertEquals(string, projekt.getProjektNavn()); // Passser navnene
-    }
-
-    @When("medarbejderen forsoeger at ændre navnet på projekt {string} til {string}")
-    public void medarbejderenForsoegerAtÆndreNavnetPåProjektTil(String projektnummer, String nytNavn) {
-        try {
-            planlaegningsvaerktoej.omdoebProjekt(projektnummer, nytNavn);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
     }
 
     // =============================
@@ -176,11 +183,10 @@ public class StepDefinitions {
     @Then("er {string} registreret som projektleder for projekt {string}")
     public void erRegistreretSomProjektlederForProjekt(String initialer, String projektnummer) {
         
-        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank());
+        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank()); // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
 
         assertEquals(planlaegningsvaerktoej.findMedarbejder(initialer),planlaegningsvaerktoej.findProjekt(projektnummer).getProjektleder());
     }
-
 
     @Then("er {string} ikke længere projektleder for projekt {string}")
     public void erIkkeLængereProjektlederForProjekt(String initialer, String projektnummer) {
