@@ -113,7 +113,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // rediger_projektnavn.feature
+    // omdoeb_projekt.feature
     // =============================
     @Given("at projektet {string} med navnet {string} findes i systemet")
     public void atProjektetMedNavnetFindesISystemet(String projektnummer, String projektNavn) {
@@ -132,6 +132,15 @@ public class StepDefinitions {
         assertNotNull(projekt, "Projektet med det nye navn findes ikke i systemet"); // Tjekker at der findes et projekt
                                                                                      // med navnet
         assertEquals(string, projekt.getProjektNavn()); // Passser navnene
+    }
+
+    @When("medarbejderen forsoeger at ændre navnet på projekt {string} til {string}")
+    public void medarbejderenForsoegerAtÆndreNavnetPåProjektTil(String projektnummer, String nytNavn) {
+        try {
+            planlaegningsvaerktoej.omdoebProjekt(projektnummer, nytNavn);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
     }
 
     // =============================
@@ -637,18 +646,6 @@ public class StepDefinitions {
     public void medarbejderenForsoegerAtOpretteEtProjektMedNavn(String projektNavn) {
         try {
             planlaegningsvaerktoej.opretProjekt(projektNavn);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
-    // =============================
-    // rediger_projektnavn.feature - error scenarios
-    // =============================
-    @When("medarbejderen forsoeger at ændre navnet på projekt {string} til {string}")
-    public void medarbejderenForsoegerAtÆndreNavnetPåProjektTil(String projektnummer, String nytNavn) {
-        try {
-            planlaegningsvaerktoej.omdoebProjekt(projektnummer, nytNavn);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }

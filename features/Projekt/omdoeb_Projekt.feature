@@ -10,7 +10,7 @@ Feature: Rediger projektnavn
 
     Scenario: Fejlscenarie - Projekt er ikke valgt i GUI
         Given at projektet "26001" med navnet "Nyt IT System" findes i systemet
-        When medarbejderen ændrer navnet på projekt "" til "Nyt Navn"
+        When medarbejderen forsoeger at ændre navnet på projekt "" til "Nyt Navn"
         Then giver systemet fejlmeddelelsen "Projekt skal vælges"
 
     Scenario: Fejlscenarie - Tomt nyt projektnavn
@@ -27,7 +27,7 @@ Feature: Rediger projektnavn
         When medarbejderen forsoeger at ændre navnet på projekt "26001" til "Nyt Navn"
         Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
 
-        Scenario: Hovedscenarie - Ændring af projektnavn lykkes
+    Scenario: Hovedscenarie - Ændring af projektnavn lykkes
         Given at projektet "26001" med navnet "Nyt IT System" findes i systemet
         When medarbejderen ændrer navnet på projekt "26001" til "Nyt Navn"
         Then er projektets navn opdateret til "Nyt Navn" i systemet

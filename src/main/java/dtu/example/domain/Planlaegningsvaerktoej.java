@@ -156,11 +156,7 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
 
-        if (projektNummer == null || projektNummer.isBlank()) { // 2 (2a || 2b)
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
-
-        //tjek_ProjektErValgt(projektNummer); // 2 (2a || 2b)
+        tjek_ProjektErValgt(projektNummer); // 2 (2a || 2b)
 
 
         if (nytNavn == null || nytNavn.isBlank()) { // 3 (3a || 3b)
@@ -176,12 +172,7 @@ public class Planlaegningsvaerktoej {
         }
 
         // Opdater navn og return true
-        Projekt projekt = findProjekt(projektNummer);
-
-        if (projekt == null) { // 6
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         String gammeltNavn = projekt.getProjektNavn();
         boolean opdateret = projekt.opdaterNavn(nytNavn);
