@@ -41,6 +41,10 @@ Feature: Vis restarbejde, flaskehalse og timeforbrug
         When medarbejderen anmoder om overblik for projekt "26001"
         Then fremhæver systemet aktiviteten "Frontend" som overskredet
 
+    Scenario: Fejlscenarie - Projekt er ikke valgt i GUI
+        When medarbejderen anmoder om overblik for projekt ""
+        Then giver systemet fejlmeddelelsen "Projekt skal vælges"
+
     Scenario: Fejlscenarie - Overblik for ikke-eksisterende projekt
         When medarbejderen anmoder om overblik for projekt "99999"
         Then giver systemet fejlmeddelelsen "Projektet findes ikke"

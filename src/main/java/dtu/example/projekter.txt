@@ -1,8 +1,3 @@
-P,26001,Nyt IT System
-M,huba
-M,jfk
-A,26001-1,Frontend,0.0,1,1
-AM,26001-1,huba
-AM,26001-1,jfk
-A,26001-2,Backend,1.0,2,3
-AM,26001-2,huba
+P,26001,Projekt A
+A,26001-1,Analyse,10.0,1,50
+T,26001-1,2.0,2026-05-07,jfk

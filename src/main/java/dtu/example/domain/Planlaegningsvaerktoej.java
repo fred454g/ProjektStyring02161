@@ -578,9 +578,11 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
 
-        if (projektNummer == null || projektNummer.isBlank()) {
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
+        // if (projektNummer == null || projektNummer.isBlank()) {
+        //     throw new OperationNotAllowedException("Projekt skal vælges");
+        // }
+
+        tjek_ProjektErValgt(projektNummer);
 
         Projekt projekt = findProjekt(projektNummer);
         if (projekt == null) {

@@ -804,20 +804,27 @@ public class StepDefinitions {
     // =============================
     @When("medarbejderen anmoder om overblik for projekt {string}")
     public void medarbejderenAnmoderOmOverblikForProjekt(String projektnummer) {
+        
         try {
             // Check if user is logged in first
             if (planlaegningsvaerktoej.getLoggedinUserInitials() == null) {
                 errorMessageHolder.setErrorMessage("Ingen bruger logged in");
                 return;
             }
+
         } catch (Exception e) {
             errorMessageHolder.setErrorMessage("Ingen bruger logged in");
             return;
         }
+
         try {
+            
             genereretRapport = planlaegningsvaerktoej.genererRapport(projektnummer);
+        
         } catch (OperationNotAllowedException e) {
+            
             String msg = e.getMessage();
+
             if (msg.contains("Projektet findes ikke i systemet")) {
                 errorMessageHolder.setErrorMessage("Projektet findes ikke");
             } else {
