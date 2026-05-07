@@ -207,10 +207,7 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Projektleder skal vælges");
         }
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         Medarbejder nyProjektleder = findMedarbejder(medarbejderInitialer);
         if (nyProjektleder == null) {
