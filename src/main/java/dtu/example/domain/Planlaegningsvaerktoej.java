@@ -179,7 +179,10 @@ public class Planlaegningsvaerktoej {
         
         }
 
+        // --- DbC PRE-CONDITION ---
         String gammeltNavn = projekt.getProjektNavn();
+        assert !gammeltNavn.equals(nytNavn) : "Pre-condition: Projektet har allerede det ønskede navn";
+
         boolean opdateret = projekt.opdaterNavn(nytNavn);
         
         if (opdateret) {
@@ -187,6 +190,11 @@ public class Planlaegningsvaerktoej {
         }
 
         gemProjekter();
+
+        // --- DbC POST-CHECK ---
+        assert projekt.getProjektNavn().equals(nytNavn) : "Post-condition: Projektets navn blev ikke opdateret lokalt i objektet";
+        assert findProjekt(projektNummer).getProjektNavn().equals(nytNavn) : "Post-condition: Navneændringen blev ikke persisteret overordnet i systemet";
+
         return opdateret; // 7
     }
 
@@ -314,11 +322,21 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Projekt findes ikke");
         }
 
+        // --- DbC PRE-CONDITION ---
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
+        // Hent timer hvis aktiviteten findes, ellers sæt til 0 (koden kaster exception om lidt, hvis den er null)
+        double registreretTidFoer = (aktivitet != null) ? aktivitet.getTotalRegistreretTid() : 0.0;
+
         projekt.registrerTid(aktivitetsNavn, loggedInUser, timer);
 
         observers.firePropertyChange("TID_REGISTRERET", null, loggedInUser);
 
         gemProjekter();
+
+        // --- DbC POST-CHECK (Nås kun ved et Success-scenarie) ---
+        assert aktivitet != null : "Post-condition: Aktiviteten findes pludselig ikke længere";
+        double forventetNyTid = registreretTidFoer + timer;
+        assert aktivitet.getTotalRegistreretTid() == forventetNyTid : "Post-condition: Timerne blev ikke lagt korrekt til aktivitetens totale tidsforbrug";
     }
 
     public double visEgneTimer() throws OperationNotAllowedException {
@@ -458,10 +476,19 @@ public class Planlaegningsvaerktoej {
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
-        
+        // --- DbC PRE-CONDITION ---
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
+        int forventetAntalMedarbejdere = (aktivitet != null) ? aktivitet.getTilknyttedeMedarbejdere().size() + 1 : 0;
+
         projekt.tilfoejMedarbejderTilAktivitet(aktivitetsNavn, medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_AKTIVITET", null, projekt.findAktivitet(aktivitetsNavn));
         gemProjekter();
+
+        // --- DbC POST-CHECK (Nås kun ved et Success-scenarie) ---
+        assert aktivitet != null : "Post-condition: Aktiviteten bør eksistere";
+        assert aktivitet.getTilknyttedeMedarbejdere().size() == forventetAntalMedarbejdere : "Post-condition: Medarbejderlisten voksede ikke med 1 som forventet";
+        assert aktivitet.getTilknyttedeMedarbejdere().contains(medarbejder) : "Post-condition: Den specifikke medarbejder blev ikke korrekt tilknyttet aktivitetens liste over medarbejdere";
+
         return true;
     }
 
