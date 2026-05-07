@@ -120,6 +120,7 @@ public class Planlaegningsvaerktoej {
         if (this.loggedInUser == null) { // 1
             throw new OperationNotAllowedException("Ingen bruger logged in");
         }
+        
         if (projektNavn == null || projektNavn.isEmpty()) { // 2 (2a || 2b)
             throw new OperationNotAllowedException("Projektnavnet må ikke være tomt");
         }
@@ -151,13 +152,10 @@ public class Planlaegningsvaerktoej {
     public boolean omdoebProjekt(String projektNummer, String nytNavn) throws OperationNotAllowedException {
         // Der bliver udført struktureret white-box test på denne metode
 
-        if (this.loggedInUser == null) { // 1
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd(); // 1
 
-        if (projektNummer == null || projektNummer.isBlank()) { // 2 (2a || 2b)
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
+        tjek_ProjektErValgt(projektNummer); // 2 (2a || 2b)
+
 
         if (nytNavn == null || nytNavn.isBlank()) { // 3 (3a || 3b)
             throw new OperationNotAllowedException("Nyt projektnavn må ikke være tomt");
@@ -172,12 +170,7 @@ public class Planlaegningsvaerktoej {
         }
 
         // Opdater navn og return true
-        Projekt projekt = findProjekt(projektNummer);
-
-        if (projekt == null) { // 6
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
 
         // --- DbC PRE-CONDITION ---
         String gammeltNavn = projekt.getProjektNavn();
@@ -208,25 +201,19 @@ public class Planlaegningsvaerktoej {
     public boolean opdaterProjektMedProjektleder(String projektNummer, String medarbejderInitialer)
             throws OperationNotAllowedException {
 
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
 
-        if (projektNummer == null || projektNummer.isBlank()) {
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
+        tjek_ProjektErValgt(projektNummer); // Fejlscenarie 2
 
-        if (medarbejderInitialer == null || medarbejderInitialer.isBlank()) {
+        if (medarbejderInitialer == null || medarbejderInitialer.isBlank()) { // Fejlscenarie 3
+
             throw new OperationNotAllowedException("Projektleder skal vælges");
         }
 
-        Projekt projekt = findProjekt(projektNummer);
-        if (projekt == null) {
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 4
 
         Medarbejder nyProjektleder = findMedarbejder(medarbejderInitialer);
-        if (nyProjektleder == null) {
+        if (nyProjektleder == null) { // Fejlscenarie 5
             throw new OperationNotAllowedException("Medarbejder findes ikke");
         }
 
