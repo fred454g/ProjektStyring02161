@@ -5,6 +5,7 @@ Feature: Slet aktivitet fra projekt
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
+        And at aktiviteten "Backend API" findes på projekt "Nyt IT System"
     
     Scenario: Fejlscenarie - Projektet findes ikke
         When medarbejderen fjerner aktiviteten "Backend API" på projekt "96001"
@@ -23,7 +24,5 @@ Feature: Slet aktivitet fra projekt
         Then giver systemet fejlmeddelelsen "Projekt skal vælges"
 
     Scenario: Hovedscenarie - Slet aktivitet fra projekt
-        Given at projektet "26001" findes i systemet
-        And at aktiviteten "Backend API" er oprettet på projekt "26001"
         When medarbejderen fjerner aktiviteten "Backend API" på projekt "26001"
         Then er aktiviteten "Backend API" ikke tilknyttet projekt "26001"

@@ -105,7 +105,7 @@ public class Projekt {
         assert starttidspunkt <= sluttidspunkt : "Pre-condition: Facaden tillod en startuge efter slutuge";
         int forventetAntalAktiviteter = this.aktiviteter.size() + 1;
 
-        if (findAktivitet(aktivitetsNavn) != null) {
+        if (findAktivitet(aktivitetsNavn) != null) { // Fejlscenarie 7
             throw new OperationNotAllowedException("Aktivitetsnavn er i brug");
         }
         

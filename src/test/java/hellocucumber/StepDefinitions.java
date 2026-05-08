@@ -339,15 +339,6 @@ public class StepDefinitions {
         assertEquals(forventetTid, aktivitet.getForventedeAntalArbejdsTimer());
     }
 
-    @Given("at aktiviteten {string} er oprettet på projekt {string}")
-    public void atAktivitetenErOprettetPåProjekt(String aktivitetsnavn, String projektnummer) {
-        try {
-            planlaegningsvaerktoej.opretAktivitet(projektnummer, aktivitetsnavn, 0.0, 1, 1);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
 
     @Then("er aktiviteten {string} ikke tilknyttet projekt {string}")
     public void erAktivitetenIkkeTilknyttetProjekt(String aktivitetsnavn, String projektnummer) {
@@ -358,19 +349,13 @@ public class StepDefinitions {
     // =============================
     // Opret_aktivitet_til_projekt
     // =============================
-    @When("medarbejderen opretter aktiviteten {string} paa projekt {string} med data FAA {string} Start {string} Slut {string}")
-    public void medarbejderenOpretterAktivitetenPaaProjektMedDataFAAStartSlut(String aktivitetsNavn, String projektNr, String faa_arg, String start_arg, String slut_arg) {
-        
-        double faa = Double.parseDouble(faa_arg);
-
-        int start = Integer.parseInt(start_arg);
-
-        int slut = Integer.parseInt(slut_arg);
+    @When("medarbejderen opretter aktiviteten {string} paa projekt {string} med budgetteret tid {double} starttidspunkt {int} sluttidspunkt {int}")
+    public void medarbejderenOpretterAktivitetenPaaProjektMedBudgetteretTidStarttidspunktSluttidspunkt(String aktivitetsNavn, String projektNr, Double budgetteretTid, Integer start, Integer slut) {
         
         try {
             errorMessageHolder.setErrorMessage(null);
 
-            planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, faa, start, slut);
+            planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, budgetteretTid, start, slut);
         
         } catch (OperationNotAllowedException e) {
 
@@ -658,36 +643,6 @@ public class StepDefinitions {
         assertEquals(forventetTid, registreret);
     }
 
-
-
-
-
-    // =============================
-    // opret_og_rediger_aktivitet.feature - error scenarios
-    // =============================
-    // @When("medarbejderen forsoeger at oprette aktiviteten {string} på projekt {string}")
-    // public void medarbejderenForsoegerAtOpretteAktivitetenPåProjekt(String aktivitetsNavn, String projektNr) {
-    //     try {
-    //         planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
-    //     } catch (OperationNotAllowedException e) {
-    //         errorMessageHolder.setErrorMessage(e.getMessage());
-    //     }
-    // }
-
-    // @When("medarbejderen forsoeger at fjerne aktiviteten {string} på projekt {string}")
-    // public void medarbejderenForsoegerAtFjerneAktivitetenPåProjekt(String aktivitetsnavn, String projektnummer) {
-    //     try {
-    //         planlaegningsvaerktoej.sletAktivitet(projektnummer, aktivitetsnavn);
-    //     } catch (OperationNotAllowedException e) {
-    //         errorMessageHolder.setErrorMessage(e.getMessage());
-    //     }
-    // }
-
-    // =============================
-    // registrer_tid.feature - error scenarios
-    // =============================
-
-
     // =============================
     // registrer_fravaer.feature - additional scenarios
     // =============================
@@ -879,9 +834,6 @@ public class StepDefinitions {
         assertFalse(genereretRapport.contains(initialer), "Medarbejderen " + initialer + " skal ikke være på listen over ledige medarbejdere");
     }
 
-    @When("medarbejderen opretter aktiviteten {string} på projekt {string}")
-    public void medarbejderenOpretterAktivitetenPåProjekt(String aktivitetsNavn, String projektnummer) throws OperationNotAllowedException {
-        planlaegningsvaerktoej.opretAktivitet(projektnummer, aktivitetsNavn, 0.0, 1, 1);
-    }
+
 }
 
