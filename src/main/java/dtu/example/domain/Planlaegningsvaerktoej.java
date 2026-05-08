@@ -142,6 +142,19 @@ public class Planlaegningsvaerktoej {
         assert findProjekt(nytProjektnr) != null : "Post-condition: Kunne ikke genfinde det oprettede projekt";
     }
 
+    public void sletProjekt(String projektNummer) throws OperationNotAllowedException {
+        // Jacob
+
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
+
+        tjek_ProjektErValgt(projektNummer); // Fejlscenarie 2
+
+        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 3
+
+        projekter.remove(projekt);
+        gemProjekter();
+    }
+
     /**
      * @author Jeppe, Frederik
      * @param projektNummer

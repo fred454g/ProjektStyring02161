@@ -8,7 +8,7 @@ Feature: Rediger projektnavn
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
 
-    Scenario: Fejlscenarie 1 - Tilknytning af projektleder uden at være logget ind
+    Scenario: Fejlscenarie 1 - Brugeren er ikke at være logget ind
         Given at medarbejderen "jfk" er logget ud
         When medarbejderen forsoeger at ændre navnet på projekt "26001" til "Nyt Navn"
         Then giver systemet fejlmeddelelsen "Ingen bruger logged in"

@@ -112,6 +112,36 @@ public class StepDefinitions {
         assertEquals(fejlMeddelelse, this.errorMessageHolder.getErrorMessage());
     }
 
+
+
+    // =============================
+    // slet_projekt.feature
+    // =============================
+  
+    @When("medarbejderen forsoeger at slette projektet med nummeret {string}")
+    public void medarbejderenForsoegerAtSletteProjektetMedNummeret(String projektNummer) {
+        try {
+            errorMessageHolder.setErrorMessage(null);
+            
+            planlaegningsvaerktoej.sletProjekt(projektNummer);
+        
+        } catch (OperationNotAllowedException e) {
+
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+
+    @Then("er projektet med nummeret {string} slettet fra applikationen")
+    public void erProjektetMedNummeretSlettetFraApplikationen(String projektNummer) {
+
+        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank()); // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
+    
+        assertNull(planlaegningsvaerktoej.findProjekt(projektNummer));
+    }
+
+
+
     // =============================
     // omdoeb_projekt.feature
     // =============================
