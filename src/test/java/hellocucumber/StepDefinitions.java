@@ -75,10 +75,8 @@ public class StepDefinitions {
     public void giverSystemetFejlmeddelelsen(String fejlMeddelelse) throws Exception {
 
         assertEquals(fejlMeddelelse, this.errorMessageHolder.getErrorMessage());
-    
     }
 
-    
     @Then("giver systenet ingen fejlmeddelelse")
     public void giverSystenetIngenFejlmeddelelse() {
         // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
@@ -86,7 +84,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // Generelle
+    // Generelle - Disse skal KUN bruges i Background
     // =============================
 
     @Given("at medarbejderen {string} er logget ud")
@@ -95,12 +93,8 @@ public class StepDefinitions {
     }
 
     @Given("at medarbejderen {string} er logget ind i systemet")
-    public void atMedarbejderenErLoggetIndISystemet(String medarbejderInitialer) {
-        try {
-            planlaegningsvaerktoej.userLogin(medarbejderInitialer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
+    public void atMedarbejderenErLoggetIndISystemet(String medarbejderInitialer) throws OperationNotAllowedException{
+        planlaegningsvaerktoej.userLogin(medarbejderInitialer);   
     }
 
     @Given("at medarbejderen {string} tilfoejes til systemet")
@@ -124,35 +118,27 @@ public class StepDefinitions {
         planlaegningsvaerktoej.tilfoejMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
     }
 
-    @Given("at aktiviteten {string} findes på projekt {string}")
-    public void atAktivitetenFindesPåProjekt(String aktivitetsNavn, String projektNr)
-            throws OperationNotAllowedException {
-        planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
-    }
-
     @Given("at medarbejderen {string} er tilknyttet projekt {string}")
     public void atMedarbejderenErTilknyttetProjekt(String initialer, String projektNr)
             throws OperationNotAllowedException {
         planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, initialer);
     }
 
-    // =============================
-    // opret_projekt.feature
-    // =============================
-
-    @When("medarbejderen forsoeger at oprette et projekt uden at angive et navn")
-    public void medarbejderenForsoegerAtOpretteEtProjektUdenAtAngiveEtNavn() {
-        try {
-            planlaegningsvaerktoej.opretProjekt(null);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
+    @Given("at aktiviteten {string} findes på projekt {string}")
+    public void atAktivitetenFindesPåProjekt(String aktivitetsNavn, String projektNr)
+            throws OperationNotAllowedException {
+        planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
     }
 
-    @When("medarbejderen opretter et projekt med navnet {string}")
+    @Given("medarbejderen opretter et projekt med navnet {string}")
     public void medarbejderenOpretterEtProjektMedNavnet(String projektNavn) throws OperationNotAllowedException {
         planlaegningsvaerktoej.opretProjekt(projektNavn);
     }
+
+
+    // =============================
+    // opret_projekt.feature
+    // =============================
 
     @Then("eksisterer projektet {string} i systemet")
     public void eksistererProjektetISystemet(String projektNavn) {
@@ -165,6 +151,33 @@ public class StepDefinitions {
     public void projektetTildelesAutomatiskEtUniktProjektnummerFEks(String projektnummer) {
         Projekt fundneProjekt = planlaegningsvaerktoej.findProjekt(projektnummer);
         assertEquals(projektnummer, fundneProjekt.getProjektNummer());
+    }
+
+    @Then("de to projekter har forskellige projektnumre")
+    public void deToProjerterHarForskelligeProjektnumre() {
+        Projekt projekt1 = planlaegningsvaerktoej.findProjekt("Projekt A");
+        Projekt projekt2 = planlaegningsvaerktoej.findProjekt("Projekt B");
+        assertNotNull(projekt1, "Projekt A skulle eksistere");
+        assertNotNull(projekt2, "Projekt B skulle eksistere");
+        assertNotEquals(projekt1.getProjektNummer(), projekt2.getProjektNummer(), "Projektnumre skal være forskellige");
+    }
+    
+    @Then("projektet {string} har nu et projektnummer som starter med det aktuelle aarstal")
+    public void projektetHarNuEtProjektnummerSomStarterMedDetAktuelleAarstal(String string) {
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(string);
+        assertNotNull(projekt, "Projektet skulle eksistere");
+        String projektnummer = projekt.getProjektNummer();
+        assertTrue(projektnummer.startsWith("26"), "Projektnummeret skal starte med det aktuelle årstal (26)");
+    }
+
+    @When("medarbejderen forsoeger at oprette et projekt med navnet {string}")
+    public void medarbejderenForsoegerAtOpretteEtProjektMedNavn(String projektNavn) {
+        try {
+            errorMessageHolder.setErrorMessage(null);
+            planlaegningsvaerktoej.opretProjekt(projektNavn);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
     }
 
     // =============================
@@ -576,13 +589,6 @@ public class StepDefinitions {
         planlaegningsvaerktoej.userLogin("huba");
     }
 
-    @Given("at projekt {string} med navnet {string} eksisterer")
-    public void at_projekt_med_navnet_eksisterer(String projektNummer, String projektNavn) throws Exception {
-        // Vi simulerer at brugeren har oprettet projektet gennem systemet
-        // Ret eventuelt metodens parametre, så de matcher jeres faktiske app.opretProjekt()
-        planlaegningsvaerktoej.opretProjekt(projektNavn);
-    }
-
     @Given("at projektet har en aktivitet {string} med budget på {int} timer")
     public void at_projektet_har_en_aktivitet_med_budget_paa_timer(String aktivitetsNavn, Integer budget) throws Exception {
         // Simulerer oprettelse af aktivitet i det netop oprettede projekt "26001"
@@ -653,35 +659,6 @@ public class StepDefinitions {
     }
 
 
-
-    // =============================
-    // opret_projekt.feature - additional scenarios
-    // =============================
-    @Then("de to projekter har forskellige projektnumre")
-    public void deToProjerterHarForskelligeProjektnumre() {
-        Projekt projekt1 = planlaegningsvaerktoej.findProjekt("Projekt A");
-        Projekt projekt2 = planlaegningsvaerktoej.findProjekt("Projekt B");
-        assertNotNull(projekt1, "Projekt A skulle eksistere");
-        assertNotNull(projekt2, "Projekt B skulle eksistere");
-        assertNotEquals(projekt1.getProjektNummer(), projekt2.getProjektNummer(), "Projektnumre skal være forskellige");
-    }
-
-    @Then("projektnummeret starter med det aktuelle årstal")
-    public void projektnummeretStarterMedDetAktueltAarstal() {
-        Projekt projekt = planlaegningsvaerktoej.findProjekt("Format Test");
-        assertNotNull(projekt, "Projektet skulle eksistere");
-        String projektnummer = projekt.getProjektNummer();
-        assertTrue(projektnummer.startsWith("26"), "Projektnummeret skal starte med det aktuelle årstal (26)");
-    }
-
-    @When("medarbejderen forsoeger at oprette et projekt med navnet {string}")
-    public void medarbejderenForsoegerAtOpretteEtProjektMedNavn(String projektNavn) {
-        try {
-            planlaegningsvaerktoej.opretProjekt(projektNavn);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
 
 
 

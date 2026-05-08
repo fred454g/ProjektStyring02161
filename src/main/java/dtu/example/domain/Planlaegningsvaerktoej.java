@@ -66,6 +66,7 @@ public class Planlaegningsvaerktoej {
      */
     public void userLogin(String initialer) throws OperationNotAllowedException {
         if (findMedarbejder(initialer) == null) {
+
             throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet.");
         }
         this.loggedInUser = findMedarbejder(initialer);
@@ -117,9 +118,7 @@ public class Planlaegningsvaerktoej {
     public void opretProjekt(String projektNavn) throws OperationNotAllowedException {
         // Der bliver udført struktureret white-box test på denne metode
         
-        if (this.loggedInUser == null) { // 1
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd(); // 1
         
         if (projektNavn == null || projektNavn.isEmpty()) { // 2 (2a || 2b)
             throw new OperationNotAllowedException("Projektnavnet må ikke være tomt");

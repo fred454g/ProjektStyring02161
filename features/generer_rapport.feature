@@ -10,14 +10,14 @@ Feature: Generer rapport
     And medarbejderen opretter et projekt med navnet "Nyt IT System"
 
   Scenario: Hovedscenarie - Generering af rapport for et projekt
-    Given at projekt "26001" med navnet "Nyt IT System" eksisterer
+    Given medarbejderen opretter et projekt med navnet "Nyt IT System"
     And at projektet har en aktivitet "Frontend" med budget på 50 timer
     When medarbejderen anmoder om en rapport for projekt "26001"
     Then modtager systemet en rapport, der indeholder projektnavnet "Nyt IT System"
     And rapporten viser at totalt budget er 50 timer
 
   Scenario: Rapport med flere aktiviteter og tidsforbrug
-    Given at projekt "26001" med navnet "Nyt IT System" eksisterer
+    Given medarbejderen opretter et projekt med navnet "Nyt IT System"
     And at projektet har en aktivitet "Frontend" med budget på 50 timer
     And at projektet har en aktivitet "Backend" med budget på 80 timer
     And at medarbejderen "huba" er tilknyttet projekt "26001"
@@ -31,7 +31,7 @@ Feature: Generer rapport
     And rapporten viser at totalt registreret tid er 10.0 timer
 
   Scenario: Rapport for projekt uden aktiviteter
-    Given at projekt "26001" med navnet "Nyt IT System" eksisterer
+    Given medarbejderen opretter et projekt med navnet "Nyt IT System"
     When medarbejderen anmoder om en rapport for projekt "26001"
     Then modtager systemet en rapport, der indeholder projektnavnet "Nyt IT System"
     And rapporten viser at totalt budget er 0 timer

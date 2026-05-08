@@ -16,6 +16,11 @@ Feature: Vis medarbejders egne timer
         And at medarbejderen "huba" er tilknyttet aktiviteten "Backend" på projekt "26001"
         And at medarbejderen "jfk" er tilknyttet aktiviteten "Frontend" på projekt "26001"
 
+    Scenario: Fejlscenarie 1 - Vis timer uden at være logget ind
+        Given at medarbejderen "jfk" er logget ud
+        When medarbejderen anmoder om at se sine egne tidsregistreringer
+        Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
+
     Scenario: Hovedscenarie - Visning af egne timer på tværs af aktiviteter
         Given at medarbejderen "huba" er logget ind i systemet
         And medarbejderen registrerer 4.5 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
@@ -37,11 +42,6 @@ Feature: Vis medarbejders egne timer
         And medarbejderen registrerer 2.0 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
         When medarbejderen anmoder om at se sine egne tidsregistreringer
         Then viser systemet 2.0 timer totalt for medarbejderen
-
-    Scenario: Fejlscenarie - Vis timer uden at være logget ind
-        Given at medarbejderen "jfk" er logget ud
-        When medarbejderen anmoder om at se sine egne tidsregistreringer
-        Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
 
     Scenario: Visning af timer på tværs af flere projekter
         Given medarbejderen opretter et projekt med navnet "Andet Projekt"
