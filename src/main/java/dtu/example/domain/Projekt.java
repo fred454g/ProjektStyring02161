@@ -68,8 +68,10 @@ public class Projekt {
     public void fjernMedarbejderFraProjekt(Medarbejder medarbejder) throws OperationNotAllowedException {
         
         if (isMedarbejderInProjekt(medarbejder)) {
+            
             this.tilknyttedeMedarbejdere.remove(medarbejder);
-        } else {
+        
+        } else { // Fejlscenarie 4
 
             throw new OperationNotAllowedException("Medarbejder er ikke tilknyttet projekt");
         }

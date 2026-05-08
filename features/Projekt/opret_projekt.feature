@@ -32,5 +32,6 @@ Feature: Opret projekt og tildel projektnummer
     Scenario: Projektnummer har korrekt format med årstal
         Given at medarbejderen "jfk" er logget ind i systemet
         When medarbejderen opretter et projekt med navnet "Format Test"
-        Then projektet tildeles automatisk et unikt projektnummer, f.eks. "26001"
+        Then giver systenet ingen fejlmeddelelse
+        And projektet tildeles automatisk et unikt projektnummer, f.eks. "26001"
         And projektnummeret starter med det aktuelle årstal

@@ -68,7 +68,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // Generelle
+    // Generelle - Fejlmeddelelser
     // =============================
 
     @Then("giver systemet fejlmeddelelsen {string}")
@@ -77,6 +77,17 @@ public class StepDefinitions {
         assertEquals(fejlMeddelelse, this.errorMessageHolder.getErrorMessage());
     
     }
+
+    
+    @Then("giver systenet ingen fejlmeddelelse")
+    public void giverSystenetIngenFejlmeddelelse() {
+        // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
+        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank()); 
+    }
+
+    // =============================
+    // Generelle
+    // =============================
 
     @Given("at medarbejderen {string} er logget ind i systemet")
     public void atMedarbejderenErLoggetIndISystemet(String medarbejderInitialer) {
@@ -100,6 +111,24 @@ public class StepDefinitions {
     @Given("at medarbejderen med initialerne {string} findes i systemet")
     public void atMedarbejderenMedInitialerneFindesISystemet(String initialer) {
         assertEquals(initialer, planlaegningsvaerktoej.findMedarbejder(initialer).getInitialer());
+    }
+
+    @Given("at medarbejderen {string} er tilknyttet aktiviteten {string} på projekt {string}")
+    public void atMedarbejderenErTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
+            String projektNr) throws OperationNotAllowedException {
+        planlaegningsvaerktoej.tilfoejMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
+    }
+
+    @Given("at aktiviteten {string} findes på projekt {string}")
+    public void atAktivitetenFindesPåProjekt(String aktivitetsNavn, String projektNr)
+            throws OperationNotAllowedException {
+        planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
+    }
+
+    @Given("at medarbejderen {string} er tilknyttet projekt {string}")
+    public void atMedarbejderenErTilknyttetProjekt(String initialer, String projektNr)
+            throws OperationNotAllowedException {
+        planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, initialer);
     }
 
     // =============================
@@ -153,8 +182,9 @@ public class StepDefinitions {
     @Then("er projektet med nummeret {string} slettet fra applikationen")
     public void erProjektetMedNummeretSlettetFraApplikationen(String projektNummer) {
 
-        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank()); // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
-    
+        // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
+        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank()); 
+
         assertNull(planlaegningsvaerktoej.findProjekt(projektNummer));
     }
 
@@ -184,8 +214,6 @@ public class StepDefinitions {
     @Then("er projektets navn opdateret til {string} i systemet")
     public void erProjektetsNavnOpdateretTilISystemet(String string) {
 
-        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank()); // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
-
         Projekt projekt = planlaegningsvaerktoej.findProjekt(string);
         assertNotNull(projekt, "Projektet med det nye navn findes ikke i systemet"); // Tjekker at der findes et projekt
                                                                                      // med navnet
@@ -194,7 +222,7 @@ public class StepDefinitions {
 
 
     // =============================
-    // opdater_projekt_med_projektleder.feature
+    // opdater_projekt_med_projektleder
     // =============================
 
     @When("medarbejderen forsoeger at tilknytte {string} som projektleder til projekt {string}")
@@ -211,8 +239,6 @@ public class StepDefinitions {
 
     @Then("er {string} registreret som projektleder for projekt {string}")
     public void erRegistreretSomProjektlederForProjekt(String initialer, String projektnummer) {
-        
-        assertTrue(errorMessageHolder.getErrorMessage() == null || errorMessageHolder.getErrorMessage().isBlank()); // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
 
         assertEquals(planlaegningsvaerktoej.findMedarbejder(initialer),planlaegningsvaerktoej.findProjekt(projektnummer).getProjektleder());
     }
@@ -234,6 +260,7 @@ public class StepDefinitions {
     @When("medarbejderen tilfoejer {string} til projekt {string}")
     public void medarbejderenTilfoejerTilProjekt(String medarbejderInitialer, String projektNr) {
         try {
+            errorMessageHolder.setErrorMessage(null);
             planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, medarbejderInitialer);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
@@ -246,28 +273,38 @@ public class StepDefinitions {
         assertTrue(planlaegningsvaerktoej.findProjekt(projektNummer).isMedarbejderInProjekt(medarbejder));
     }
 
-
+     // =============================
+    // fjern_medarbejder_fra_projekt.feature
     // =============================
-    // tilfoej_medarbejder_projekt.feature - error scenarios
-    // =============================
-    @When("medarbejderen forsoeger at tilfoejer {string} til projekt {string}")
-    public void medarbejderenForsoegerAtTilfoejerTilProjekt(String medarbejderInitialer, String projektNr) {
+    @When("medarbejderen fjerner {string} fra projekt {string}")
+    public void medarbejderenFjernerFraProjekt(String medarbejderInitialer, String projektNummer) {
         try {
-            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, medarbejderInitialer);
+            errorMessageHolder.setErrorMessage(null);
+            planlaegningsvaerktoej.fjernMedarbejderFraProjekt(projektNummer, medarbejderInitialer);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
 
-    @When("medarbejderen forsoeger at tilfoejer {string} til projekt {string} igen")
-    public void medarbejderenForsoegerAtTilfoejerTilProjektIgen(String medarbejderInitialer, String projektNr) {
-        try {
-            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, medarbejderInitialer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
+    // @When("medarbejderen forsoeger at fjerne {string} fra projekt {string}")
+    // public void medarbejderenForsoegerAtFjerneFraProjekt(String medarbejderInitialer, String projektNummer) {
+    //     try {
+    //         planlaegningsvaerktoej.fjernMedarbejderFraProjekt(projektNummer, medarbejderInitialer);
+    //     } catch (OperationNotAllowedException e) {
+    //         errorMessageHolder.setErrorMessage(e.getMessage());
+    //     }
+    // }
+
+    @Then("fremgår {string} ikke længere af listen over tilknyttede medarbejdere på projekt {string}")
+    public void fremgårIkkeLængereAfListenOverTilknyttedeMedarbejderePåProjekt(String medarbejderInitialer, String projektNummer) {
+        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(medarbejderInitialer);
+        assertFalse(planlaegningsvaerktoej.findProjekt(projektNummer).isMedarbejderInProjekt(medarbejder));
     }
 
+    @Then("udsendes observer-eventen {string}")
+    public void udsendesObserverEventen(String eventNavn) {
+        assertEquals(eventNavn, this.sidsteObserverEvent);
+    }
 
     // =============================
     // Background opret, slet & rediger_aktivitet_til/fra_projekt
@@ -327,8 +364,12 @@ public class StepDefinitions {
         int slut = Integer.parseInt(slut_arg);
         
         try {
+            errorMessageHolder.setErrorMessage(null);
+
             planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, faa, start, slut);
+        
         } catch (OperationNotAllowedException e) {
+
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
@@ -363,30 +404,6 @@ public class StepDefinitions {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
-
-
-
-    // =============================
-    // Background tilfoej & fjern_medarbejder_fra_aktivitet
-    // =============================
-    @Given("at medarbejderen {string} er tilknyttet aktiviteten {string} på projekt {string}")
-    public void atMedarbejderenErTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
-            String projektNr) throws OperationNotAllowedException {
-        planlaegningsvaerktoej.tilfoejMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
-    }
-
-    @Given("at aktiviteten {string} findes på projekt {string}")
-    public void atAktivitetenFindesPåProjekt(String aktivitetsNavn, String projektNr)
-            throws OperationNotAllowedException {
-        planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
-    }
-
-    @Given("at medarbejderen {string} er tilknyttet projekt {string}")
-    public void atMedarbejderenErTilknyttetProjekt(String initialer, String projektNr)
-            throws OperationNotAllowedException {
-        planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, initialer);
-    }
-
 
     // =============================
     // tilfoej_medarbejder_fra_aktivitet
@@ -560,37 +577,6 @@ public class StepDefinitions {
         assertTrue(planlaegningsvaerktoej.harFravaer(initialer, type, startUge, slutUge));
     }
 
-    // =============================
-    // fjern_medarbejder_fra_projekt.feature
-    // =============================
-    @When("medarbejderen fjerner {string} fra projekt {string}")
-    public void medarbejderenFjernerFraProjekt(String medarbejderInitialer, String projektNummer) {
-        try {
-            planlaegningsvaerktoej.fjernMedarbejderFraProjekt(projektNummer, medarbejderInitialer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
-    @When("medarbejderen forsoeger at fjerne {string} fra projekt {string}")
-    public void medarbejderenForsoegerAtFjerneFraProjekt(String medarbejderInitialer, String projektNummer) {
-        try {
-            planlaegningsvaerktoej.fjernMedarbejderFraProjekt(projektNummer, medarbejderInitialer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
-    @Then("fremgår {string} ikke længere af listen over tilknyttede medarbejdere på projekt {string}")
-    public void fremgårIkkeLængereAfListenOverTilknyttedeMedarbejderePåProjekt(String medarbejderInitialer, String projektNummer) {
-        Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(medarbejderInitialer);
-        assertFalse(planlaegningsvaerktoej.findProjekt(projektNummer).isMedarbejderInProjekt(medarbejder));
-    }
-
-    @Then("udsendes observer-eventen {string}")
-    public void udsendesObserverEventen(String eventNavn) {
-        assertEquals(eventNavn, this.sidsteObserverEvent);
-    }
 
     // ==========================================
     // STEPS TIL RAPPORTGENERERING

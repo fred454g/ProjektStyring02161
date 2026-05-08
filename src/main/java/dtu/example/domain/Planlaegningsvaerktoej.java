@@ -279,13 +279,14 @@ public class Planlaegningsvaerktoej {
      */
     public boolean fjernMedarbejderFraProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
 
-        tjek_BrugerErLoggedInd();
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
 
-        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 2
 
-        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // Fejlscenarie 3
 
-        projekt.fjernMedarbejderFraProjekt(medarbejder);
+        projekt.fjernMedarbejderFraProjekt(medarbejder); // Fejlscenarie 4
+
         observers.firePropertyChange("MEDARBEJDER_FJERNET_PROJEKT", medarbejder, projekt);
         gemProjekter();
         return true;

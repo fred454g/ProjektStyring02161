@@ -23,12 +23,11 @@ Feature: Tilføj medarbejder til projekt
         Then giver systemet fejlmeddelelsen "Medarbejder med initialer Ukendt findes ikke i systemet"
 
     Scenario: Fejlscenarie 4 - Medarbejederen er ikke tilknyttet projekt
-        Given medarbejderen tilfoejer "huba" til projekt "26001"
         When medarbejderen tilfoejer "huba" til projekt "26001"
+        And medarbejderen tilfoejer "huba" til projekt "26001"
         Then giver systemet fejlmeddelelsen "Medarbejder er allerede tilknyttet projekt"
 
     Scenario: Sccesscenarie - Tilføjelse af medarbejder til projekt
-        Given at projektet "26001" findes i systemet
-        And at medarbejderen med initialerne "huba" findes i systemet
         When medarbejderen tilfoejer "huba" til projekt "26001"
-        Then fremgår "huba" af listen over tilknyttede medarbejdere på projekt "26001"
+        Then giver systenet ingen fejlmeddelelse
+        And fremgår "huba" af listen over tilknyttede medarbejdere på projekt "26001"

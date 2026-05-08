@@ -7,7 +7,7 @@ Feature: Tilknyt eller ændr projektleder
         And at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "anda" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
-        And medarbejderen opretter et projekt med navnet "Nyt IT System"
+        And medarbejderen opretter et projekt med navnet "Nyt IT System"       
 
     Scenario: Fejlscenarie 1 - Tilknytning af projektleder uden at være logget ind
         Given at medarbejderen "jfk" er logget ud
@@ -31,15 +31,13 @@ Feature: Tilknyt eller ændr projektleder
         Then giver systemet fejlmeddelelsen "Medarbejder findes ikke"
 
     Scenario: Sccesscenarie - Tilknytning af projektleder lykkes
-        Given at projektet "26001" findes i systemet
-        And at medarbejderen med initialerne "huba" findes i systemet
         When medarbejderen forsoeger at tilknytte "huba" som projektleder til projekt "26001"
         Then er "huba" registreret som projektleder for projekt "26001"
 
     Scenario: Sccesscenarie - Ændring af projektleder
-        Given at projektet "26001" findes i systemet
-        And at medarbejderen med initialerne "huba" findes i systemet
-        And medarbejderen forsoeger at tilknytte "huba" som projektleder til projekt "26001"
+        When medarbejderen forsoeger at tilknytte "huba" som projektleder til projekt "26001"
+        Then giver systenet ingen fejlmeddelelse
         When medarbejderen forsoeger at tilknytte "anda" som projektleder til projekt "26001"
-        Then er "anda" registreret som projektleder for projekt "26001"
+        Then giver systenet ingen fejlmeddelelse
+        And er "anda" registreret som projektleder for projekt "26001"
         And er "huba" ikke længere projektleder for projekt "26001"
