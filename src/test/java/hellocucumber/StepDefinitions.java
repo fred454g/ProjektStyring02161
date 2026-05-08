@@ -686,14 +686,7 @@ public class StepDefinitions {
     // =============================
     // registrer_tid.feature - error scenarios
     // =============================
-    @When("medarbejderen forsoeger at registrerer {double} timer på aktiviteten {string} på projekt {string} for dags dato")
-    public void medarbejderenForsoegerAtRegistrerTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
-        try {
-            planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
+
 
     // =============================
     // registrer_fravaer.feature - additional scenarios

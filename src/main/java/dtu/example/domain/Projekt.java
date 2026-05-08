@@ -173,7 +173,7 @@ public class Projekt {
         Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
 
         // Har vi fundet et match?
-        if (aktivitet == null) {
+        if (aktivitet == null) { // 7
             throw new OperationNotAllowedException("Aktivitet findes ikke i projekt");
         }
         aktivitet.registrerTid(medarbejder, timer);

@@ -41,8 +41,8 @@ Feature: Registrer tid (dagligt)
 
     Scenario: Sccesscenarie - Medarbejder kan registrere tid uden direkte aktivitetstilknytning
         When medarbejderen registrerer 2.0 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
-        And giver systenet ingen fejlmeddelelse
-        Then er 2.0 timer tilføjet til det samlede tidsforbrug for "huba" på aktiviteten "Frontend" på projekt "26001"
+        Then giver systenet ingen fejlmeddelelse
+        And er 2.0 timer tilføjet til det samlede tidsforbrug for "huba" på aktiviteten "Frontend" på projekt "26001"
 
     Scenario: Sccesscenarie - Tidsregistrering med halvtimes nøjagtighed
         When medarbejderen registrerer 0.5 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
