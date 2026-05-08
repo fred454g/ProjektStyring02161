@@ -7,22 +7,28 @@ Feature: Slet aktivitet fra projekt
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
         And at aktiviteten "Backend API" findes på projekt "Nyt IT System"
     
-    Scenario: Fejlscenarie - Projektet findes ikke
-        When medarbejderen fjerner aktiviteten "Backend API" på projekt "96001"
-        Then giver systemet fejlmeddelelsen "Projekt findes ikke"
+    Scenario: Fejlscenarie 1 - Brugeren er ikke logget ind
+        Given at medarbejderen "jfk" er logget ud
+        When medarbejderen fjerner aktiviteten "Backend API" på projekt "26001"
+        Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
 
-    Scenario: Fejlscenarie - Aktivitet findes ikke
-        When medarbejderen fjerner aktiviteten "Ukendt Aktivitet" på projekt "26001"
-        Then giver systemet fejlmeddelelsen "Aktivitet findes ikke"
-
-    Scenario: Fejlscenarie - Aktivitet er ikke valgt i GUI
-        When medarbejderen fjerner aktiviteten "" på projekt "26001"
-        Then giver systemet fejlmeddelelsen "Aktivitet skal vælges"
-
-    Scenario: Fejlscenarie - Projekt er ikke valgt i GUI
+    Scenario: Fejlscenarie 2 - Projekt er ikke valgt
         When medarbejderen fjerner aktiviteten "Backend API" på projekt ""
         Then giver systemet fejlmeddelelsen "Projekt skal vælges"
 
-    Scenario: Hovedscenarie - Slet aktivitet fra projekt
+    Scenario: Fejlscenarie 3 - Aktivitet er ikke valgt i GUI
+        When medarbejderen fjerner aktiviteten "" på projekt "26001"
+        Then giver systemet fejlmeddelelsen "Aktivitet skal vælges"
+
+    Scenario: Fejlscenarie 4 - Projektet findes ikke
+        When medarbejderen fjerner aktiviteten "Backend API" på projekt "96001"
+        Then giver systemet fejlmeddelelsen "Projekt findes ikke"
+
+    Scenario: Fejlscenarie 5 - Aktivitet findes ikke
+        When medarbejderen fjerner aktiviteten "Ukendt Aktivitet" på projekt "26001"
+        Then giver systemet fejlmeddelelsen "Aktivitet findes ikke"
+
+    Scenario: Sccesscenarie - Slet aktivitet fra projekt
         When medarbejderen fjerner aktiviteten "Backend API" på projekt "26001"
-        Then er aktiviteten "Backend API" ikke tilknyttet projekt "26001"
+        Then giver systenet ingen fejlmeddelelse
+        And er aktiviteten "Backend API" ikke tilknyttet projekt "26001"

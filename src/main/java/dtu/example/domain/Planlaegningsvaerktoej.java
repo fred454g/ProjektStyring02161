@@ -433,15 +433,15 @@ public class Planlaegningsvaerktoej {
      */
     public boolean sletAktivitet(String projektNummer, String aktivitetsNummer) throws OperationNotAllowedException {
         
-        tjek_BrugerErLoggedInd();
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
         
-        tjek_ProjektErValgt(projektNummer);
+        tjek_ProjektErValgt(projektNummer); // Fejlscenarie 2
     
-		tjek_AktivitetErValgt(aktivitetsNummer);
+		tjek_AktivitetErValgt(aktivitetsNummer); // Fejlscenarie 3
 
-	    Projekt projekt = tjek_ProjektetFindes(projektNummer);
+	    Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 4
 
-        Aktivitet aktivitet = tjek_AktivitetFindes(projekt, aktivitetsNummer);
+        Aktivitet aktivitet = tjek_AktivitetFindes(projekt, aktivitetsNummer); // Fejlscenarie 5
 
         projekt.sletAktivitet(aktivitet);
         observers.firePropertyChange("AKTIVITET_SLETTET", aktivitet, projekt);
