@@ -122,7 +122,8 @@ public class Projekt {
 
     public boolean opdaterForventedeAntalArbejdstimer(String aktivitetsInfo, float timer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
         Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
-        if (aktivitet == null) {
+        
+        if (aktivitet == null) { // 7
             throw new OperationNotAllowedException("Aktivitet findes ikke");
         }
 

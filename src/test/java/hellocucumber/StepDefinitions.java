@@ -89,6 +89,11 @@ public class StepDefinitions {
     // Generelle
     // =============================
 
+    @Given("at medarbejderen {string} er logget ud")
+    public void atMedarbejderenErLoggetUd(String initialer) {
+        planlaegningsvaerktoej.userLogout();
+    }
+
     @Given("at medarbejderen {string} er logget ind i systemet")
     public void atMedarbejderenErLoggetIndISystemet(String medarbejderInitialer) {
         try {
@@ -495,14 +500,10 @@ public class StepDefinitions {
     // registrer_tid.feature
     // =============================
 
-    @Given("at medarbejderen {string} er logget ud")
-    public void atMedarbejderenErLoggetUd(String initialer) {
-        planlaegningsvaerktoej.userLogout();
-    }
-
     @When("medarbejderen registrerer {double} timer på aktiviteten {string} på projekt {string} for dags dato")
     public void medarbejderenRegistrererTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
         try {
+            errorMessageHolder.setErrorMessage(null);
             planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());

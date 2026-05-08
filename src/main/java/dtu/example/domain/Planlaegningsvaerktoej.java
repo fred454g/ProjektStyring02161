@@ -297,17 +297,11 @@ public class Planlaegningsvaerktoej {
 
         // Der bliver udført struktureret white-box test på denne metode
 
-        if (this.loggedInUser == null) { // 1
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd(); // 1
 
-        if (projektNr == null || projektNr.isBlank()) { // 2 (2a || 2b)
-            throw new OperationNotAllowedException("Projekt skal vælges");
-        }
+        tjek_ProjektErValgt(projektNr); // 2 (2a || 2b)
 
-        if (aktivitetsNavn == null || aktivitetsNavn.isBlank()) { // 3 (3a || 3b)
-            throw new OperationNotAllowedException("Aktivitet skal vælges");
-        }
+        tjek_AktivitetErValgt(aktivitetsNavn); // 3 (3a || 3b)
 
         if (timer == null || timer <= 0) { // 4 (4a || 4b)
             throw new OperationNotAllowedException("Antal timer skal være større end 0");
@@ -317,11 +311,7 @@ public class Planlaegningsvaerktoej {
             throw new OperationNotAllowedException("Antal timer kan ikke overstige 24 timer per dag");
         }
 
-        Projekt projekt = findProjekt(projektNr);
-
-        if (projekt == null) { // 6
-            throw new OperationNotAllowedException("Projekt findes ikke");
-        }
+        Projekt projekt = tjek_ProjektetFindes(projektNr); // 6
 
         // --- DbC PRE-CONDITION ---
         Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
@@ -341,11 +331,11 @@ public class Planlaegningsvaerktoej {
     }
 
     public double visEgneTimer() throws OperationNotAllowedException {
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
 
         String initialer = loggedInUser.getInitialer();
+
         double total = 0;
 
         for (Projekt p : this.projekter) {
