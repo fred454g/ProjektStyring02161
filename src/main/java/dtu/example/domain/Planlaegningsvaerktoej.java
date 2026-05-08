@@ -534,9 +534,7 @@ public class Planlaegningsvaerktoej {
         assert slutUge > 0 && slutUge <= 52 : "Pre-condition: Ugyldig slutUge ("+slutUge+")";
         assert startUge <= slutUge : "Pre-condition: Startuge må ikke være efter slutuge";
             
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd();
 
         List<Medarbejder> ledige = new ArrayList<>();
 
@@ -606,9 +604,7 @@ public class Planlaegningsvaerktoej {
     public void registrerFravaer(String type, Integer startUge, Integer slutUge)
             throws OperationNotAllowedException {
 
-        if (this.loggedInUser == null) {
-            throw new OperationNotAllowedException("Ingen bruger logged in");
-        }
+        tjek_BrugerErLoggedInd();
 
         if (type == null || type.isBlank()) {
             throw new OperationNotAllowedException("Fraværstype må ikke være tom");
