@@ -405,17 +405,17 @@ public class Planlaegningsvaerktoej {
      */
     public boolean redigerAktivitet(String projektNummer, String aktivitetsNummer, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
         
-        tjek_BrugerErLoggedInd();
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
 
-        tjek_ProjektErValgt(projektNummer);
+        tjek_ProjektErValgt(projektNummer); // Fejlscenarie 2
 
-        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
+        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer); // Fejlscenarie 3
 
-        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt);
+        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt); // Fejlscenarie 4
 
-        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 5
 
-        Aktivitet aktivitetFoerOpdatering = tjek_AktivitetFindes(projekt, aktivitetsNummer);
+        Aktivitet aktivitetFoerOpdatering = tjek_AktivitetFindes(projekt, aktivitetsNummer); // Fejlscenarie 6
 
 
         projekt.opdaterAktivitet(aktivitetsNummer, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);

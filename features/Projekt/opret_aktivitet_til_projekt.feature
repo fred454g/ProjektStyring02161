@@ -39,8 +39,7 @@ Feature: Opret aktivitet til projekt
         Then giver systemet fejlmeddelelsen "Aktivitetsnavn er i brug"
 
     Scenario: Sccesscenarie - Opret aktivitet til projekt
-        When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med budgetteret tid 10.0 starttidspunkt 1 sluttidspunkt 2
-        And medarbejderen angiver startuge 10, slutuge 14 og estimeret tid 50.0 timer for aktiviteten "Backend API" på projekt "26001"
+        When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med budgetteret tid 50.0 starttidspunkt 10 sluttidspunkt 14
         Then giver systenet ingen fejlmeddelelse
         And er aktiviteten "Backend API" oprettet på projekt "26001"
         And aktiviteten "Backend API" på projekt "26001" har startuge 10, slutuge 14 og estimeret tid 50.0 timer

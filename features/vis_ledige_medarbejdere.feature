@@ -28,7 +28,8 @@ Feature: Vis ledige medarbejdere
         Given at medarbejderen "huba" er tilknyttet projekt "26001"
         And at aktiviteten "Backend" findes på projekt "26001"
         And at medarbejderen "huba" er tilknyttet aktiviteten "Backend" på projekt "26001"
-        And medarbejderen angiver startuge 10, slutuge 14 og estimeret tid 200.0 timer for aktiviteten "Backend" på projekt "26001"
+        And medarbejderen redigerer aktiviteten "Backend" paa projekt "26001" til budgetteret tid 200.0 starttidspunkt 10 sluttidspunkt 14
+        Then giver systenet ingen fejlmeddelelse
         When medarbejderen søger efter ledige medarbejdere i uge 12
         Then fremgår "anda" af listen over ledige medarbejdere
 
