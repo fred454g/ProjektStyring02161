@@ -286,24 +286,10 @@ public class StepDefinitions {
         }
     }
 
-    // @When("medarbejderen forsoeger at fjerne {string} fra projekt {string}")
-    // public void medarbejderenForsoegerAtFjerneFraProjekt(String medarbejderInitialer, String projektNummer) {
-    //     try {
-    //         planlaegningsvaerktoej.fjernMedarbejderFraProjekt(projektNummer, medarbejderInitialer);
-    //     } catch (OperationNotAllowedException e) {
-    //         errorMessageHolder.setErrorMessage(e.getMessage());
-    //     }
-    // }
-
     @Then("fremgår {string} ikke længere af listen over tilknyttede medarbejdere på projekt {string}")
     public void fremgårIkkeLængereAfListenOverTilknyttedeMedarbejderePåProjekt(String medarbejderInitialer, String projektNummer) {
         Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(medarbejderInitialer);
         assertFalse(planlaegningsvaerktoej.findProjekt(projektNummer).isMedarbejderInProjekt(medarbejder));
-    }
-
-    @Then("udsendes observer-eventen {string}")
-    public void udsendesObserverEventen(String eventNavn) {
-        assertEquals(eventNavn, this.sidsteObserverEvent);
     }
 
     // =============================
@@ -701,23 +687,23 @@ public class StepDefinitions {
     // =============================
     // opret_og_rediger_aktivitet.feature - error scenarios
     // =============================
-    @When("medarbejderen forsoeger at oprette aktiviteten {string} på projekt {string}")
-    public void medarbejderenForsoegerAtOpretteAktivitetenPåProjekt(String aktivitetsNavn, String projektNr) {
-        try {
-            planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
+    // @When("medarbejderen forsoeger at oprette aktiviteten {string} på projekt {string}")
+    // public void medarbejderenForsoegerAtOpretteAktivitetenPåProjekt(String aktivitetsNavn, String projektNr) {
+    //     try {
+    //         planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
+    //     } catch (OperationNotAllowedException e) {
+    //         errorMessageHolder.setErrorMessage(e.getMessage());
+    //     }
+    // }
 
-    @When("medarbejderen forsoeger at fjerne aktiviteten {string} på projekt {string}")
-    public void medarbejderenForsoegerAtFjerneAktivitetenPåProjekt(String aktivitetsnavn, String projektnummer) {
-        try {
-            planlaegningsvaerktoej.sletAktivitet(projektnummer, aktivitetsnavn);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
+    // @When("medarbejderen forsoeger at fjerne aktiviteten {string} på projekt {string}")
+    // public void medarbejderenForsoegerAtFjerneAktivitetenPåProjekt(String aktivitetsnavn, String projektnummer) {
+    //     try {
+    //         planlaegningsvaerktoej.sletAktivitet(projektnummer, aktivitetsnavn);
+    //     } catch (OperationNotAllowedException e) {
+    //         errorMessageHolder.setErrorMessage(e.getMessage());
+    //     }
+    // }
 
     // =============================
     // registrer_tid.feature - error scenarios

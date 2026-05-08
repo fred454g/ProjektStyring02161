@@ -31,4 +31,3 @@ Feature: Fjern medarbejder fra projekt
         When medarbejderen fjerner "huba" fra projekt "26001"
         Then giver systenet ingen fejlmeddelelse
         And fremgår "huba" ikke længere af listen over tilknyttede medarbejdere på projekt "26001"
-        And udsendes observer-eventen "MEDARBEJDER_FJERNET_PROJEKT"

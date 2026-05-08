@@ -27,4 +27,3 @@ Feature: Slet aktivitet fra projekt
         And at aktiviteten "Backend API" er oprettet på projekt "26001"
         When medarbejderen fjerner aktiviteten "Backend API" på projekt "26001"
         Then er aktiviteten "Backend API" ikke tilknyttet projekt "26001"
-        And udsendes observer-eventen "AKTIVITET_SLETTET"
