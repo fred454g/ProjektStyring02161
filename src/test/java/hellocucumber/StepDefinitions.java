@@ -68,8 +68,15 @@ public class StepDefinitions {
     }
 
     // =============================
-    // opret_projekt.feature
+    // Generelle
     // =============================
+
+    @Then("giver systemet fejlmeddelelsen {string}")
+    public void giverSystemetFejlmeddelelsen(String fejlMeddelelse) throws Exception {
+
+        assertEquals(fejlMeddelelse, this.errorMessageHolder.getErrorMessage());
+    
+    }
 
     @Given("at medarbejderen {string} er logget ind i systemet")
     public void atMedarbejderenErLoggetIndISystemet(String medarbejderInitialer) {
@@ -79,6 +86,25 @@ public class StepDefinitions {
             errorMessageHolder.setErrorMessage(e.getMessage());
         }
     }
+
+    @Given("at medarbejderen {string} tilfoejes til systemet")
+    public void atMedarbejderenTilfoejesTilSystemet(String initialer) throws OperationNotAllowedException {
+        planlaegningsvaerktoej.nyMedarbejder(initialer);
+    }
+
+    @Given("at projektet {string} findes i systemet")
+    public void atProjektetFindesISystemet(String projektnummer) {
+        assertEquals(projektnummer, planlaegningsvaerktoej.findProjekt(projektnummer).getProjektNummer());
+    }
+
+    @Given("at medarbejderen med initialerne {string} findes i systemet")
+    public void atMedarbejderenMedInitialerneFindesISystemet(String initialer) {
+        assertEquals(initialer, planlaegningsvaerktoej.findMedarbejder(initialer).getInitialer());
+    }
+
+    // =============================
+    // opret_projekt.feature
+    // =============================
 
     @When("medarbejderen forsoeger at oprette et projekt uden at angive et navn")
     public void medarbejderenForsoegerAtOpretteEtProjektUdenAtAngiveEtNavn() {
@@ -107,13 +133,6 @@ public class StepDefinitions {
         assertEquals(projektnummer, fundneProjekt.getProjektNummer());
     }
 
-    @Then("giver systemet fejlmeddelelsen {string}")
-    public void giverSystemetFejlmeddelelsen(String fejlMeddelelse) throws Exception {
-        assertEquals(fejlMeddelelse, this.errorMessageHolder.getErrorMessage());
-    }
-
-
-
     // =============================
     // slet_projekt.feature
     // =============================
@@ -131,7 +150,6 @@ public class StepDefinitions {
         }
     }
 
-
     @Then("er projektet med nummeret {string} slettet fra applikationen")
     public void erProjektetMedNummeretSlettetFraApplikationen(String projektNummer) {
 
@@ -139,7 +157,6 @@ public class StepDefinitions {
     
         assertNull(planlaegningsvaerktoej.findProjekt(projektNummer));
     }
-
 
 
     // =============================
@@ -179,20 +196,6 @@ public class StepDefinitions {
     // =============================
     // opdater_projekt_med_projektleder.feature
     // =============================
-    @Given("at medarbejderen {string} tilfoejes til systemet")
-    public void atMedarbejderenTilfoejesTilSystemet(String initialer) throws OperationNotAllowedException {
-        planlaegningsvaerktoej.nyMedarbejder(initialer);
-    }
-
-    @Given("at projektet {string} findes i systemet")
-    public void atProjektetFindesISystemet(String projektnummer) {
-        assertEquals(projektnummer, planlaegningsvaerktoej.findProjekt(projektnummer).getProjektNummer());
-    }
-
-    @Given("at medarbejderen med initialerne {string} findes i systemet")
-    public void atMedarbejderenMedInitialerneFindesISystemet(String initialer) {
-        assertEquals(initialer, planlaegningsvaerktoej.findMedarbejder(initialer).getInitialer());
-    }
 
     @When("medarbejderen forsoeger at tilknytte {string} som projektleder til projekt {string}")
     public void medarbejderenForsoegerAtTilknytteSomProjektlederTilProjekt(String initialer, String projektnummer) {
@@ -216,12 +219,13 @@ public class StepDefinitions {
 
     @Then("er {string} ikke længere projektleder for projekt {string}")
     public void erIkkeLængereProjektlederForProjekt(String initialer, String projektnummer) {
+        
         Medarbejder medarbejder = planlaegningsvaerktoej.findMedarbejder(initialer);
+        
         Projekt projekt = planlaegningsvaerktoej.findProjekt(projektnummer);
-        assertNotEquals(medarbejder, projekt.getProjektleder(), 
-            "Medarbejderen skal ikke længere være projektleder");
+        
+        assertNotEquals(medarbejder, projekt.getProjektleder(), "Medarbejderen skal ikke længere være projektleder");
     }
-
 
 
     // =============================

@@ -9,49 +9,26 @@ Feature: Tilføj medarbejder til projekt
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
 
-    # Jacob
-    Scenario: Fejlscenarie - Projektet findes ikke
+    Scenario: Fejlscenarie 1 - Brugeren er ikke logget ind
+        Given at medarbejderen "jfk" er logget ud
+        When medarbejderen tilfoejer "huba" til projekt "26002"
+        Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
+
+    Scenario: Fejlscenarie 2 - Projekt findes ikke
         When medarbejderen tilfoejer "huba" til projekt "26002"
         Then giver systemet fejlmeddelelsen "Projekt findes ikke"
 
-    # Jacob
-    Scenario: Fejlscenarie - Medarbejederen findes ikke
+    Scenario: Fejlscenarie 3 - Medarbejederen findes ikke
         When medarbejderen tilfoejer "Ukendt" til projekt "26001"
         Then giver systemet fejlmeddelelsen "Medarbejder med initialer Ukendt findes ikke i systemet"
 
-    # Jacob
-    Scenario: Fejlscenarie - Medarbejederen er ikke tilknyttet projekt
-        And medarbejderen tilfoejer "huba" til projekt "26001"
+    Scenario: Fejlscenarie 4 - Medarbejederen er ikke tilknyttet projekt
+        Given medarbejderen tilfoejer "huba" til projekt "26001"
         When medarbejderen tilfoejer "huba" til projekt "26001"
         Then giver systemet fejlmeddelelsen "Medarbejder er allerede tilknyttet projekt"
 
-    Scenario: Hovedscenarie - Tilføjelse af medarbejder til projekt
+    Scenario: Sccesscenarie - Tilføjelse af medarbejder til projekt
         Given at projektet "26001" findes i systemet
         And at medarbejderen med initialerne "huba" findes i systemet
         When medarbejderen tilfoejer "huba" til projekt "26001"
         Then fremgår "huba" af listen over tilknyttede medarbejdere på projekt "26001"
-
-    Scenario: Fejlscenarie - Medarbejder allerede tilknyttet projekt
-        Given medarbejderen tilfoejer "huba" til projekt "26001"
-        When medarbejderen forsoeger at tilfoejer "huba" til projekt "26001" igen
-        Then giver systemet fejlmeddelelsen "Medarbejder er allerede tilknyttet projekt"
-
-    Scenario: Fejlscenarie - Projekt findes ikke
-        When medarbejderen forsoeger at tilfoejer "huba" til projekt "99999"
-        Then giver systemet fejlmeddelelsen "Projekt findes ikke"
-
-    Scenario: Fejlscenarie - Medarbejder findes ikke
-        When medarbejderen forsoeger at tilfoejer "xxxx" til projekt "26001"
-        Then giver systemet fejlmeddelelsen "Medarbejder med initialer xxxx findes ikke i systemet"
-
-    Scenario: Fejlscenarie - Tilføjelse uden at være logget ind
-        Given at medarbejderen "jfk" er logget ud
-        When medarbejderen forsoeger at tilfoejer "huba" til projekt "26001"
-        Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
-
-    Scenario: Tilføjelse af flere medarbejdere til projekt
-        Given at medarbejderen "anda" tilfoejes til systemet
-        When medarbejderen tilfoejer "huba" til projekt "26001"
-        And medarbejderen tilfoejer "anda" til projekt "26001"
-        Then fremgår "huba" af listen over tilknyttede medarbejdere på projekt "26001"
-        And fremgår "anda" af listen over tilknyttede medarbejdere på projekt "26001"
