@@ -382,9 +382,9 @@ public class StepDefinitions {
     // =============================
 
     @When("medarbejderen tilfoejer {string} til aktiviteten {string} paa projekt {string}")
-    public void medarbejderenTilknytterTilAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
-            String projektNr) {
+    public void medarbejderenTilknytterTilAktivitetenPåProjekt(String initialer, String aktivitetsNavn, String projektNr) {
         try {
+            errorMessageHolder.setErrorMessage(null);
             planlaegningsvaerktoej.tilfoejMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());
@@ -399,7 +399,6 @@ public class StepDefinitions {
         assertTrue(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn)
                 .isMedarbejderInAktivitet(medarbejder));
     }
-
 
     // =============================
     // fjern_medarbejder_fra_aktivitet
@@ -421,8 +420,6 @@ public class StepDefinitions {
         assertFalse(planlaegningsvaerktoej.findProjekt(projektNr).findAktivitet(aktivitetsNavn)
                 .isMedarbejderInAktivitet(medarbejder));
     }
-
-
 
     // =============================
     // indlaes_hr_liste

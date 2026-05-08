@@ -151,9 +151,9 @@ public class Projekt {
     public void tilfoejMedarbejderTilAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
         // Jacob
 
-        tjek_MedarbejderenErTilfoejetTilProjektet(medarbejder);
+        tjek_MedarbejderenErTilfoejetTilProjektet(medarbejder); // Fejlscenarie 4
 
-        Aktivitet aktivitet = tjek_AktivotetenFindesIProjektet(aktivitetsNavn);
+        Aktivitet aktivitet = tjek_AktivotetenFindesIProjektet(aktivitetsNavn); // Fejlscenarie 5
 
         aktivitet.tilfoejMedarbejder(medarbejder);
     }

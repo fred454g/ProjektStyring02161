@@ -90,7 +90,7 @@ public class Aktivitet {
 
             this.tilknyttedeMedarbejdere.add(medarbejder);
         
-        } else {
+        } else { // Fejlscenarie 6
 
             throw new OperationNotAllowedException("Medarbejder er allerede tilknyttet aktivitet");
         }

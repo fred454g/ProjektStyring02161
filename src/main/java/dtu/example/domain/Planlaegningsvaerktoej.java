@@ -460,11 +460,11 @@ public class Planlaegningsvaerktoej {
     public boolean tilfoejMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
         // Jacob
 
-        tjek_BrugerErLoggedInd();
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
         
-        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 2
 
-        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // Fejlscenarie 3
 
         // --- DbC PRE-CONDITION ---
         Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
