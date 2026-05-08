@@ -7,7 +7,7 @@ Som medarbejder vil jeg gerne kunne slette et projekt fra applikationen når pro
         And medarbejderen opretter et projekt med navnet "Projekt_1"
         And medarbejderen opretter et projekt med navnet "Projekt_2"
 
-    Scenario: Fejlscenarie 1 - Brugeren er ikke at være logget ind
+    Scenario: Fejlscenarie 1 - Brugeren er ikke logget ind
         Given at medarbejderen "jfk" er logget ud
         When medarbejderen forsoeger at slette projektet med nummeret "26001"
         Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
@@ -24,5 +24,7 @@ Som medarbejder vil jeg gerne kunne slette et projekt fra applikationen når pro
 
     Scenario: Sccesscenarie - Sletning af projekt lykkes
         Given at projektet "26001" med navnet "Projekt_1" findes i systemet
+        And at projektet "26002" med navnet "Projekt_2" findes i systemet
         When medarbejderen forsoeger at slette projektet med nummeret "26001"
         Then er projektet med nummeret "26001" slettet fra applikationen
+        And at projektet "26002" med navnet "Projekt_2" findes i systemet
