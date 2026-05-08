@@ -100,7 +100,7 @@ public class Aktivitet {
     public void fjernMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
         // Jacob
 
-        if (!isMedarbejderInAktivitet(medarbejder)) {
+        if (!isMedarbejderInAktivitet(medarbejder)) { // Fejlscenarie 6 
 
             throw new OperationNotAllowedException("Medarbejder er ikke i aktivitet");
         }

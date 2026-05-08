@@ -488,11 +488,11 @@ public class Planlaegningsvaerktoej {
     public boolean fjernMedarbejderFraAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
         // Jacob
 
-        tjek_BrugerErLoggedInd();
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
   
-        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 2
 
-        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // Fejlscenarie 3
 
         projekt.fjernMedarbejderFraAktivitet(aktivitetsNavn, medarbejder);
         observers.firePropertyChange("MEDARBEJDER_FJERNET_AKTIVITET", medarbejder, projekt.findAktivitet(aktivitetsNavn));   
