@@ -110,18 +110,13 @@ public class Aktivitet {
 
     public void registrerTid(Medarbejder medarbejder, Double timer) throws OperationNotAllowedException {
         // PRE-CONDITIONS (Design by Contract)
-        // Tjekker at de logiske grundbetingelser for metoden er opfyldt
+        // Klienten (Planlaegningsvaerktoej-facaden) skal sikre disse er opfyldt før kaldet.
+        // Defensive validering ligger i facade-laget; her er kun assert-baseret kontrakt-failsafe.
         assert medarbejder != null : "Pre-condition fejlede: Medarbejder må ikke være null";
-        assert timer > 0 : "Pre-condition fejlede: Timer skal være større end 0";
+        assert timer != null && timer > 0 : "Pre-condition fejlede: Timer skal være større end 0";
 
         // Gemmer den gamle tilstand til brug i post-condition
         double gammelTotalTid = getTotalRegistreretTid();
-
-        // FORRETNINGSLOGIK (niko)
-
-        if (timer <= 0) {
-            throw new OperationNotAllowedException("Tid skal være positiv"); // Kaster exception over for brugeren
-        }
 
         // 1. Opretter ny tidsregistrering
         Tidsregistrering registrering = new Tidsregistrering(LocalDate.now(), timer, medarbejder.getInitialer());
