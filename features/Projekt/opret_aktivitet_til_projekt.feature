@@ -1,5 +1,3 @@
-# Jaocb
-
 Feature: Opret aktivitet til projekt
 
     Background: Tilføj jfk

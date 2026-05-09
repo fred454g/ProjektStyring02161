@@ -1,5 +1,3 @@
-# Jacob
-
 Feature: Rediger aktivitet til projekt
 
     Background: Tilføj jfk

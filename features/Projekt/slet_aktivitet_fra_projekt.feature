@@ -1,4 +1,3 @@
-# Jaocb
 Feature: Slet aktivitet fra projekt
 
     Background: Tilføj jfk
