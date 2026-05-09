@@ -594,38 +594,6 @@ public class StepDefinitions {
     }
 
     // =============================
-    // rediger_tid.feature
-    // =============================
-
-    @When("medarbejderen redigerer timeforbruget til {double} timer paa aktiviteten {string} paa projekt {string}")
-    public void medarbejderenRedigererTimeforbrugetTilTimerPaaAktivitetenPaaProjekt(Double timer, String aktivitetsNavn, String projektNr) {
-        try {
-            errorMessageHolder.setErrorMessage(null);
-            planlaegningsvaerktoej.redigerTid(projektNr, aktivitetsNavn, timer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
-
-    // @When("medarbejderen retter tidsregistrering til {double} timer på aktiviteten {string} på projekt {string} for dags dato")
-    // public void medarbejderenRetterTidsregistreringTilTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
-    //     try {
-    //         planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
-    //     } catch (OperationNotAllowedException e) {
-    //         errorMessageHolder.setErrorMessage(e.getMessage());
-    //     }
-    // }
-
-    // @Then("er det samlede tidsforbrug for {string} på aktiviteten {string} på projekt {string} nu {double} timer")
-    // public void erDetSamledeTidsforbrugForPåAktivitetenPåProjektNuTimer(String initialer, String aktivitetsNavn, String projektNr, Double forventetTid) {
-    //     Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
-    //     Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
-    //     double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
-    //     assertEquals(forventetTid, registreret);
-    // }
-
-    // =============================
     // vis_egne_timer.feature
     // =============================
     @When("medarbejderen anmoder om at se sine egne tidsregistreringer")
