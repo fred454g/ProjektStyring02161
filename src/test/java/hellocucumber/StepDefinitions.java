@@ -688,8 +688,6 @@ public class StepDefinitions {
         );
     }
 
-
-
     // =============================
     // registrer_fravaer.feature - additional scenarios
     // =============================
