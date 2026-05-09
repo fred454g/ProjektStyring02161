@@ -6,6 +6,9 @@ import java.util.List;
 import java.nio.file.Paths;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import dtu.example.persistence.IProjektRepository;
+import dtu.example.persistence.IMedarbejderRepository;
+import dtu.example.persistence.IFravaerRepository;
 import dtu.example.persistence.ProjektRepository;
 import dtu.example.persistence.MedarbejderRepository;
 import dtu.example.persistence.FravaerRepository;
@@ -17,9 +20,9 @@ public class Planlaegningsvaerktoej {
     private PropertyChangeSupport observers = new PropertyChangeSupport(this);
     private Medarbejder loggedInUser = null;
     private int hoejesteProjektnummer = 1;
-    private ProjektRepository projektRepository;
-    private MedarbejderRepository medarbejderRepository;
-    private FravaerRepository fravaerRepository;
+    private IProjektRepository projektRepository;
+    private IMedarbejderRepository medarbejderRepository;
+    private IFravaerRepository fravaerRepository;
 
     // ====================
     // Constructor
@@ -42,7 +45,7 @@ public class Planlaegningsvaerktoej {
      * @param mr medarbejderrepo
      * @param fr fravaerrepo
      */
-    public Planlaegningsvaerktoej(ProjektRepository pr, MedarbejderRepository mr, FravaerRepository fr) {
+    public Planlaegningsvaerktoej(IProjektRepository pr, IMedarbejderRepository mr, IFravaerRepository fr) {
         this.projektRepository = pr;
         this.medarbejderRepository = mr;
         this.fravaerRepository = fr;
