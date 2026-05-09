@@ -120,29 +120,18 @@ public class Projekt {
         return true;
     }
 
-    public boolean opdaterForventedeAntalArbejdstimer(String aktivitetsInfo, float timer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
-        Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
-        
-        if (aktivitet == null) { // 7
-            throw new OperationNotAllowedException("Aktivitet findes ikke");
-        }
-
-        aktivitet.setForventedeAntalArbejdstimer(timer);
-        aktivitet.setStarttidspunkt(starttidspunkt);
-        aktivitet.setSluttidspunkt(sluttidspunkt);
-
-        return true;
-    }
-
     public void sletAktivitet(Aktivitet aktivitet) throws OperationNotAllowedException {
 
         this.aktiviteter.remove(aktivitet);
     }
 
     public void opdaterAktivitet(String aktivitetsInfo, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
-        
         Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
-
+        
+        if (aktivitet == null) {
+            throw new OperationNotAllowedException("Aktivitet findes ikke");
+        }
+        
         aktivitet.setForventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
         aktivitet.setStarttidspunkt(starttidspunkt);
         aktivitet.setSluttidspunkt(sluttidspunkt);
