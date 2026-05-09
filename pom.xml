@@ -95,6 +95,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
+				<argLine>-ea</argLine>
 					<properties>
 						<!-- Work around. Surefire does not include enough
                              information to disambiguate between different
@@ -111,6 +112,9 @@
 				<version>0.0.8</version>
 				<configuration>
 					<mainClass>hellofx/dtu.example.ui.App</mainClass>
+					<options>
+            			<option>-ea</option>
+        			</options>
 				</configuration>
 			</plugin>
 		</plugins>
