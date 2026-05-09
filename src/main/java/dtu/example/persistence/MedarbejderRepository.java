@@ -9,7 +9,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedarbejderRepository {
+public class MedarbejderRepository implements IMedarbejderRepository {
 
     private final Path hrListePath;
     private long sidsteHrListeOpdatering = -1L;

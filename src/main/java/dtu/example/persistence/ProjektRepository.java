@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjektRepository {
+public class ProjektRepository implements IProjektRepository {
     private final Path projektSti;
 
     public ProjektRepository(Path projektSti) {
