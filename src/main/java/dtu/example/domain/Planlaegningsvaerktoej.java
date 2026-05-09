@@ -291,8 +291,7 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
-    public void registrerTid(String projektNr, String aktivitetsNavn, Double timer)
-            throws OperationNotAllowedException {
+    public void registrerTid(String projektNr, String aktivitetsNavn, Double timer) throws OperationNotAllowedException {
 
         // Der bliver udført struktureret white-box test på denne metode
 
@@ -302,13 +301,9 @@ public class Planlaegningsvaerktoej {
 
         tjek_AktivitetErValgt(aktivitetsNavn); // 3 (3a || 3b)
 
-        if (timer == null || timer <= 0) { // 4 (4a || 4b)
-            throw new OperationNotAllowedException("Antal timer skal være større end 0");
-        }
+        tjek_AntalTimerStoerreEnd0(timer); // 4 (4a || 4b)
 
-        if (timer > 24) { // 5
-            throw new OperationNotAllowedException("Antal timer kan ikke overstige 24 timer per dag");
-        }
+        tjek_AntalTimerMindreEnd24(timer); // 5
 
         Projekt projekt = tjek_ProjektetFindes(projektNr); // 6
 
@@ -817,6 +812,20 @@ public class Planlaegningsvaerktoej {
         
         if (starttidspunkt > sluttidspunkt) {
             throw new OperationNotAllowedException("Startuge kan ikke være efter slutuge");
+        }
+    }
+
+    private void tjek_AntalTimerStoerreEnd0(Double timer) throws OperationNotAllowedException {
+        
+        if (timer == null || timer <= 0) { 
+            throw new OperationNotAllowedException("Antal timer skal være større end 0");
+        }
+    }
+
+    private void tjek_AntalTimerMindreEnd24(Double timer) throws OperationNotAllowedException {
+        
+        if (timer > 24) {
+            throw new OperationNotAllowedException("Antal timer kan ikke overstige 24 timer per dag");
         }
     }
 

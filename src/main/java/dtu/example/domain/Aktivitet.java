@@ -135,6 +135,11 @@ public class Aktivitet {
         assert this.tidsregistreringer.contains(registrering) : "Post-condition fejlede: Registreringen blev ikke gemt";
     }
 
+    public void regdigerTid(Medarbejder medarbejder, Double timer) throws OperationNotAllowedException {
+
+        
+    }
+    
     public double getRegistreretTidForMedarbejder(String initialer) {
         double total = 0;
 

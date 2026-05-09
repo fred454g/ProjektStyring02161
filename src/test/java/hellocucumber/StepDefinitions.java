@@ -141,7 +141,10 @@ public class StepDefinitions {
         planlaegningsvaerktoej.opretProjekt(projektNavn);
     }
 
-
+    @Given("at medarbejderen tidligere har registreret {double} timer paa aktiviteten {string} paa projekt {string}")
+    public void atMedarbejderenTidligereHarRegistreretTimerPaaAktivitetenPaaProjekt(Double timer, String aktivitetsNavn, String projektNr) throws OperationNotAllowedException {
+        planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
+    }
 
     // =============================
     // opret_projekt.feature
@@ -481,9 +484,6 @@ public class StepDefinitions {
         assertNull(planlaegningsvaerktoej.findMedarbejder("temp"), "temp skulle fjernes ved HR-sync");
     }
 
-    // =============================
-    // indlaes_hr_liste.feature - additional scenarios
-    // =============================
     @Given("at en HR-fil med duplikerede initialer er tilgængelig")
     public void atEnHRFilMedDuplichereteInitialerErTilgængelig() {
         try {
@@ -594,6 +594,38 @@ public class StepDefinitions {
     }
 
     // =============================
+    // rediger_tid.feature
+    // =============================
+
+    @When("medarbejderen redigerer timeforbruget til {double} timer paa aktiviteten {string} paa projekt {string}")
+    public void medarbejderenRedigererTimeforbrugetTilTimerPaaAktivitetenPaaProjekt(Double timer, String aktivitetsNavn, String projektNr) {
+        try {
+            errorMessageHolder.setErrorMessage(null);
+            planlaegningsvaerktoej.redigerTid(projektNr, aktivitetsNavn, timer);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+
+    // @When("medarbejderen retter tidsregistrering til {double} timer på aktiviteten {string} på projekt {string} for dags dato")
+    // public void medarbejderenRetterTidsregistreringTilTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
+    //     try {
+    //         planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
+    //     } catch (OperationNotAllowedException e) {
+    //         errorMessageHolder.setErrorMessage(e.getMessage());
+    //     }
+    // }
+
+    // @Then("er det samlede tidsforbrug for {string} på aktiviteten {string} på projekt {string} nu {double} timer")
+    // public void erDetSamledeTidsforbrugForPåAktivitetenPåProjektNuTimer(String initialer, String aktivitetsNavn, String projektNr, Double forventetTid) {
+    //     Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
+    //     Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
+    //     double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
+    //     assertEquals(forventetTid, registreret);
+    // }
+
+    // =============================
     // vis_egne_timer.feature
     // =============================
     @When("medarbejderen anmoder om at se sine egne tidsregistreringer")
@@ -688,25 +720,7 @@ public class StepDefinitions {
         );
     }
 
-    // =============================
-    // rediger_tidsregistrering.feature
-    // =============================
-    @When("medarbejderen retter tidsregistrering til {double} timer på aktiviteten {string} på projekt {string} for dags dato")
-    public void medarbejderenRetterTidsregistreringTilTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
-        try {
-            planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
 
-    @Then("er det samlede tidsforbrug for {string} på aktiviteten {string} på projekt {string} nu {double} timer")
-    public void erDetSamledeTidsforbrugForPåAktivitetenPåProjektNuTimer(String initialer, String aktivitetsNavn, String projektNr, Double forventetTid) {
-        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
-        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
-        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
-        assertEquals(forventetTid, registreret);
-    }
 
     // =============================
     // registrer_fravaer.feature - additional scenarios
