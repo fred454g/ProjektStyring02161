@@ -1,8 +1,6 @@
-# Jacob
+Feature: Tilkfoej medarbejder til aktivitet
 
-Feature: Tilknyt medarbejder på aktivitet
-
-    Background: Tilføj jfk og huba
+    Background: Grunddata for tilknytning af medarbejder til aktivitet
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "huba" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
@@ -27,7 +25,7 @@ Feature: Tilknyt medarbejder på aktivitet
         When medarbejderen tilfoejer "jfk" til aktiviteten "Backend API" paa projekt "26001"
         Then giver systemet fejlmeddelelsen "Medarbejder ikke tilknyttet projekt"
 
-    Scenario: Fejlscenarie 5 - Medarbejederen er ikke tilknyttet projekt
+    Scenario: Fejlscenarie 5 - Aktiviteten findes ikke i projektet
         When medarbejderen tilfoejer "huba" til aktiviteten "Frontend" paa projekt "26001"
         Then giver systemet fejlmeddelelsen "Aktivitet findes ikke i projekt"
 
@@ -37,7 +35,7 @@ Feature: Tilknyt medarbejder på aktivitet
         When medarbejderen tilfoejer "huba" til aktiviteten "Backend API" paa projekt "26001"
         Then giver systemet fejlmeddelelsen "Medarbejder er allerede tilknyttet aktivitet"
 
-    Scenario: Sccesscenarie - Tilknyt medarbejder til aktivitet
+    Scenario: Succescenarie - Tilknyt medarbejder til aktivitet
         When medarbejderen tilfoejer "huba" til aktiviteten "Backend API" paa projekt "26001"
         Then giver systenet ingen fejlmeddelelse
         And er "huba" tilknyttet aktiviteten "Backend API" på projekt "26001"

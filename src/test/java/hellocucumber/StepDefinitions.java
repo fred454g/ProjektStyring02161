@@ -130,11 +130,21 @@ public class StepDefinitions {
         planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
     }
 
+    @Given("at projektet har en aktivitet {string} med budget på {int} timer")
+    public void at_projektet_har_en_aktivitet_med_budget_paa_timer(String aktivitetsNavn, Integer budget) throws Exception {
+        // Simulerer oprettelse af aktivitet i det netop oprettede projekt "26001"
+        // Bemærk: '10' og '12' er bare dummy start/slut uger for at få metoden til at køre
+        planlaegningsvaerktoej.opretAktivitet("26001", aktivitetsNavn, (double) budget, 10, 12);
+    }
     @Given("medarbejderen opretter et projekt med navnet {string}")
     public void medarbejderenOpretterEtProjektMedNavnet(String projektNavn) throws OperationNotAllowedException {
         planlaegningsvaerktoej.opretProjekt(projektNavn);
     }
 
+    @Given("at medarbejderen tidligere har registreret {double} timer paa aktiviteten {string} paa projekt {string}")
+    public void atMedarbejderenTidligereHarRegistreretTimerPaaAktivitetenPaaProjekt(Double timer, String aktivitetsNavn, String projektNr) throws OperationNotAllowedException {
+        planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
+    }
 
     // =============================
     // opret_projekt.feature
@@ -474,166 +484,6 @@ public class StepDefinitions {
         assertNull(planlaegningsvaerktoej.findMedarbejder("temp"), "temp skulle fjernes ved HR-sync");
     }
 
-    // =============================
-    // registrer_tid.feature
-    // =============================
-
-    @When("medarbejderen registrerer {double} timer på aktiviteten {string} på projekt {string} for dags dato")
-    public void medarbejderenRegistrererTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
-        try {
-            errorMessageHolder.setErrorMessage(null);
-            planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
-    @Then("er {double} timer tilføjet til det samlede tidsforbrug for {string} på aktiviteten {string} på projekt {string}")
-    public void erTimerTilføjetTilDetSamledeTidsforbrugForPåAktivitetenPåProjekt(Double timer, String initialer, String aktivitetsNavn, String projektNr) {
-        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
-        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
-        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
-        assertEquals(timer, registreret);
-    }
-
-    // =============================
-    // vis_egne_timer.feature
-    // =============================
-    @When("medarbejderen anmoder om at se sine egne tidsregistreringer")
-    public void medarbejderenAnmoderOmAtSeSineEgneTidsregistreringer() {
-        try {
-            totalTimer = planlaegningsvaerktoej.visEgneTimer();
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
-    @Then("viser systemet {double} timer totalt for medarbejderen")
-    public void viserSystemetTimerTotaltForMedarbejderen(Double timer) {
-        assertEquals(timer, totalTimer);
-    }
-
-    @Then("systemet viser {double} timer på aktiviteten {string} på projekt {string}")
-    public void systemetViserTimerPåAktivitetenPåProjekt(Double timer, String aktivitetsNavn, String projektNr) {
-        String initialer = planlaegningsvaerktoej.getLoggedinUserInitials();
-        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
-        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
-        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
-
-        assertEquals(timer, registreret);
-    }
-
-    // =============================
-    // registrer_fravaer.feature
-    // =============================
-
-    @When("medarbejderen registrerer fravær af typen {string} fra uge {int} til uge {int}")
-    public void medarbejderenRegistrererFraværAfTypenFraUgeTilUge(String type, Integer startUge, Integer slutUge) {
-        try {
-            planlaegningsvaerktoej.registrerFravaer(type, startUge, slutUge);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
-    @Then("er medarbejderen markeret som fraværende med typen {string} fra uge {int} til uge {int}")
-    public void erMedarbejderenMarkeretSomFraværendeMedTypenFraUgeTilUge(String type, Integer startUge, Integer slutUge) {
-        String initialer = planlaegningsvaerktoej.getLoggedinUserInitials();
-        assertTrue(planlaegningsvaerktoej.harFravaer(initialer, type, startUge, slutUge));
-    }
-
-
-    // ==========================================
-    // STEPS TIL RAPPORTGENERERING
-    // ==========================================
-
-    @Given("at medarbejderen er logget ind i systemet")
-    public void at_medarbejderen_er_logget_ind_i_systemet() throws Exception {
-        // Sikrer at systemet har data og logger ind
-        planlaegningsvaerktoej.nyMedarbejder("huba");
-        planlaegningsvaerktoej.userLogin("huba");
-    }
-
-    @Given("at projektet har en aktivitet {string} med budget på {int} timer")
-    public void at_projektet_har_en_aktivitet_med_budget_paa_timer(String aktivitetsNavn, Integer budget) throws Exception {
-        // Simulerer oprettelse af aktivitet i det netop oprettede projekt "26001"
-        // Bemærk: '10' og '12' er bare dummy start/slut uger for at få metoden til at køre
-        planlaegningsvaerktoej.opretAktivitet("26001", aktivitetsNavn, (double) budget, 10, 12);
-    }
-
-    @When("medarbejderen anmoder om en rapport for projekt {string}")
-    public void medarbejderen_anmoder_om_en_rapport_for_projekt(String projektNummer) throws Exception {
-        // Her trækker vi data ud af facaden, præcis som UI'en vil gøre det!
-        try {
-            // Check if user is logged in first
-            if (planlaegningsvaerktoej.getLoggedinUserInitials() == null) {
-                errorMessageHolder.setErrorMessage("Ingen bruger logged in");
-                return;
-            }
-        } catch (Exception e) {
-            errorMessageHolder.setErrorMessage("Ingen bruger logged in");
-            return;
-        }
-        try {
-            genereretRapport = planlaegningsvaerktoej.genererRapport(projektNummer);
-        } catch (OperationNotAllowedException e) {
-            // Normalize error message to match test expectations
-            String msg = e.getMessage();
-            if (msg.contains("Projektet findes ikke i systemet")) {
-                errorMessageHolder.setErrorMessage("Projektet findes ikke");
-            } else {
-                errorMessageHolder.setErrorMessage(msg);
-            }
-        }
-    }
-
-    @Then("modtager systemet en rapport, der indeholder projektnavnet {string}")
-    public void modtager_systemet_en_rapport_der_indeholder_projektnavnet(String forventetNavn) {
-        // Vi bruger JUnit's assertTrue til at bevise, at strengen indeholder det rigtige
-        assertTrue(genereretRapport.contains(forventetNavn), "Rapporten mangler projektnavnet");
-    }
-
-    @Then("rapporten viser at totalt budget er {int} timer")
-    public void rapporten_viser_at_totalt_budget_er_timer(Integer timer) {
-        assertTrue(
-                genereretRapport.contains("Budgetteret tid: " + timer + ".0 timer")
-                        || genereretRapport.contains("Total Budget: " + timer + ".0 timer")
-                        || genereretRapport.contains("Total Budget: " + timer + " timer"),
-                "Rapporten har forkert budget"
-        );
-    }
-
-    // =============================
-    // rediger_tidsregistrering.feature
-    // =============================
-    @When("medarbejderen retter tidsregistrering til {double} timer på aktiviteten {string} på projekt {string} for dags dato")
-    public void medarbejderenRetterTidsregistreringTilTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
-        try {
-            planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
-        } catch (OperationNotAllowedException e) {
-            errorMessageHolder.setErrorMessage(e.getMessage());
-        }
-    }
-
-    @Then("er det samlede tidsforbrug for {string} på aktiviteten {string} på projekt {string} nu {double} timer")
-    public void erDetSamledeTidsforbrugForPåAktivitetenPåProjektNuTimer(String initialer, String aktivitetsNavn, String projektNr, Double forventetTid) {
-        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
-        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
-        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
-        assertEquals(forventetTid, registreret);
-    }
-
-    // =============================
-    // registrer_fravaer.feature - additional scenarios
-    // =============================
-    @Then("forbliver det eksisterende antal medarbejdere uændret")
-    public void forbliverserDetEksisterendeAntalMedarbejdereUændret() {
-        assertNotNull(planlaegningsvaerktoej.findMedarbejder("jfk"));
-    }
-
-    // =============================
-    // indlaes_hr_liste.feature - additional scenarios
-    // =============================
     @Given("at en HR-fil med duplikerede initialer er tilgængelig")
     public void atEnHRFilMedDuplichereteInitialerErTilgængelig() {
         try {
@@ -714,32 +564,106 @@ public class StepDefinitions {
         assertNotNull(planlaegningsvaerktoej.findMedarbejder(initialer), "Medarbejderen " + initialer + " skal findes i systemet");
     }
 
+    @Then("rapporten viser at totalt registreret tid er {double} timer")
+    public void rapportenViserAtTotaltRegistreretTidErTimer(Double timer) {
+        assertTrue(genereretRapport.contains("Registreret tid: " + String.format("%.1f", timer)) ||
+                   genereretRapport.contains("Registreret tid: " + timer.intValue()),
+                "Rapporten skal indeholde den totalt registrerede tid");
+    }
+    
     // =============================
-    // vis_projekt_overblik.feature
+    // registrer_tid.feature
     // =============================
-    @When("medarbejderen anmoder om overblik for projekt {string}")
-    public void medarbejderenAnmoderOmOverblikForProjekt(String projektnummer) {
-        
+
+    @When("medarbejderen registrerer {double} timer på aktiviteten {string} på projekt {string} for dags dato")
+    public void medarbejderenRegistrererTimerPåAktivitetenPåProjektForDagsDato(Double timer, String aktivitetsNavn, String projektNr) {
+        try {
+            errorMessageHolder.setErrorMessage(null);
+            planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("er {double} timer tilføjet til det samlede tidsforbrug for {string} på aktiviteten {string} på projekt {string}")
+    public void erTimerTilføjetTilDetSamledeTidsforbrugForPåAktivitetenPåProjekt(Double timer, String initialer, String aktivitetsNavn, String projektNr) {
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
+        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
+        assertEquals(timer, registreret);
+    }
+
+    // =============================
+    // vis_egne_timer.feature
+    // =============================
+    @When("medarbejderen anmoder om at se sine egne tidsregistreringer")
+    public void medarbejderenAnmoderOmAtSeSineEgneTidsregistreringer() {
+        try {
+            errorMessageHolder.setErrorMessage(null);
+            totalTimer = planlaegningsvaerktoej.visEgneTimer();
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("viser systemet {double} timer totalt for medarbejderen")
+    public void viserSystemetTimerTotaltForMedarbejderen(Double timer) {
+        assertEquals(timer, totalTimer);
+    }
+
+    @Then("systemet viser {double} timer på aktiviteten {string} på projekt {string}")
+    public void systemetViserTimerPåAktivitetenPåProjekt(Double timer, String aktivitetsNavn, String projektNr) {
+        String initialer = planlaegningsvaerktoej.getLoggedinUserInitials();
+        Projekt projekt = planlaegningsvaerktoej.findProjekt(projektNr);
+        Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
+        double registreret = aktivitet.getRegistreretTidForMedarbejder(initialer);
+
+        assertEquals(timer, registreret);
+    }
+
+    // =============================
+    // registrer_fravaer.feature
+    // =============================
+
+    @When("medarbejderen registrerer fravær af typen {string} fra uge {int} til uge {int}")
+    public void medarbejderenRegistrererFraværAfTypenFraUgeTilUge(String type, Integer startUge, Integer slutUge) {
+        try {
+            planlaegningsvaerktoej.registrerFravaer(type, startUge, slutUge);
+        } catch (OperationNotAllowedException e) {
+            errorMessageHolder.setErrorMessage(e.getMessage());
+        }
+    }
+
+    @Then("er medarbejderen markeret som fraværende med typen {string} fra uge {int} til uge {int}")
+    public void erMedarbejderenMarkeretSomFraværendeMedTypenFraUgeTilUge(String type, Integer startUge, Integer slutUge) {
+        String initialer = planlaegningsvaerktoej.getLoggedinUserInitials();
+        assertTrue(planlaegningsvaerktoej.harFravaer(initialer, type, startUge, slutUge));
+    }
+
+
+    // ==========================================
+    // STEPS TIL RAPPORTGENERERING
+    // ==========================================
+
+    @When("medarbejderen anmoder om en rapport for projekt {string}")
+    public void medarbejderen_anmoder_om_en_rapport_for_projekt(String projektNummer) throws Exception {
+        // Her trækker vi data ud af facaden, præcis som UI'en vil gøre det!
         try {
             // Check if user is logged in first
             if (planlaegningsvaerktoej.getLoggedinUserInitials() == null) {
                 errorMessageHolder.setErrorMessage("Ingen bruger logged in");
                 return;
             }
-
         } catch (Exception e) {
             errorMessageHolder.setErrorMessage("Ingen bruger logged in");
             return;
         }
-
         try {
-            
-            genereretRapport = planlaegningsvaerktoej.genererRapport(projektnummer);
-        
+            errorMessageHolder.setErrorMessage(null);
+            genereretRapport = planlaegningsvaerktoej.genererRapport(projektNummer);
         } catch (OperationNotAllowedException e) {
-            
+            // Normalize error message to match test expectations
             String msg = e.getMessage();
-
             if (msg.contains("Projektet findes ikke i systemet")) {
                 errorMessageHolder.setErrorMessage("Projektet findes ikke");
             } else {
@@ -748,42 +672,28 @@ public class StepDefinitions {
         }
     }
 
-    @Then("viser systemet det samlede budget på {double} timer")
-    public void viserSystemetDetSamledeBudgetPåTimer(Double budget) {
-        String budgetStr = String.format(java.util.Locale.US, "%.1f", budget);
-        assertTrue(genereretRapport.contains("Budgetteret tid: " + budgetStr + " timer") || 
-                   genereretRapport.contains("Budgetteret tid: " + budget.intValue()),
-                "Rapporten skal indeholde det forventede budget");
+    @Then("modtager systemet en rapport, der indeholder projektnavnet {string}")
+    public void modtager_systemet_en_rapport_der_indeholder_projektnavnet(String forventetNavn) {
+        // Vi bruger JUnit's assertTrue til at bevise, at strengen indeholder det rigtige
+        assertTrue(genereretRapport.contains(forventetNavn), "Rapporten mangler projektnavnet");
     }
 
-    @Then("viser systemet det samlede tidsforbrug på {double} timer")
-    public void viserSystemetDetSamledeTidsforbrugPåTimer(Double timerforbrug) {
-        String timerStr = String.format(java.util.Locale.US, "%.1f", timerforbrug);
-        assertTrue(genereretRapport.contains("Registreret tid: " + timerStr + " timer") || 
-                   genereretRapport.contains("Registreret tid: " + timerforbrug.intValue()),
-                "Rapporten skal indeholde det forventede tidsforbrug");
+    @Then("rapporten viser at totalt budget er {int} timer")
+    public void rapporten_viser_at_totalt_budget_er_timer(Integer timer) {
+        assertTrue(
+                genereretRapport.contains("Budgetteret tid: " + timer + ".0 timer")
+                        || genereretRapport.contains("Total Budget: " + timer + ".0 timer")
+                        || genereretRapport.contains("Total Budget: " + timer + " timer"),
+                "Rapporten har forkert budget"
+        );
     }
 
-    @Then("viser systemet det forventede restarbejde på {double} timer")
-    public void viserSystemetDetForventedeRestarbejdePPåTimer(Double restarbejde) {
-        String restStr = String.format(java.util.Locale.US, "%.1f", restarbejde);
-        boolean found = genereretRapport.contains("Rest:   " + restStr + " timer") || 
-                        genereretRapport.contains("Restarbejde:     " + restStr + " timer");
-        assertTrue(found, "Rapporten skal indeholde det forventede restarbejde");
-    }
-
-    @Then("fremhæver systemet aktiviteten {string} som overskredet")
-    public void fremhæverSystemetAktivitetenSomOverskredet(String aktivitetsNavn) {
-        assertTrue(genereretRapport.contains(aktivitetsNavn) && 
-                   genereretRapport.contains("Over budget"),
-                "Rapporten skal fremhæve aktiviteten som overskredet");
-    }
-
-    @Then("rapporten viser at totalt registreret tid er {double} timer")
-    public void rapportenViserAtTotaltRegistreretTidErTimer(Double timer) {
-        assertTrue(genereretRapport.contains("Registreret tid: " + String.format("%.1f", timer)) ||
-                   genereretRapport.contains("Registreret tid: " + timer.intValue()),
-                "Rapporten skal indeholde den totalt registrerede tid");
+    // =============================
+    // registrer_fravaer.feature - additional scenarios
+    // =============================
+    @Then("forbliver det eksisterende antal medarbejdere uændret")
+    public void forbliverserDetEksisterendeAntalMedarbejdereUændret() {
+        assertNotNull(planlaegningsvaerktoej.findMedarbejder("jfk"));
     }
 
     // =============================
@@ -792,6 +702,7 @@ public class StepDefinitions {
     @When("medarbejderen søger efter ledige medarbejdere i uge {int}")
     public void medarbejderenSøgerEfterLedigeMedarbejdereIUge(Integer uge) {
         try {
+            errorMessageHolder.setErrorMessage(null);
             genereretRapport = planlaegningsvaerktoej.visLedigeMedarbejdere(uge, uge);
         } catch (OperationNotAllowedException e) {
             errorMessageHolder.setErrorMessage(e.getMessage());

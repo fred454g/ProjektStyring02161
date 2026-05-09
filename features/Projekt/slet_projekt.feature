@@ -1,7 +1,9 @@
 Feature: Slet projekt
-Som medarbejder vil jeg gerne kunne slette et projekt fra applikationen når projektet er fuldført
+    For at kunne fjerne projekter, der ikke længere er relevante
+    Som en medarbejder
+    Vil jeg gerne kunne slette et projekt fra applikationen
 
-    Background: At der findes et projekt
+    Background: Grunddata for sletning af projekt
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Projekt_1"
@@ -20,7 +22,7 @@ Som medarbejder vil jeg gerne kunne slette et projekt fra applikationen når pro
         When medarbejderen forsoeger at slette projektet med nummeret "96001"
         Then giver systemet fejlmeddelelsen "Projekt findes ikke"
 
-    Scenario: Sccesscenarie - Sletning af projekt lykkes
+    Scenario: Succescenarie  - Sletning af projekt lykkes
         When medarbejderen forsoeger at slette projektet med nummeret "26001"
         Then giver systenet ingen fejlmeddelelse
         And er projektet med nummeret "26001" slettet fra applikationen
