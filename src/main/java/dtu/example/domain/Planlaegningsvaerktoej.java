@@ -534,7 +534,7 @@ public class Planlaegningsvaerktoej {
         assert slutUge > 0 && slutUge <= 52 : "Pre-condition: Ugyldig slutUge ("+slutUge+")";
         assert startUge <= slutUge : "Pre-condition: Startuge må ikke være efter slutuge";
             
-        tjek_BrugerErLoggedInd();
+        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
 
         List<Medarbejder> ledige = new ArrayList<>();
 
@@ -697,15 +697,15 @@ public class Planlaegningsvaerktoej {
     // Rapport Generering
     // ====================
     public String genererRapport(String projektInfo) throws OperationNotAllowedException {
-        // 1. Find projektet (helper)
+        // Find projektet (helper)
         Projekt p = findProjekt(projektInfo);
 
-        // 2. Validering
-        if (p == null) {
+        // Validering
+        if (p == null) { // Fejlscenarie 1
             throw new OperationNotAllowedException("Projektet findes ikke i systemet.");
         }
 
-        // 3. formatering og returnering af rapport
+        // Formatering og returnering af rapport
         return RapportGenerator.genererProjektRapport(p);
     }
 

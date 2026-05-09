@@ -3,7 +3,7 @@ Feature: Rediger tidsregistrering
     Som en medarbejder
     Vil jeg gerne kunne rette i mine tidsregistreringer
 
-    Background:
+    Background: Grunddata for redigering af tidsregistrering
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "huba" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet

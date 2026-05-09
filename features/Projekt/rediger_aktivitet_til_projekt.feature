@@ -1,6 +1,9 @@
 Feature: Rediger aktivitet til projekt
+    For at kunne rette planlægningen af arbejdet på et projekt
+    Som en medarbejder
+    Vil jeg gerne kunne redigere en eksisterende aktivitet på et projekt
 
-    Background: Tilføj jfk
+    Background: Grunddata for redigering af aktivitet
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
@@ -15,11 +18,11 @@ Feature: Rediger aktivitet til projekt
         When medarbejderen redigerer aktiviteten "Backend API" paa projekt "" til budgetteret tid 67.0 starttidspunkt 8 sluttidspunkt 9
         Then giver systemet fejlmeddelelsen "Projekt skal vælges"
 
-    Scenario: Fejlscenarie 3 - Forventede antal arbejdstimer er nagativt
+    Scenario: Fejlscenarie 3 - Budgetteret tid er negativ (Forventede antal arbejdstimer)
         When medarbejderen redigerer aktiviteten "Backend API" paa projekt "26001" til budgetteret tid -67.0 starttidspunkt 8 sluttidspunkt 9
         Then giver systemet fejlmeddelelsen "Budgetteret tid må ikke være negativ"
 
-    Scenario: Fejlscenarie 4 - Start og slutuge er ikke korrekt angivet
+    Scenario: Fejlscenarie 4 - Startuge er efter slutuge
         When medarbejderen redigerer aktiviteten "Backend API" paa projekt "26001" til budgetteret tid 67.0 starttidspunkt 18 sluttidspunkt 9
         Then giver systemet fejlmeddelelsen "Startuge kan ikke være efter slutuge"
 
@@ -31,7 +34,7 @@ Feature: Rediger aktivitet til projekt
         When medarbejderen redigerer aktiviteten "Ukendt Aktivitet" paa projekt "26001" til budgetteret tid 67.0 starttidspunkt 8 sluttidspunkt 9
         Then giver systemet fejlmeddelelsen "Aktivitet findes ikke"
 
-    Scenario: Sccesscenarie - Aktiviteten redigeres
+    Scenario: Succescenarie - Aktiviteten redigeres
         When medarbejderen redigerer aktiviteten "Backend API" paa projekt "26001" til budgetteret tid 67.0 starttidspunkt 8 sluttidspunkt 9
         Then giver systenet ingen fejlmeddelelse
         And er aktiviteten "Backend API" oprettet på projekt "26001"

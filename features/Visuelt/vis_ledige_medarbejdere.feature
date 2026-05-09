@@ -3,28 +3,35 @@ Feature: Vis ledige medarbejdere
     Som en medarbejder
     Vil jeg gerne kunne se en liste over hvilke medarbejdere der er ledige i en given periode
 
-    Background:
+    Background: Grunddata for visning af ledige medarbejdere
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "huba" tilfoejes til systemet
         And at medarbejderen "anda" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
 
-    Scenario: Hovedscenarie - Søgning efter ledige medarbejdere
+    Scenario: Fejlscenarie 1 - Søgning uden at være logget ind
+        Given at medarbejderen "jfk" er logget ud
         When medarbejderen søger efter ledige medarbejdere i uge 12
-        Then viser systemet en liste over medarbejdere der er ledige i uge 12
+        And giver systemet fejlmeddelelsen "Ingen bruger logged in"
+
+    Scenario: Succescenarie 1 - Søgning efter ledige medarbejdere
+        When medarbejderen søger efter ledige medarbejdere i uge 12
+        Then giver systenet ingen fejlmeddelelse
+        And viser systemet en liste over medarbejdere der er ledige i uge 12
         And fremgår "huba" af listen over ledige medarbejdere
         And fremgår "anda" af listen over ledige medarbejdere
 
-    Scenario: Medarbejder med fravær vises ikke som ledig
+    Scenario: Succescenarie 2 - Medarbejder med fravær vises ikke som ledig
         Given at medarbejderen "huba" er logget ind i systemet
         And medarbejderen registrerer fravær af typen "Ferie" fra uge 12 til uge 14
         And at medarbejderen "jfk" er logget ind i systemet
         When medarbejderen søger efter ledige medarbejdere i uge 13
-        Then fremgår "huba" ikke af listen over ledige medarbejdere
+        Then giver systenet ingen fejlmeddelelse
+        And fremgår "huba" ikke af listen over ledige medarbejdere
         And fremgår "anda" af listen over ledige medarbejdere
 
-    Scenario: Medarbejder med fuld booking vises ikke som ledig
+    Scenario: Succescenarie 3 - Medarbejder med fuld booking vises ikke som ledig
         Given at medarbejderen "huba" er tilknyttet projekt "26001"
         And at aktiviteten "Backend" findes på projekt "26001"
         And at medarbejderen "huba" er tilknyttet aktiviteten "Backend" på projekt "26001"
@@ -32,15 +39,14 @@ Feature: Vis ledige medarbejdere
         Then giver systenet ingen fejlmeddelelse
         When medarbejderen søger efter ledige medarbejdere i uge 12
         Then fremgår "anda" af listen over ledige medarbejdere
+        And fremgår "huba" ikke af listen over ledige medarbejdere
 
-    Scenario: Alle medarbejdere ledige når ingen er allokeret
+    Scenario: Succescenarie 4 - Alle medarbejdere ledige når ingen er allokeret
         When medarbejderen søger efter ledige medarbejdere i uge 40
-        Then viser systemet en liste over medarbejdere der er ledige i uge 40
+        Then giver systenet ingen fejlmeddelelse
+        And viser systemet en liste over medarbejdere der er ledige i uge 40
         And fremgår "jfk" af listen over ledige medarbejdere
         And fremgår "huba" af listen over ledige medarbejdere
         And fremgår "anda" af listen over ledige medarbejdere
 
-    Scenario: Fejlscenarie - Søgning uden at være logget ind
-        Given at medarbejderen "jfk" er logget ud
-        When medarbejderen søger efter ledige medarbejdere i uge 12
-        Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
+

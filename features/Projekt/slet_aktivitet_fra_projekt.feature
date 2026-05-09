@@ -1,6 +1,9 @@
 Feature: Slet aktivitet fra projekt
+    For at kunne fjerne aktiviteter, der ikke længere er relevante
+    Som en medarbejder
+    Vil jeg gerne kunne slette en aktivitet fra et projekt
 
-    Background: Tilføj jfk
+    Background: Grunddata for sletning af aktivitet fra projekt
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
@@ -15,7 +18,7 @@ Feature: Slet aktivitet fra projekt
         When medarbejderen fjerner aktiviteten "Backend API" på projekt ""
         Then giver systemet fejlmeddelelsen "Projekt skal vælges"
 
-    Scenario: Fejlscenarie 3 - Aktivitet er ikke valgt i GUI
+    Scenario: Fejlscenarie 3 - Aktivitet er ikke valgt
         When medarbejderen fjerner aktiviteten "" på projekt "26001"
         Then giver systemet fejlmeddelelsen "Aktivitet skal vælges"
 
@@ -27,7 +30,7 @@ Feature: Slet aktivitet fra projekt
         When medarbejderen fjerner aktiviteten "Ukendt Aktivitet" på projekt "26001"
         Then giver systemet fejlmeddelelsen "Aktivitet findes ikke"
 
-    Scenario: Sccesscenarie - Slet aktivitet fra projekt
+    Scenario: Succescenarie - Slet aktivitet fra projekt
         When medarbejderen fjerner aktiviteten "Backend API" på projekt "26001"
         Then giver systenet ingen fejlmeddelelse
         And er aktiviteten "Backend API" ikke tilknyttet projekt "26001"

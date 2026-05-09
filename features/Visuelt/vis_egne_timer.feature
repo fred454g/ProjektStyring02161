@@ -3,7 +3,7 @@ Feature: Vis medarbejders egne timer
     Som en medarbejder
     Vil jeg gerne kunne se en oversigt over mine egne registrerede timer
 
-    Background:
+    Background: Grunddata for visning af medarbejders egne timer
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "huba" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
@@ -21,29 +21,22 @@ Feature: Vis medarbejders egne timer
         When medarbejderen anmoder om at se sine egne tidsregistreringer
         Then giver systemet fejlmeddelelsen "Ingen bruger logged in"
 
-    Scenario: Hovedscenarie - Visning af egne timer på tværs af aktiviteter
-        Given at medarbejderen "huba" er logget ind i systemet
-        And medarbejderen registrerer 4.5 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
-        And medarbejderen registrerer 3.0 timer på aktiviteten "Backend" på projekt "26001" for dags dato
-        When medarbejderen anmoder om at se sine egne tidsregistreringer
-        Then viser systemet 7.5 timer totalt for medarbejderen
-        And systemet viser 4.5 timer på aktiviteten "Frontend" på projekt "26001"
-        And systemet viser 3.0 timer på aktiviteten "Backend" på projekt "26001"
-
-    Scenario: Visning af egne timer når ingen timer er registreret
+    Scenario: Succescenarie 1 - Visning af egne timer når ingen timer er registreret
         Given at medarbejderen "huba" er logget ind i systemet
         When medarbejderen anmoder om at se sine egne tidsregistreringer
-        Then viser systemet 0.0 timer totalt for medarbejderen
+        Then giver systenet ingen fejlmeddelelse
+        And viser systemet 0.0 timer totalt for medarbejderen
 
-    Scenario: Kun egne timer vises, ikke andres
+    Scenario: Succescenarie 2 - Kun egne timer vises, ikke andres
         Given at medarbejderen "huba" er logget ind i systemet
         And medarbejderen registrerer 4.5 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen registrerer 2.0 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
         When medarbejderen anmoder om at se sine egne tidsregistreringer
-        Then viser systemet 2.0 timer totalt for medarbejderen
+        Then giver systenet ingen fejlmeddelelse
+        And viser systemet 2.0 timer totalt for medarbejderen
 
-    Scenario: Visning af timer på tværs af flere projekter
+    Scenario: Succescenarie 3 - Visning af timer på tværs af flere projekter
         Given medarbejderen opretter et projekt med navnet "Andet Projekt"
         And at aktiviteten "Design" findes på projekt "26002"
         And at medarbejderen "huba" er tilknyttet projekt "26002"
@@ -52,4 +45,15 @@ Feature: Vis medarbejders egne timer
         And medarbejderen registrerer 2.0 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
         And medarbejderen registrerer 3.0 timer på aktiviteten "Design" på projekt "26002" for dags dato
         When medarbejderen anmoder om at se sine egne tidsregistreringer
-        Then viser systemet 5.0 timer totalt for medarbejderen
+        Then giver systenet ingen fejlmeddelelse
+        And viser systemet 5.0 timer totalt for medarbejderen
+
+    Scenario: Succescenarie 4 - Visning af egne timer på tværs af aktiviteter
+        Given at medarbejderen "huba" er logget ind i systemet
+        And medarbejderen registrerer 4.5 timer på aktiviteten "Frontend" på projekt "26001" for dags dato
+        And medarbejderen registrerer 3.0 timer på aktiviteten "Backend" på projekt "26001" for dags dato
+        When medarbejderen anmoder om at se sine egne tidsregistreringer
+        Then giver systenet ingen fejlmeddelelse
+        And viser systemet 7.5 timer totalt for medarbejderen
+        And systemet viser 4.5 timer på aktiviteten "Frontend" på projekt "26001"
+        And systemet viser 3.0 timer på aktiviteten "Backend" på projekt "26001"

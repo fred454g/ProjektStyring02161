@@ -1,6 +1,9 @@
 Feature: Opret aktivitet til projekt
+    For at kunne planlægge arbejdet på et projekt
+    Som en medarbejder
+    Vil jeg gerne kunne oprette aktiviteter på et projekt
 
-    Background: Tilføj jfk
+    Background: Grunddata for oprettelse af aktivitet til projekt
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
         And medarbejderen opretter et projekt med navnet "Nyt IT System"
@@ -18,11 +21,11 @@ Feature: Opret aktivitet til projekt
         When medarbejderen opretter aktiviteten "" paa projekt "26001" med budgetteret tid 0.0 starttidspunkt 1 sluttidspunkt 2
         Then giver systemet fejlmeddelelsen "Aktivitet skal vælges"
 
-    Scenario: Fejlscenarie 4- Forventede antal arbejdstimer er nagativt
+    Scenario: Fejlscenarie 4- Budgetteret tid er negativ (Forventede antal arbejdstimer)
         When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med budgetteret tid -1.0 starttidspunkt 1 sluttidspunkt 2
         Then giver systemet fejlmeddelelsen "Budgetteret tid må ikke være negativ"
 
-    Scenario: Fejlscenarie 5 - Start og slutuge er ikke korrekt angivet
+    Scenario: Fejlscenarie 5 - Startuge er efter slutuge
         When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med budgetteret tid 0.0 starttidspunkt 50 sluttidspunkt 2
         Then giver systemet fejlmeddelelsen "Startuge kan ikke være efter slutuge"
 
@@ -31,12 +34,11 @@ Feature: Opret aktivitet til projekt
         Then giver systemet fejlmeddelelsen "Projekt findes ikke"
 
     Scenario: Fejlscenarie 7 - Aktivitetsnavn er allerede i brug
-        When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med budgetteret tid 0.0 starttidspunkt 1 sluttidspunkt 2
-        Then giver systenet ingen fejlmeddelelse
+        Given at aktiviteten "Backend API" findes på projekt "26001"
         When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med budgetteret tid 0.0 starttidspunkt 1 sluttidspunkt 2
         Then giver systemet fejlmeddelelsen "Aktivitetsnavn er i brug"
 
-    Scenario: Sccesscenarie - Opret aktivitet til projekt
+    Scenario: Succescenarie - Opret aktivitet til projekt
         When medarbejderen opretter aktiviteten "Backend API" paa projekt "26001" med budgetteret tid 50.0 starttidspunkt 10 sluttidspunkt 14
         Then giver systenet ingen fejlmeddelelse
         And er aktiviteten "Backend API" oprettet på projekt "26001"

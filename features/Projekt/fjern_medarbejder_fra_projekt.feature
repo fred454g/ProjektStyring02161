@@ -3,7 +3,7 @@ Feature: Fjern medarbejder fra projekt
     Som en medarbejder
     Vil jeg gerne kunne fjerne en medarbejder fra et projekt
 
-    Background:
+    Background: Grunddata for fjernelse af medarbejder fra projekt
         Given at medarbejderen "jfk" tilfoejes til systemet
         And at medarbejderen "huba" tilfoejes til systemet
         And at medarbejderen "jfk" er logget ind i systemet
@@ -27,7 +27,7 @@ Feature: Fjern medarbejder fra projekt
         When medarbejderen fjerner "jfk" fra projekt "26001"
         Then giver systemet fejlmeddelelsen "Medarbejder er ikke tilknyttet projekt"
     
-    Scenario: Sccesscenarie - Fjern medarbejder fra projekt
+    Scenario: Succescenarie - Fjern medarbejder fra projekt
         When medarbejderen fjerner "huba" fra projekt "26001"
         Then giver systenet ingen fejlmeddelelse
         And fremgår "huba" ikke længere af listen over tilknyttede medarbejdere på projekt "26001"
