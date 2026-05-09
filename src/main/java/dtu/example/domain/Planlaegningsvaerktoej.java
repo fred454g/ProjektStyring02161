@@ -118,16 +118,22 @@ public class Planlaegningsvaerktoej {
     public void opretProjekt(String projektNavn) throws OperationNotAllowedException {
         // Der bliver udført struktureret white-box test på denne metode
         
-        tjek_BrugerErLoggedInd(); // 1
+        // --- Defensive programming (untrusted UI-input) ---
+        tjek_BrugerErLoggedInd();
         
-        if (projektNavn == null || projektNavn.isEmpty()) { // 2 (2a || 2b)
+        if (projektNavn == null || projektNavn.isEmpty()) {
             throw new OperationNotAllowedException("Projektnavnet må ikke være tomt");
         }
 
-        // --- DbC PRE-CONDITION ---
+        // --- DbC PRE-CONDITION (failsafe — bør allerede være etableret af defensive code ovenfor) ---
+        assert loggedInUser != null : "Pre-condition: bruger skal være logget ind";
+        assert projektNavn != null && !projektNavn.isEmpty() : "Pre-condition: projektnavn skal være ikke-tomt";
+
+        // --- @pre-state snapshot til brug i post-condition ---
         int forventetAntalProjekter = this.projekter.size() + 1;
         int forventetNytNummer = this.hoejesteProjektnummer + 1;
 
+        // --- Operation ---
         String nytProjektnr = String.valueOf(26000 + this.hoejesteProjektnummer);
         Projekt nytProjekt = new Projekt(nytProjektnr, projektNavn);
         projekter.add(nytProjekt);
@@ -135,9 +141,9 @@ public class Planlaegningsvaerktoej {
         observers.firePropertyChange("PROJECT_OPRETTET", null, nytProjekt);
         gemProjekter();
 
-        // --- DbC POST-CHECK ---
+        // --- DbC POST-CONDITION ---
         assert this.projekter.size() == forventetAntalProjekter : "Post-condition: Projekt blev ikke tilføjet til listen";
-        assert this.hoejesteProjektnummer == forventetNytNummer : "Post-condition: højesteProjektnummer blev ikke talt op";
+        assert this.hoejesteProjektnummer == forventetNytNummer : "Post-condition: hoejesteProjektnummer blev ikke talt op";
         assert findProjekt(nytProjektnr) != null : "Post-condition: Kunne ikke genfinde det oprettede projekt";
     }
 
@@ -307,7 +313,7 @@ public class Planlaegningsvaerktoej {
 
         Projekt projekt = tjek_ProjektetFindes(projektNr); // 6
 
-        // --- DbC PRE-CONDITION ---
+        // --- @pre-state snapshot til brug i post-condition ---
         Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
         // Hent timer hvis aktiviteten findes, ellers sæt til 0 (koden kaster exception om lidt, hvis den er null)
         double registreretTidFoer = (aktivitet != null) ? aktivitet.getTotalRegistreretTid() : 0.0;
@@ -461,7 +467,7 @@ public class Planlaegningsvaerktoej {
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // Fejlscenarie 3
 
-        // --- DbC PRE-CONDITION ---
+        // --- @pre-state snapshot til brug i post-condition ---
         Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
         int forventetAntalMedarbejdere = (aktivitet != null) ? aktivitet.getTilknyttedeMedarbejdere().size() + 1 : 0;
 
