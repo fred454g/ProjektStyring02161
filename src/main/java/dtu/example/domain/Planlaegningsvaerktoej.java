@@ -272,9 +272,28 @@ public class Planlaegningsvaerktoej {
 
         Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // 3
 
+        // --- DbC PRE-CONDITION ---
+
+        assert true : "Pre-condition: Ingen yderligere logisk pre-condition";
+
+        // --- DbC PRE-CONDITION STATE ---
+
+        int antalMedarbejdereFoer = projekt.getTilknyttedeMedarbejdere().size();
+
         projekt.tilknytMedarbejder(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
         gemProjekter();
+
+        // --- DbC POST-CHECK ---
+
+        assert projekt.isMedarbejderInProjekt(medarbejder)
+
+                : "Post-condition: Medarbejderen blev ikke tilknyttet projektet";
+
+        assert projekt.getTilknyttedeMedarbejdere().size() == antalMedarbejdereFoer + 1
+
+                : "Post-condition: Medarbejderlisten voksede ikke med 1";
+
         return true;
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 // This Class is used to perfrom systematic whitebox test in the method planlaegningsvaerktoej.tilknytMedarbejderTilProjekt()
 
-public class WhiteBox_tilknytMedarbejderTilProjekt {
+public class WhiteBox_tilfoejMedarbejderTilProjekt {
 
     private Planlaegningsvaerktoej planlaegningsvaerktoej;
 
