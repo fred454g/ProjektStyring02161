@@ -2,6 +2,9 @@ package dtu.example.domain;
 
 import java.time.LocalDate;
 
+/**
+ * @author Frederik
+ */
 public class Tidsregistrering {
     
     private LocalDate dato;

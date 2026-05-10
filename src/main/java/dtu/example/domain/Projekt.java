@@ -48,6 +48,9 @@ public class Projekt {
     // ====================
     // Aktivitetsnummer opdater
     // ====================
+    /**
+     * @author Jeppe
+     */
     public void hoejesteAktivitetsnummerPlusEn() {
         this.hoejesteAktivitetsnummer++;
     }
@@ -55,28 +58,42 @@ public class Projekt {
     // ====================
     // Projekt Metoder
     // ====================
+    /**
+     * @author Frederik
+     */
     public boolean opdaterNavn(String nytNavn) {
         this.projektNavn = nytNavn;
         return true;
     }
 
+    /**
+     * @author Jacob
+     * @param nyProjektleder
+     * @return
+     */
     public boolean opdaterProjektleder(Medarbejder nyProjektleder) {
         this.projektleder = nyProjektleder;
         return true;
     }
 
-    public void fjernMedarbejderFraProjekt(Medarbejder medarbejder) throws OperationNotAllowedException {
-        
+    /**
+     * @author Frederik
+     * @param medarbejder
+     * @throws OperationNotAllowedException
+     */
+    public void fjernMedarbejderFraProjekt(Medarbejder medarbejder) throws OperationNotAllowedException {  
         if (isMedarbejderInProjekt(medarbejder)) {
-            
             this.tilknyttedeMedarbejdere.remove(medarbejder);
-        
-        } else { // Fejlscenarie 4
-
+        } else {
             throw new OperationNotAllowedException("Medarbejder er ikke tilknyttet projekt");
         }
     }
 
+    /**
+     * @author Nikolai
+     * @param medarbejder
+     * @throws OperationNotAllowedException
+     */
     public void tilknytMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
         // == DbC: PRE-CONDITIONS ==
         assert medarbejder != null : "Pre-condition: Systemet forsøgte at tilføje null som medarbejder til projektet";
@@ -97,7 +114,16 @@ public class Projekt {
     // ===================
     // Aktivitet metoder
     // ===================
-
+    /**
+     * @author Jeppe
+     * @param aktivitetsNr
+     * @param aktivitetsNavn
+     * @param forventedeAntalArbejdstimer
+     * @param starttidspunkt
+     * @param sluttidspunkt
+     * @return
+     * @throws OperationNotAllowedException
+     */
     public boolean opretAktivitet(String aktivitetsNr, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
         // DbC - PRE-CONDITIONS
         assert aktivitetsNr != null && !aktivitetsNr.isBlank() : "Pre-condition: Mangler internt aktivitetsNr";
@@ -119,14 +145,25 @@ public class Projekt {
         return true;
     }
 
+    /**
+     * @author Frederik
+     * @param aktivitet
+     * @throws OperationNotAllowedException
+     */
     public void sletAktivitet(Aktivitet aktivitet) throws OperationNotAllowedException {
-
         this.aktiviteter.remove(aktivitet);
     }
 
+    /**
+     * @author Jeppe
+     * @param aktivitetsInfo
+     * @param forventedeAntalArbejdstimer
+     * @param starttidspunkt
+     * @param sluttidspunkt
+     * @throws OperationNotAllowedException
+     */
     public void opdaterAktivitet(String aktivitetsInfo, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
         Aktivitet aktivitet = findAktivitet(aktivitetsInfo);
-        
         if (aktivitet == null) {
             throw new OperationNotAllowedException("Aktivitet findes ikke");
         }
@@ -136,18 +173,26 @@ public class Projekt {
         aktivitet.setSluttidspunkt(sluttidspunkt);
     }
 
+    /**
+     * @author Jeppe
+     * @param aktivitetsNavn
+     * @param medarbejder
+     * @throws OperationNotAllowedException
+     */
     public void tilfoejMedarbejderTilAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
-        // Jacob
-
-        tjek_MedarbejderenErTilfoejetTilProjektet(medarbejder); // Fejlscenarie 4
-
-        Aktivitet aktivitet = tjek_AktivotetenFindesIProjektet(aktivitetsNavn); // Fejlscenarie 5
+        tjek_MedarbejderenErTilfoejetTilProjektet(medarbejder);
+        Aktivitet aktivitet = tjek_AktivotetenFindesIProjektet(aktivitetsNavn);
 
         aktivitet.tilfoejMedarbejder(medarbejder);
     }
 
+    /**
+     * @author Jacob
+     * @param aktivitetsNavn
+     * @param medarbejder
+     * @throws OperationNotAllowedException
+     */
     public void fjernMedarbejderFraAktivitet(String aktivitetsNavn, Medarbejder medarbejder) throws OperationNotAllowedException {
-        // Jacob
 
         tjek_MedarbejderenErTilfoejetTilProjektet(medarbejder); // Fejlscenarie 4 
 
@@ -167,19 +212,28 @@ public class Projekt {
         aktivitet.registrerTid(medarbejder, timer);
     }
 
+    /**
+     * Returnerer samlet projekt-tid for en medarbejder på tværs af aktiviteter
+     * @author Frederik
+     * @param initialer
+     * @return
+     */
     public double getRegistreretTidForMedarbejder(String initialer) {
         double total = 0;
-        
         for (Aktivitet a : this.aktiviteter) {
             total += a.getRegistreretTidForMedarbejder(initialer);
         }
-
         return total;
     }
 
     // =====================
     // Helpers
     // =====================
+    /**
+     * @author Frederik
+     * @param medarbejder
+     * @return
+     */
     public Boolean isMedarbejderInProjekt(Medarbejder medarbejder) {
         for (Medarbejder m: this.tilknyttedeMedarbejdere) {
             if (m.equals(medarbejder)) {
@@ -189,6 +243,11 @@ public class Projekt {
         return false;
     }
 
+    /**
+     * @author Jeppe
+     * @param aktivitetsInfo
+     * @return
+     */
     public Aktivitet findAktivitet(String aktivitetsInfo) {
         for (Aktivitet a: this.aktiviteter) {
             if (a.getAktivitetsnummer().equals(aktivitetsInfo) || a.getAktivitetsNavn().equals(aktivitetsInfo)) {
@@ -201,17 +260,25 @@ public class Projekt {
     // =====================
     // Tjek hjaepler metoder
     // =====================
-    
+    /**
+     * @author Jacob
+     * @param medarbejder
+     * @throws OperationNotAllowedException
+     */
     private void tjek_MedarbejderenErTilfoejetTilProjektet(Medarbejder medarbejder) throws OperationNotAllowedException {
-        // Jacob
 
         if (!isMedarbejderInProjekt(medarbejder)) {
             throw new OperationNotAllowedException("Medarbejder ikke tilknyttet projekt");
         }
     }
 
+    /**
+     * @author Jacob
+     * @param aktivitetsNavn
+     * @return
+     * @throws OperationNotAllowedException
+     */
     private Aktivitet tjek_AktivotetenFindesIProjektet(String aktivitetsNavn) throws OperationNotAllowedException {
-        // Jacob
 
         Aktivitet aktivitet = findAktivitet(aktivitetsNavn);
         

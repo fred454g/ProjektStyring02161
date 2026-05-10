@@ -10,6 +10,10 @@ public class Medarbejder {
     private String initialer;
     private List<Fravaer> fravaersliste = new ArrayList<>();
 
+    /**
+     * @author Jeppe
+     * @param initialer
+     */
     public Medarbejder(String initialer) {
         if (initialer == null || initialer.isBlank()) {
             throw new IllegalArgumentException("Initialer må ikke være tomme");
@@ -20,14 +24,30 @@ public class Medarbejder {
         this.initialer = initialer;
     }
 
+    /**
+     * @author Nikolai
+     */
     public void tilfoejFravaer(Fravaer fravaer) {
         this.fravaersliste.add(fravaer);
     }
 
+    /**
+     * @author Nikolai
+     * @param type
+     * @param startUge
+     * @param slutUge
+     */
     public void tilfoejGenskabtFravaer(String type, int startUge, int slutUge) {
         this.fravaersliste.add(new Fravaer(type, startUge, slutUge));
     }
 
+    /**
+     * @author Nikolai
+     * @param type
+     * @param startUge
+     * @param slutUge
+     * @return
+     */
     public boolean harFravaer(String type, int startUge, int slutUge) {
         for (Fravaer f : this.fravaersliste) {
             if (f.getType().equals(type) && f.getStartUge() == startUge && f.getSlutUge() == slutUge) {
@@ -37,6 +57,9 @@ public class Medarbejder {
         return false;
     }
 
+    /**
+     * @author Nikolai
+     */
     public boolean harOverlappendeFravaer(int startUge, int slutUge) {
         for (Fravaer f : this.fravaersliste) {
             if (f.overlapper(startUge, slutUge)) {
@@ -54,10 +77,17 @@ public class Medarbejder {
         return this.initialer;
     }
 
+    /**
+     * @author Nikolai
+     * @return
+     */
     public List<Fravaer> getFravaerslisteForPersistens() {
         return this.fravaersliste;
     }
 
+    /**
+     * @author Jeppe
+     */
     @Override
     public boolean equals(Object other) {
         if (this == other) {

@@ -12,8 +12,10 @@ import dtu.example.domain.Planlaegningsvaerktoej;
 import dtu.example.domain.Projekt;
 import dtu.example.domain.Aktivitet;
 
-// This Class is used to perfrom systematic whitebox test in the method planlaegningsvaerktoej.registrerTid()
-
+/**
+ * This Class is used to perfrom systematic whitebox test in the method planlaegningsvaerktoej.registrerTid()
+ * @author Nikolai
+ */
 public class WhiteBox_registrerTid {
     
 

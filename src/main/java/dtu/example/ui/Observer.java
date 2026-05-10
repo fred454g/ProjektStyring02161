@@ -6,6 +6,9 @@ import dtu.example.domain.Aktivitet;
 import dtu.example.domain.Medarbejder;
 import dtu.example.domain.Projekt;
 
+/**
+ * @author Jeppe, Nikolai, Frederik, Jacob
+ */
 public class Observer implements PropertyChangeListener {
 
     @Override

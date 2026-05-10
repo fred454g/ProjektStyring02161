@@ -1,3 +1,4 @@
+# Frederik
 Feature: Registrer tid (dagligt)
     For at holde styr på det faktiske tidsforbrug
     Som en medarbejder

@@ -9,6 +9,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Nikolai, Jeppe
+ */
 public class FravaerRepository implements IFravaerRepository {
 
     private final Path path;

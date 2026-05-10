@@ -9,6 +9,9 @@ import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Frederik, Jacob
+ */
 public class MedarbejderRepository implements IMedarbejderRepository {
 
     private final Path hrListePath;

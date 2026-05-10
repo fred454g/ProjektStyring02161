@@ -1,5 +1,8 @@
 package dtu.example.domain;
 
+/**
+ * @author Nikolai
+ */
 public class Fravaer {
 
     private String type;

@@ -10,6 +10,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Frederik, Nikolai, Jacob, Jeppe
+ */
 public class ProjektRepository implements IProjektRepository {
     private final Path projektSti;
 

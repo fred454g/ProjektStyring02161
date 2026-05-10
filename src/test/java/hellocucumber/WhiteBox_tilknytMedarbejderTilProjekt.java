@@ -7,9 +7,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
-// This Class is used to perfrom systematic whitebox test in the method planlaegningsvaerktoej.tilknytMedarbejderTilProjekt()
-
-public class WhiteBox_tilfoejMedarbejderTilProjekt {
+/**
+ * This Class is used to perfrom systematic whitebox test in the method planlaegningsvaerktoej.tilknytMedarbejderTilProjekt()
+ * @author Jacob
+ */
+public class WhiteBox_tilknytMedarbejderTilProjekt {
 
     private Planlaegningsvaerktoej planlaegningsvaerktoej;
 

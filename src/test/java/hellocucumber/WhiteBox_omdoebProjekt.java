@@ -4,9 +4,11 @@ import dtu.example.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
-// This Class is used to perfrom systematic whitebox test in the method planlaegningsvaerktoej.omdoebProjekt() 
-
+ 
+/**
+ * This Class is used to perfrom systematic whitebox test in the method planlaegningsvaerktoej.omdoebProjekt()
+ * @author Frederik
+ */
 public class WhiteBox_omdoebProjekt {
 
     private Planlaegningsvaerktoej planlaegningsvaerktoej;
