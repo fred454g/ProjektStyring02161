@@ -2,6 +2,10 @@ package dtu.example.domain;
 
 import java.util.Locale;
 
+/**
+ * Returnere en projektrapport i let-læseligt format
+ * @author Frederik
+ */
 public class RapportGenerator {
 
     public static String genererProjektRapport(Projekt p) {

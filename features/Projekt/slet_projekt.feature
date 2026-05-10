@@ -1,3 +1,4 @@
+# Jacob
 Feature: Slet projekt
     For at kunne fjerne projekter, der ikke længere er relevante
     Som en medarbejder

@@ -1,3 +1,4 @@
+# Nikolai
 Feature: Registrer fravær (Ikke tilstede)
     For at systemet og kollegaer ved, hvornår jeg ikke er tilgængelig
     Som en medarbejder

@@ -1,3 +1,4 @@
+# Frederik
 Feature: Slet aktivitet fra projekt
     For at kunne fjerne aktiviteter, der ikke længere er relevante
     Som en medarbejder

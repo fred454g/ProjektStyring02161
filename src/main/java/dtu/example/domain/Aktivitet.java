@@ -52,14 +52,9 @@ public class Aktivitet {
         }
         return total;
     }
+
     public List<Tidsregistrering> getTidsregistreringerForPersistens() {
         return this.tidsregistreringer;
-    }
-
-    public void tilfoejGenskabtTid(double timer, String datoStreng, String initialer) {
-        LocalDate dato = LocalDate.parse(datoStreng);
-        Tidsregistrering registrering = new Tidsregistrering(dato, timer, initialer);
-        this.tidsregistreringer.add(registrering);
     }
 
     public List<Medarbejder> getTilknyttedeMedarbejdere() {
@@ -68,38 +63,67 @@ public class Aktivitet {
 
      // ==================
 
+    /**
+     * @author Jeppe
+     * @param startstidspunkt
+     * @return
+     */
     public boolean setStarttidspunkt(int startstidspunkt) {
         this.starttidspunkt = startstidspunkt;
         return true;
     }
 
+    /**
+     * @author Jeppe
+     * @param sluttidspunkt
+     * @return
+     */
     public boolean setSluttidspunkt(int sluttidspunkt) {
         this.sluttidspunkt = sluttidspunkt;
         return true;
     }
 
+    /**
+     * @author Jeppe
+     * @param forventedeAntalArbejdstimer
+     * @return
+     */
     public boolean setForventedeAntalArbejdstimer(double forventedeAntalArbejdstimer) {
         this.forventedeAntalArbejdstimer = forventedeAntalArbejdstimer;
         return true;
     }
 
+    /**
+     * @author Jeppe, Nikolai
+     * @param timer
+     * @param datoStreng
+     * @param initialer
+     */
+    public void tilfoejGenskabtTid(double timer, String datoStreng, String initialer) {
+        LocalDate dato = LocalDate.parse(datoStreng);
+        Tidsregistrering registrering = new Tidsregistrering(dato, timer, initialer);
+        this.tidsregistreringer.add(registrering);
+    }
+
+    /**
+     * @author Jeppe
+     * @param medarbejder
+     * @throws OperationNotAllowedException
+     */
     public void tilfoejMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
-        // Jacob
-
         if (!isMedarbejderInAktivitet(medarbejder)) {
-
             this.tilknyttedeMedarbejdere.add(medarbejder);
-        
-        } else { // Fejlscenarie 6
-
+        } else {
             throw new OperationNotAllowedException("Medarbejder er allerede tilknyttet aktivitet");
         }
     }
 
-    
+    /**
+     * @author Jacob
+     * @param medarbejder
+     * @throws OperationNotAllowedException
+     */
     public void fjernMedarbejder(Medarbejder medarbejder) throws OperationNotAllowedException {
-        // Jacob
-
         if (!isMedarbejderInAktivitet(medarbejder)) { // Fejlscenarie 6 
 
             throw new OperationNotAllowedException("Medarbejder er ikke i aktivitet");
@@ -108,6 +132,12 @@ public class Aktivitet {
         this.tilknyttedeMedarbejdere.remove(medarbejder);
     }
 
+    /**
+     * @author Nikolai
+     * @param medarbejder
+     * @param timer
+     * @throws OperationNotAllowedException
+     */
     public void registrerTid(Medarbejder medarbejder, Double timer) throws OperationNotAllowedException {
         // PRE-CONDITIONS (Design by Contract)
         // Klienten (Planlaegningsvaerktoej-facaden) skal sikre disse er opfyldt før kaldet.
@@ -130,16 +160,19 @@ public class Aktivitet {
         assert this.tidsregistreringer.contains(registrering) : "Post-condition fejlede: Registreringen blev ikke gemt";
     }
     
+    /**
+     * @author Frederik
+     * @param initialer
+     * @return
+     */
     public double getRegistreretTidForMedarbejder(String initialer) {
         double total = 0;
-
         // løb liste igennem af registreringer og akkumeler baseret på match af initialer
         for (Tidsregistrering t : this.tidsregistreringer) {
-            if (t.getInitialer().equals(initialer)) { // match!
+            if (t.getInitialer().equals(initialer)) {
                 total += t.getAntalArbejdstimer();
             }
         }
-
         return total;
     }
 
@@ -147,6 +180,11 @@ public class Aktivitet {
     // =====================
     // Helpers
     // =====================
+    /**
+     * @author Jeppe
+     * @param medarbejder
+     * @return
+     */
     public Boolean isMedarbejderInAktivitet(Medarbejder medarbejder) {
         for (Medarbejder m: this.tilknyttedeMedarbejdere) {
             if (m.equals(medarbejder)) {

@@ -1,3 +1,4 @@
+# Jacob
 Feature: Fjern medarbejder fra aktivitet
     For at kunne rette bemandingen på en aktivitet
     Som en medarbejder

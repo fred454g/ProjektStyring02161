@@ -26,7 +26,7 @@ public class StepDefinitions {
     private Planlaegningsvaerktoej planlaegningsvaerktoej;
     private String genereretRapport = "";
     private double totalTimer;
-    private String sidsteObserverEvent;
+    private String sidsteObserverEvent; // !!!!! BLIVER BRUGT !!!!!
 
     // Stier til temp-filer
     private Path tempProjekter;
@@ -41,6 +41,10 @@ public class StepDefinitions {
         this.errorMessageHolder = errorMessageHolder;
     }
 
+    /**
+     * @author Jeppe, Frederik
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         // 1. Skab midlertidige filer på computeren til test
@@ -58,6 +62,10 @@ public class StepDefinitions {
         this.planlaegningsvaerktoej.addPropertyChangeListener(event -> this.sidsteObserverEvent = event.getPropertyName());
     }
 
+    /**
+     * @author Jeppe, Frederik
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         // 4. Slet de midlertidige filer når scenariet er færdigt, 
@@ -71,12 +79,20 @@ public class StepDefinitions {
     // Generelle - Fejlmeddelelser
     // =============================
 
+    /**
+     * @author Nikolai
+     * @param fejlMeddelelse
+     * @throws Exception
+     */
     @Then("giver systemet fejlmeddelelsen {string}")
     public void giverSystemetFejlmeddelelsen(String fejlMeddelelse) throws Exception {
 
         assertEquals(fejlMeddelelse, this.errorMessageHolder.getErrorMessage());
     }
 
+    /**
+     * @author Nikolai
+     */
     @Then("giver systenet ingen fejlmeddelelse")
     public void giverSystenetIngenFejlmeddelelse() {
         // Kontrol af at Sccesscenariet faktisk ikke ikke gav en fejl
@@ -87,69 +103,113 @@ public class StepDefinitions {
     // Generelle - Disse skal KUN bruges i Background
     // =============================
 
+    /**
+     * @author Jeppe
+     */
     @Given("at medarbejderen {string} er logget ud")
     public void atMedarbejderenErLoggetUd(String initialer) {
         planlaegningsvaerktoej.userLogout();
     }
 
+    /**
+     * @author Jeppe
+     */
     @Given("at medarbejderen {string} er logget ind i systemet")
     public void atMedarbejderenErLoggetIndISystemet(String medarbejderInitialer) throws OperationNotAllowedException{
         planlaegningsvaerktoej.userLogin(medarbejderInitialer);   
     }
 
+    /**
+     * @author Jeppe
+     * @param initialer
+     * @throws OperationNotAllowedException
+     */
     @Given("at medarbejderen {string} tilfoejes til systemet")
     public void atMedarbejderenTilfoejesTilSystemet(String initialer) throws OperationNotAllowedException {
         planlaegningsvaerktoej.nyMedarbejder(initialer);
     }
 
+    /**
+     * @author Nikolai
+     * @param projektnummer
+     */
     @Given("at projektet {string} findes i systemet")
     public void atProjektetFindesISystemet(String projektnummer) {
         assertEquals(projektnummer, planlaegningsvaerktoej.findProjekt(projektnummer).getProjektNummer());
     }
 
+    /**
+     * @author Jacob
+     * @param initialer
+     */
     @Given("at medarbejderen med initialerne {string} findes i systemet")
     public void atMedarbejderenMedInitialerneFindesISystemet(String initialer) {
         assertEquals(initialer, planlaegningsvaerktoej.findMedarbejder(initialer).getInitialer());
     }
 
+    /**
+     * @author Jeppe
+     * @param initialer
+     * @param aktivitetsNavn
+     * @param projektNr
+     * @throws OperationNotAllowedException
+     */
     @Given("at medarbejderen {string} er tilknyttet aktiviteten {string} på projekt {string}")
     public void atMedarbejderenErTilknyttetAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
             String projektNr) throws OperationNotAllowedException {
         planlaegningsvaerktoej.tilfoejMedarbejderTilAktivitet(projektNr, aktivitetsNavn, initialer);
     }
 
+    /**
+     * @author Nikolai
+     * @param initialer
+     * @param projektNr
+     * @throws OperationNotAllowedException
+     */
     @Given("at medarbejderen {string} er tilknyttet projekt {string}")
     public void atMedarbejderenErTilknyttetProjekt(String initialer, String projektNr)
             throws OperationNotAllowedException {
         planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt(projektNr, initialer);
     }
 
+    /**
+     * @author Jeppe
+     * @param aktivitetsNavn
+     * @param projektNr
+     * @throws OperationNotAllowedException
+     */
     @Given("at aktiviteten {string} findes på projekt {string}")
     public void atAktivitetenFindesPåProjekt(String aktivitetsNavn, String projektNr)
             throws OperationNotAllowedException {
         planlaegningsvaerktoej.opretAktivitet(projektNr, aktivitetsNavn, 0.0, 1, 1);
     }
 
+    /**
+     * @author Frederik
+     * @param aktivitetsNavn
+     * @param budget
+     * @throws Exception
+     */
     @Given("at projektet har en aktivitet {string} med budget på {int} timer")
     public void at_projektet_har_en_aktivitet_med_budget_paa_timer(String aktivitetsNavn, Integer budget) throws Exception {
         // Simulerer oprettelse af aktivitet i det netop oprettede projekt "26001"
         // Bemærk: '10' og '12' er bare dummy start/slut uger for at få metoden til at køre
         planlaegningsvaerktoej.opretAktivitet("26001", aktivitetsNavn, (double) budget, 10, 12);
     }
+
+    /**
+     * @author Nikolai
+     * @param projektNavn
+     * @throws OperationNotAllowedException
+     */
     @Given("medarbejderen opretter et projekt med navnet {string}")
     public void medarbejderenOpretterEtProjektMedNavnet(String projektNavn) throws OperationNotAllowedException {
         planlaegningsvaerktoej.opretProjekt(projektNavn);
     }
 
-    @Given("at medarbejderen tidligere har registreret {double} timer paa aktiviteten {string} paa projekt {string}")
-    public void atMedarbejderenTidligereHarRegistreretTimerPaaAktivitetenPaaProjekt(Double timer, String aktivitetsNavn, String projektNr) throws OperationNotAllowedException {
-        planlaegningsvaerktoej.registrerTid(projektNr, aktivitetsNavn, timer);
-    }
-
     // =============================
-    // opret_projekt.feature
+    // opret_projekt.feature - Author: Nikolai
     // =============================
-
     @Then("eksisterer projektet {string} i systemet")
     public void eksistererProjektetISystemet(String projektNavn) {
         Projekt fundneProjekt = planlaegningsvaerktoej.findProjekt(projektNavn);
@@ -191,9 +251,8 @@ public class StepDefinitions {
     }
 
     // =============================
-    // slet_projekt.feature
+    // slet_projekt.feature - Author: Jacob
     // =============================
-  
     @When("medarbejderen forsoeger at slette projektet med nummeret {string}")
     public void medarbejderenForsoegerAtSletteProjektetMedNummeret(String projektNummer) {
         try {
@@ -218,7 +277,7 @@ public class StepDefinitions {
 
 
     // =============================
-    // omdoeb_projekt.feature
+    // omdoeb_projekt.feature - Author: Frederik
     // =============================
     @Given("at projektet {string} med navnet {string} findes i systemet")
     public void atProjektetMedNavnetFindesISystemet(String projektnummer, String projektNavn) {
@@ -250,7 +309,7 @@ public class StepDefinitions {
 
 
     // =============================
-    // opdater_projekt_med_projektleder
+    // opdater_projekt_med_projektleder - Author: Jacob
     // =============================
 
     @When("medarbejderen forsoeger at tilknytte {string} som projektleder til projekt {string}")
@@ -283,7 +342,7 @@ public class StepDefinitions {
 
 
     // =============================
-    // tilfoej_medarbejder_til_projekt
+    // tilfoej_medarbejder_til_projekt - Author: Nikolai
     // =============================
     @When("medarbejderen tilfoejer {string} til projekt {string}")
     public void medarbejderenTilfoejerTilProjekt(String medarbejderInitialer, String projektNr) {
@@ -302,7 +361,7 @@ public class StepDefinitions {
     }
 
      // =============================
-    // fjern_medarbejder_fra_projekt.feature
+    // fjern_medarbejder_fra_projekt.feature - Author: Frederik
     // =============================
     @When("medarbejderen fjerner {string} fra projekt {string}")
     public void medarbejderenFjernerFraProjekt(String medarbejderInitialer, String projektNummer) {
@@ -321,7 +380,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // Fælles for slet & rediger_aktivitet_til/fra_projekt
+    // Fælles for slet & rediger_aktivitet_til/fra_projekt - Author: Jeppe
     // =============================
 
     @Then("er aktiviteten {string} oprettet på projekt {string}")
@@ -340,7 +399,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // Opret_aktivitet_til_projekt
+    // Opret_aktivitet_til_projekt - Author: Jeppe
     // =============================
     @When("medarbejderen opretter aktiviteten {string} paa projekt {string} med budgetteret tid {double} starttidspunkt {int} sluttidspunkt {int}")
     public void medarbejderenOpretterAktivitetenPaaProjektMedBudgetteretTidStarttidspunktSluttidspunkt(String aktivitetsNavn, String projektNr, Double budgetteretTid, Integer start, Integer slut) {
@@ -357,7 +416,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // slet_aktivitet_fra_projekt
+    // slet_aktivitet_fra_projekt - Author: Jacob
     // =============================
     @When("medarbejderen fjerner aktiviteten {string} på projekt {string}")
     public void medarbejderenFjernerAktivitetenPåProjekt(String aktivitetsnavn, String projektnummer) {
@@ -375,7 +434,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // rediger_aktivitet_fra_projekt
+    // rediger_aktivitet_fra_projekt - Author: Jeppe
     // =============================    
     @When("medarbejderen redigerer aktiviteten {string} paa projekt {string} til budgetteret tid {double} starttidspunkt {int} sluttidspunkt {int}")
     public void medarbejderenRedigererAktivitetenPaaProjektTilBudgetteretTidStarttidspunktSluttidspunkt(String aktivitetsNavn, String projektNr, Double budgetteretTid, Integer start, Integer slut) {
@@ -388,7 +447,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // tilfoej_medarbejder_fra_aktivitet
+    // tilfoej_medarbejder_fra_aktivitet - Author: Jeppe
     // =============================
 
     @When("medarbejderen tilfoejer {string} til aktiviteten {string} paa projekt {string}")
@@ -411,7 +470,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // fjern_medarbejder_fra_aktivitet
+    // fjern_medarbejder_fra_aktivitet - Author: Jacob
     // =============================
     @When("medarbejderen fjerner {string} fra aktiviteten {string} på projekt {string}")
     public void medarbejderenFjernerFraAktivitetenPåProjekt(String initialer, String aktivitetsNavn,
@@ -432,7 +491,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // indlaes_hr_liste
+    // indlaes_hr_liste - Author: Jeppe
     // =============================
     @Given("at en ny HR-fil med medarbejderinitialer er tilgængelig")
     public void atEnNyHRFilMedMedarbejderinitialerErTilgængelig() {
@@ -572,7 +631,7 @@ public class StepDefinitions {
     }
     
     // =============================
-    // registrer_tid.feature
+    // registrer_tid.feature - Author: Nikolai
     // =============================
 
     @When("medarbejderen registrerer {double} timer på aktiviteten {string} på projekt {string} for dags dato")
@@ -594,7 +653,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // vis_egne_timer.feature
+    // vis_egne_timer.feature - Author: Nikolai
     // =============================
     @When("medarbejderen anmoder om at se sine egne tidsregistreringer")
     public void medarbejderenAnmoderOmAtSeSineEgneTidsregistreringer() {
@@ -622,7 +681,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // registrer_fravaer.feature
+    // registrer_fravaer.feature - Author: Frederik
     // =============================
 
     @When("medarbejderen registrerer fravær af typen {string} fra uge {int} til uge {int}")
@@ -642,7 +701,7 @@ public class StepDefinitions {
 
 
     // ==========================================
-    // STEPS TIL RAPPORTGENERERING
+    // STEPS TIL RAPPORTGENERERING - Author: Frederik
     // ==========================================
 
     @When("medarbejderen anmoder om en rapport for projekt {string}")
@@ -689,7 +748,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // registrer_fravaer.feature - additional scenarios
+    // registrer_fravaer.feature - Author: Nikolai
     // =============================
     @Then("forbliver det eksisterende antal medarbejdere uændret")
     public void forbliverserDetEksisterendeAntalMedarbejdereUændret() {
@@ -697,7 +756,7 @@ public class StepDefinitions {
     }
 
     // =============================
-    // vis_ledige_medarbejdere.feature
+    // vis_ledige_medarbejdere.feature - Author: Jeppe
     // =============================
     @When("medarbejderen søger efter ledige medarbejdere i uge {int}")
     public void medarbejderenSøgerEfterLedigeMedarbejdereIUge(Integer uge) {

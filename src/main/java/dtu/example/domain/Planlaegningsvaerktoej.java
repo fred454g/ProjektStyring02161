@@ -29,7 +29,7 @@ public class Planlaegningsvaerktoej {
     // ====================
     /**
      * For App.java
-     * @author Jeppe
+     * @author Jeppe, Frederik
      */
     public Planlaegningsvaerktoej() {
         this(
@@ -41,6 +41,7 @@ public class Planlaegningsvaerktoej {
 
     /**
      * For tests
+     * @author Jeppe
      * @param pr projektrepo
      * @param mr medarbejderrepo
      * @param fr fravaerrepo
@@ -55,6 +56,7 @@ public class Planlaegningsvaerktoej {
     // User Methods
     // ====================
     /**
+     * Finder initialer på nuværende bruger logged ind
      * @author Jeppe
      * @return initialer på bruger logged ind
      */
@@ -63,13 +65,13 @@ public class Planlaegningsvaerktoej {
     }
     
     /**
+     * Logger en Medarbejder ind, hvis de eksistere i systemet
      * @author Jeppe
      * @param initialer på bruger
      * @throws OperationNotAllowedException
      */
     public void userLogin(String initialer) throws OperationNotAllowedException {
         if (findMedarbejder(initialer) == null) {
-
             throw new OperationNotAllowedException("Medarbejder med initialer " + initialer + " findes ikke i systemet.");
         }
         this.loggedInUser = findMedarbejder(initialer);
@@ -108,13 +110,17 @@ public class Planlaegningsvaerktoej {
     // ====================
     // Projekt Metoder
     // ====================
+    /**
+     * Gemmer projekter i projekter.txt
+     * @author Frederik
+     */
     public void gemProjekter() {
         projektRepository.gemProjekter(this.projekter);
     }
     
     /**
     * Logik til at oprette projekt og tildele automatisk nummer
-    * @author Jeppe
+    * @author Nikolai, Jacob
     * @param projektNavn Navn på nyoprettede projekt
     * @param \OperationNotAllowedException Indikere at systemets krav ikke opfyldes
     */
@@ -123,7 +129,6 @@ public class Planlaegningsvaerktoej {
         
         // --- Defensive programming (untrusted UI-input) ---
         tjek_BrugerErLoggedInd();
-        
         if (projektNavn == null || projektNavn.isEmpty()) {
             throw new OperationNotAllowedException("Projektnavnet må ikke være tomt");
         }
@@ -131,8 +136,6 @@ public class Planlaegningsvaerktoej {
         // --- DbC PRE-CONDITION (failsafe — bør allerede være etableret af defensive code ovenfor) ---
         assert loggedInUser != null : "Pre-condition: bruger skal være logget ind";
         assert projektNavn != null && !projektNavn.isEmpty() : "Pre-condition: projektnavn skal være ikke-tomt";
-
-        // --- @pre-state snapshot til brug i post-condition ---
         int forventetAntalProjekter = this.projekter.size() + 1;
         int forventetNytNummer = this.hoejesteProjektnummer + 1;
 
@@ -150,8 +153,12 @@ public class Planlaegningsvaerktoej {
         assert findProjekt(nytProjektnr) != null : "Post-condition: Kunne ikke genfinde det oprettede projekt";
     }
 
+    /**
+     * @author Jacob
+     * @param projektNummer
+     * @throws OperationNotAllowedException
+     */
     public void sletProjekt(String projektNummer) throws OperationNotAllowedException {
-        // Jacob
 
         tjek_BrugerErLoggedInd(); // Fejlscenarie 1
 
@@ -164,7 +171,7 @@ public class Planlaegningsvaerktoej {
     }
 
     /**
-     * @author Jeppe, Frederik
+     * @author Frederik
      * @param projektNummer
      * @param nytNavn
      * @return true hvis lykkedes.
@@ -173,19 +180,14 @@ public class Planlaegningsvaerktoej {
     public boolean omdoebProjekt(String projektNummer, String nytNavn) throws OperationNotAllowedException {
         // Der bliver udført struktureret white-box test på denne metode
 
-        tjek_BrugerErLoggedInd(); // 1
-
-        tjek_ProjektErValgt(projektNummer); // 2 (2a || 2b)
-
-
-        if (nytNavn == null || nytNavn.isBlank()) { // 3 (3a || 3b)
+        tjek_BrugerErLoggedInd();
+        tjek_ProjektErValgt(projektNummer);
+        if (nytNavn == null || nytNavn.isBlank()) {
             throw new OperationNotAllowedException("Nyt projektnavn må ikke være tomt");
         }
-
         // Tjek om navnet allerede er i brug
-        for (Projekt p: this.projekter) { // 4
-
-            if (p.getProjektNavn().equals(nytNavn)) { // 5
+        for (Projekt p: this.projekter) {
+            if (p.getProjektNavn().equals(nytNavn)) {
                 throw new OperationNotAllowedException("Projektnavn findes allerede");
             }
         }
@@ -198,22 +200,20 @@ public class Planlaegningsvaerktoej {
         assert !gammeltNavn.equals(nytNavn) : "Pre-condition: Projektet har allerede det ønskede navn";
 
         boolean opdateret = projekt.opdaterNavn(nytNavn);
-        
         if (opdateret) {
             observers.firePropertyChange("PROJEKT_OMDOEBT", gammeltNavn, projekt);
         }
-
         gemProjekter();
 
         // --- DbC POST-CHECK ---
         assert projekt.getProjektNavn().equals(nytNavn) : "Post-condition: Projektets navn blev ikke opdateret lokalt i objektet";
         assert findProjekt(projektNummer).getProjektNavn().equals(nytNavn) : "Post-condition: Navneændringen blev ikke persisteret overordnet i systemet";
 
-        return opdateret; // 7
+        return opdateret;
     }
 
     /**
-     * @author Jeppe, Frederik
+     * @author Jacob
      * @param projektNummer
      * @param medarbejderInitialer
      * @return
@@ -257,7 +257,7 @@ public class Planlaegningsvaerktoej {
     }
 
     /**
-     * @author Jeppe
+     * @author Nikolai
      * @param projektNummer
      * @param initialer
      * @return true hvis lykkedes
@@ -266,11 +266,9 @@ public class Planlaegningsvaerktoej {
     public boolean tilfoejMedarbejderTilProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
         // Der bliver udført struktureret white-box test på denne metode
 
-        tjek_BrugerErLoggedInd(); // 1
-        
-        Projekt projekt = tjek_ProjektetFindes(projektNummer); // 2
-
-        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // 3
+        tjek_BrugerErLoggedInd();
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
         projekt.tilknytMedarbejder(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_TILKNYTTET_PROJEKT", null, projekt);
@@ -279,42 +277,40 @@ public class Planlaegningsvaerktoej {
     }
 
     /**
-     * @author Jeppe
+     * @author Frederik
      * @param projektNummer
      * @param initialer
      * @return
      * @throws OperationNotAllowedException
      */
     public boolean fjernMedarbejderFraProjekt(String projektNummer, String initialer) throws OperationNotAllowedException {
+        tjek_BrugerErLoggedInd();
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
-        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
-
-        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 2
-
-        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // Fejlscenarie 3
-
-        projekt.fjernMedarbejderFraProjekt(medarbejder); // Fejlscenarie 4
-
+        projekt.fjernMedarbejderFraProjekt(medarbejder);
         observers.firePropertyChange("MEDARBEJDER_FJERNET_PROJEKT", medarbejder, projekt);
         gemProjekter();
         return true;
     }
 
+    /**
+     * @author Frederik, Jacob
+     * @param projektNr
+     * @param aktivitetsNavn
+     * @param timer
+     * @throws OperationNotAllowedException
+     */
     public void registrerTid(String projektNr, String aktivitetsNavn, Double timer) throws OperationNotAllowedException {
-
         // Der bliver udført struktureret white-box test på denne metode
 
-        tjek_BrugerErLoggedInd(); // 1
+        tjek_BrugerErLoggedInd();
+        tjek_ProjektErValgt(projektNr);
+        tjek_AktivitetErValgt(aktivitetsNavn);
+        tjek_AntalTimerStoerreEnd0(timer);
+        tjek_AntalTimerMindreEnd24(timer);
 
-        tjek_ProjektErValgt(projektNr); // 2 (2a || 2b)
-
-        tjek_AktivitetErValgt(aktivitetsNavn); // 3 (3a || 3b)
-
-        tjek_AntalTimerStoerreEnd0(timer); // 4 (4a || 4b)
-
-        tjek_AntalTimerMindreEnd24(timer); // 5
-
-        Projekt projekt = tjek_ProjektetFindes(projektNr); // 6
+        Projekt projekt = tjek_ProjektetFindes(projektNr);
 
         // --- @pre-state snapshot til brug i post-condition ---
         Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
@@ -322,9 +318,7 @@ public class Planlaegningsvaerktoej {
         double registreretTidFoer = (aktivitet != null) ? aktivitet.getTotalRegistreretTid() : 0.0;
 
         projekt.registrerTid(aktivitetsNavn, loggedInUser, timer);
-
         observers.firePropertyChange("TID_REGISTRERET", null, loggedInUser);
-
         gemProjekter();
 
         // --- DbC POST-CHECK (Nås kun ved et Success-scenarie) ---
@@ -333,18 +327,19 @@ public class Planlaegningsvaerktoej {
         assert aktivitet.getTotalRegistreretTid() == forventetNyTid : "Post-condition: Timerne blev ikke lagt korrekt til aktivitetens totale tidsforbrug";
     }
 
+    /**
+     * @author Frederik
+     * @return
+     * @throws OperationNotAllowedException
+     */
     public double visEgneTimer() throws OperationNotAllowedException {
-        
-        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
+        tjek_BrugerErLoggedInd();
 
         String initialer = loggedInUser.getInitialer();
-
         double total = 0;
-
         for (Projekt p : this.projekter) {
             total += p.getRegistreretTidForMedarbejder(initialer);
         }
-
         return total;
     }
 
@@ -352,6 +347,7 @@ public class Planlaegningsvaerktoej {
     // Aktivitet Metoder
     // =========================
     /**
+     * Opretter en aktivitet tilknyttet til et projekt
      * @author Jeppe
      * @param projektNummer
      * @param aktivitetsNavn
@@ -362,34 +358,19 @@ public class Planlaegningsvaerktoej {
      * @throws OperationNotAllowedException
      */
     public boolean opretAktivitet(String projektNummer, String aktivitetsNavn, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
+        tjek_BrugerErLoggedInd();
+		tjek_ProjektErValgt(projektNummer);
+        tjek_AktivitetErValgt(aktivitetsNavn);
+        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
+        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt);
 
-        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        String nytAktivitetsnr = projekt.getProjektNummer() + "-" + projekt.getHoejesteAktivitetsnummer();
 
-		tjek_ProjektErValgt(projektNummer); // Fejlscenarie 2
-
-        tjek_AktivitetErValgt(aktivitetsNavn); // Fejlscenarie 3
-
-        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer); // Fejlscenarie 4
-
-        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt); // Fejlscenarie 5
-
-        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 6
-
-        String nytAktivitetsnr =
-                projekt.getProjektNummer() + "-" + projekt.getHoejesteAktivitetsnummer();
-
-        projekt.opretAktivitet(
-                nytAktivitetsnr,
-                aktivitetsNavn,
-                forventedeAntalArbejdstimer,
-                starttidspunkt,
-                sluttidspunkt
-        );
-
+        projekt.opretAktivitet(nytAktivitetsnr, aktivitetsNavn, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
         projekt.hoejesteAktivitetsnummerPlusEn();
 
         Aktivitet nyAktivitet = projekt.findAktivitet(nytAktivitetsnr);
-
         observers.firePropertyChange("AKTIVITET_OPRETTET", null, nyAktivitet);
 
         gemProjekter();
@@ -398,6 +379,7 @@ public class Planlaegningsvaerktoej {
     }
 
     /**
+     * Giver mulighed for ændring af timeline og arbejdstimer
      * @author Jeppe
      * @param projektNummer
      * @param aktivitetsNummer
@@ -408,48 +390,40 @@ public class Planlaegningsvaerktoej {
      * @throws OperationNotAllowedException
      */
     public boolean redigerAktivitet(String projektNummer, String aktivitetsNummer, double forventedeAntalArbejdstimer, int starttidspunkt, int sluttidspunkt) throws OperationNotAllowedException {
-        
-        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
+        tjek_BrugerErLoggedInd();
+        tjek_ProjektErValgt(projektNummer);
+        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer);
+        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt);
 
-        tjek_ProjektErValgt(projektNummer); // Fejlscenarie 2
-
-        tjek_forventedeAntalArbejdstimer(forventedeAntalArbejdstimer); // Fejlscenarie 3
-
-        tjek_StartOgSluttidspunkt(starttidspunkt, sluttidspunkt); // Fejlscenarie 4
-
-        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 5
-
-        Aktivitet aktivitetFoerOpdatering = tjek_AktivitetFindes(projekt, aktivitetsNummer); // Fejlscenarie 6
-
-
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Aktivitet aktivitetFoerOpdatering = tjek_AktivitetFindes(projekt, aktivitetsNummer);
         projekt.opdaterAktivitet(aktivitetsNummer, forventedeAntalArbejdstimer, starttidspunkt, sluttidspunkt);
+
         observers.firePropertyChange("AKTIVITET_OPDATERET", null, aktivitetFoerOpdatering);
         gemProjekter();
+        
         return true;
     }
 
     /**
-     * @author Jeppe 
+     * @author Frederik
      * @param projektNummer
      * @param aktivitetsNummer
      * @return true hvis lykkedes
      * @throws OperationNotAllowedException
      */
     public boolean sletAktivitet(String projektNummer, String aktivitetsNummer) throws OperationNotAllowedException {
-        
-        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
-        
-        tjek_ProjektErValgt(projektNummer); // Fejlscenarie 2
-    
-		tjek_AktivitetErValgt(aktivitetsNummer); // Fejlscenarie 3
+        tjek_BrugerErLoggedInd();
+        tjek_ProjektErValgt(projektNummer);
+		tjek_AktivitetErValgt(aktivitetsNummer);
 
-	    Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 4
-
-        Aktivitet aktivitet = tjek_AktivitetFindes(projekt, aktivitetsNummer); // Fejlscenarie 5
-
+	    Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Aktivitet aktivitet = tjek_AktivitetFindes(projekt, aktivitetsNummer);
         projekt.sletAktivitet(aktivitet);
+
         observers.firePropertyChange("AKTIVITET_SLETTET", aktivitet, projekt);
         gemProjekter();
+
         return true;
     }
 
@@ -462,15 +436,12 @@ public class Planlaegningsvaerktoej {
      * @throws OperationNotAllowedException
      */
     public boolean tilfoejMedarbejderTilAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
-        // Jacob
-
-        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
+        tjek_BrugerErLoggedInd();
         
-        Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 2
+        Projekt projekt = tjek_ProjektetFindes(projektNummer);
+        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer);
 
-        Medarbejder medarbejder = tjek_MedarbejderenFindes(initialer); // Fejlscenarie 3
-
-        // --- @pre-state snapshot til brug i post-condition ---
+        // --- DbC PRE-CHECK ---
         Aktivitet aktivitet = projekt.findAktivitet(aktivitetsNavn);
         int forventetAntalMedarbejdere = (aktivitet != null) ? aktivitet.getTilknyttedeMedarbejdere().size() + 1 : 0;
 
@@ -487,10 +458,9 @@ public class Planlaegningsvaerktoej {
     }
 
     /**
-     * @author Jeppe
+     * @author Jacob
      */
     public boolean fjernMedarbejderFraAktivitet(String projektNummer, String aktivitetsNavn, String initialer) throws OperationNotAllowedException {
-        // Jacob
 
         tjek_BrugerErLoggedInd(); // Fejlscenarie 1
   
@@ -504,6 +474,11 @@ public class Planlaegningsvaerktoej {
         return true;
     }
 
+    /**
+     * Returnerer en liste med alle projektnumre (IDs)
+     * @author Frederik
+     * @return
+     */
     public List<String> getAlleProjektIds() {
         List<String> ids = new ArrayList<>();
         for (Projekt p : this.projekter) {
@@ -512,6 +487,13 @@ public class Planlaegningsvaerktoej {
         return ids;
     }
 
+    /**
+     * Returnerer en liste med alle aktivitetsnavne i et projekt
+     * @author Frederik
+     * @param projektNummer
+     * @return
+     * @throws OperationNotAllowedException
+     */
     public List<String> getAktivitetsNavneForProjekt(String projektNummer) throws OperationNotAllowedException {
 
         Projekt projekt = tjek_ProjektetFindes(projektNummer);
@@ -524,21 +506,21 @@ public class Planlaegningsvaerktoej {
     }
 
     /**
-     * @author Jeppe
+     * Returnerer liste over medarbejdere som ikke er tilknyttet aktivitet, eller har fravær i en periode
+     * @author Nikolai
      * @param startUge
      * @param slutUge
      * @return
      * @throws OperationNotAllowedException
      */
-    public List<Medarbejder> findLedigeMedarbejdere(int startUge, int slutUge)
-            throws OperationNotAllowedException {
+    public List<Medarbejder> findLedigeMedarbejdere(int startUge, int slutUge) throws OperationNotAllowedException {
         // --- DbC PRE-CONDITIONS ---
         // Metoden fanger ikke null, så det ville være en fatal logisk fejl at kalde denne metode med start > slut
         assert startUge > 0 && startUge <= 52 : "Pre-condition: Ugyldig startUge ("+startUge+")";
         assert slutUge > 0 && slutUge <= 52 : "Pre-condition: Ugyldig slutUge ("+slutUge+")";
         assert startUge <= slutUge : "Pre-condition: Startuge må ikke være efter slutuge";
             
-        tjek_BrugerErLoggedInd(); // Fejlscenarie 1
+        tjek_BrugerErLoggedInd();
 
         List<Medarbejder> ledige = new ArrayList<>();
 
@@ -578,7 +560,15 @@ public class Planlaegningsvaerktoej {
 
         return ledige;
     }
-    
+
+    /**
+     * Returnerer en liste over ledige medarbejdere, for let overblik
+     * @author Jeppe
+     * @param startUge
+     * @param slutUge
+     * @return
+     * @throws OperationNotAllowedException
+     */
     public String visLedigeMedarbejdere(int startUge, int slutUge) throws OperationNotAllowedException {
 
         List<Medarbejder> ledige = findLedigeMedarbejdere(startUge, slutUge);
@@ -605,6 +595,14 @@ public class Planlaegningsvaerktoej {
     // Fravaer Metoder
     // =====================
 
+    /**
+     * Lader en medarbejder melde ind hvornår de er utilgængelige
+     * @author Nikolai
+     * @param type
+     * @param startUge
+     * @param slutUge
+     * @throws OperationNotAllowedException
+     */
     public void registrerFravaer(String type, Integer startUge, Integer slutUge)
             throws OperationNotAllowedException {
 
@@ -633,6 +631,15 @@ public class Planlaegningsvaerktoej {
         fravaerRepository.gemFravaer(this.medarbejdere);
     }
 
+    /**
+     * Returnere om en medarbejder har fravær i en bestemt periode
+     * @author Nikolai
+     * @param initialer
+     * @param type
+     * @param startUge
+     * @param slutUge
+     * @return
+     */
     public boolean harFravaer(String initialer, String type, Integer startUge, Integer slutUge) {
         Medarbejder medarbejder = findMedarbejder(initialer);
         return medarbejder.harFravaer(type, startUge, slutUge);
@@ -661,7 +668,8 @@ public class Planlaegningsvaerktoej {
     // Filindløsning
     // =======================
     /**
-     * @author Jeppe
+     * Indlæser hr_liste.txt for oprettede af medarbejdere ud fra initialer
+     * @author Jeppe, Frederik
      */
     public void indlaesFil() {
         int antalMedarbejdereFoer = this.medarbejdere.size();
@@ -700,6 +708,13 @@ public class Planlaegningsvaerktoej {
     // ====================
     // Rapport Generering
     // ====================
+    /**
+     * Genererer en let-læslig rapport for et projekt i text format
+     * @author Frederik
+     * @param projektInfo
+     * @return
+     * @throws OperationNotAllowedException
+     */
     public String genererRapport(String projektInfo) throws OperationNotAllowedException {
         // Find projektet (helper)
         Projekt p = findProjekt(projektInfo);
@@ -747,9 +762,13 @@ public class Planlaegningsvaerktoej {
     // =====================
     // Tjek hjaepler metoder
     // =====================
-
+    /**
+     * @author Jacob
+     * @param projektNummer
+     * @return
+     * @throws OperationNotAllowedException
+     */
     private Projekt tjek_ProjektetFindes(String projektNummer) throws OperationNotAllowedException {
-        // Jacob
 
         Projekt projekt = findProjekt(projektNummer);
 
@@ -760,6 +779,12 @@ public class Planlaegningsvaerktoej {
         return projekt;
     }
 
+    /**
+     * @author Jacob
+     * @param initialer
+     * @return
+     * @throws OperationNotAllowedException
+     */
     private Medarbejder tjek_MedarbejderenFindes(String initialer) throws OperationNotAllowedException {
         // Jacob
 
@@ -772,6 +797,13 @@ public class Planlaegningsvaerktoej {
         return medarbejder;
     }
 
+    /**
+     * @author Jacob
+     * @param projekt
+     * @param aktivitetsNummer
+     * @return
+     * @throws OperationNotAllowedException
+     */
     private Aktivitet tjek_AktivitetFindes(Projekt projekt, String aktivitetsNummer) throws OperationNotAllowedException {
         // Jacob
 
@@ -784,6 +816,10 @@ public class Planlaegningsvaerktoej {
         return aktivitet;
     }
 
+    /**
+     * @author Jacob
+     * @throws OperationNotAllowedException
+     */
     private void tjek_BrugerErLoggedInd() throws OperationNotAllowedException {
         // Jacob
 
@@ -792,6 +828,11 @@ public class Planlaegningsvaerktoej {
         }
     }
 
+    /**
+     * @author Jacob
+     * @param aktivitetsNummer
+     * @throws OperationNotAllowedException
+     */
     private void tjek_AktivitetErValgt(String aktivitetsNummer) throws OperationNotAllowedException {
         // Jacob
 
@@ -800,6 +841,11 @@ public class Planlaegningsvaerktoej {
         }
     }
 
+    /**
+     * @author Jacob
+     * @param projektNummer
+     * @throws OperationNotAllowedException
+     */
     private void tjek_ProjektErValgt(String projektNummer) throws OperationNotAllowedException {
         // Jacob
 
@@ -808,6 +854,11 @@ public class Planlaegningsvaerktoej {
         }
     }
 
+    /**
+     * @author Jacob
+     * @param forventedeAntalArbejdstimer
+     * @throws OperationNotAllowedException
+     */
     private void tjek_forventedeAntalArbejdstimer(double forventedeAntalArbejdstimer) throws OperationNotAllowedException {
         // Jacob
 
@@ -816,6 +867,12 @@ public class Planlaegningsvaerktoej {
         }
     }
 
+    /**
+     * @author Jacob
+     * @param starttidspunkt
+     * @param sluttidspunkt
+     * @throws OperationNotAllowedException
+     */
     private void tjek_StartOgSluttidspunkt(double starttidspunkt, double sluttidspunkt) throws OperationNotAllowedException {
         // Jacob
         
@@ -824,6 +881,11 @@ public class Planlaegningsvaerktoej {
         }
     }
 
+    /**
+     * @author Jacob
+     * @param timer
+     * @throws OperationNotAllowedException
+     */
     private void tjek_AntalTimerStoerreEnd0(Double timer) throws OperationNotAllowedException {
         
         if (timer == null || timer <= 0) { 
@@ -831,6 +893,11 @@ public class Planlaegningsvaerktoej {
         }
     }
 
+    /**
+     * @author Jacob
+     * @param timer
+     * @throws OperationNotAllowedException
+     */
     private void tjek_AntalTimerMindreEnd24(Double timer) throws OperationNotAllowedException {
         
         if (timer > 24) {

@@ -6,6 +6,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
+/**
+ * @author Jacob, Nikolai, Jeppe, Frederik
+ */
 public class PrimaryController {
 
 

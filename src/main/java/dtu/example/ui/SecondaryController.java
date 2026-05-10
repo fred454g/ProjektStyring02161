@@ -9,6 +9,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+/**
+ * @author Frederik, Jeppe, Nikolai, Jacob
+ */
 public class SecondaryController implements PropertyChangeListener {
 
     // --- Projekter ---
