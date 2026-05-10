@@ -117,6 +117,31 @@ public class WhiteBox_tilfoejMedarbejderTilProjekt {
         fail("Medarbejderen blev ikke tilkynttet korrekt til prjektet");
     }
 
+    /*
+     * Sæt E:
+     * 1 false, 2 false, 3 false, 4 true
+     * Projekt findes, medarbejder findes, men medarbejderen er allerede tilknyttet projektet
+     */
+    @Test
+    public void testSetE_MedarbejderAlleredeTilknyttetProjekt() throws Exception {
+        logIndSomJfk();
+
+        planlaegningsvaerktoej.opretProjekt("Projekt A");
+        planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt("26001", "jfk");
+
+        try {
+            planlaegningsvaerktoej.tilfoejMedarbejderTilProjekt("26001", "jfk");
+
+            fail("Forventede at OperationNotAllowedException blev kastet");
+
+        } catch (OperationNotAllowedException exception) {
+            assertEquals("Medarbejder er allerede tilknyttet projekt", exception.getMessage());
+        }
+
+        Projekt projekt = planlaegningsvaerktoej.findProjekt("26001");
+        assertEquals(1, projekt.getTilknyttedeMedarbejdere().size());
+    }
+
     private void logIndSomJfk() throws Exception {
 
         planlaegningsvaerktoej.nyMedarbejder("jfk");
