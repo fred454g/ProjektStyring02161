@@ -334,6 +334,8 @@ public class Planlaegningsvaerktoej {
 
         tjek_AntalTimerMindreEnd24(timer); // 5
 
+        assert true : "Pre-condition: Ingen yderligere logisk pre-condition";
+
         Projekt projekt = tjek_ProjektetFindes(projektNr); // 6
 
         // --- @pre-state snapshot til brug i post-condition ---
