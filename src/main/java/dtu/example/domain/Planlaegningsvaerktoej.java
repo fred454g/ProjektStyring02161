@@ -421,7 +421,7 @@ public class Planlaegningsvaerktoej {
 
         observers.firePropertyChange("AKTIVITET_OPDATERET", null, aktivitetFoerOpdatering);
         gemProjekter();
-        
+
         return true;
     }
 
@@ -505,6 +505,10 @@ public class Planlaegningsvaerktoej {
             ids.add(p.getProjektNummer());
         }
         return ids;
+    }
+
+    public List<Projekt> getProjekter() {
+        return new ArrayList<>(this.projekter);
     }
 
     /**

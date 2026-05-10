@@ -2,6 +2,7 @@ package dtu.example.ui;
 
 import dtu.example.domain.Medarbejder;
 import dtu.example.domain.OperationNotAllowedException;
+import dtu.example.domain.Projekt;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -18,42 +19,42 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML private TextField nytProjektNavnInput;
 
     // --- Projektleder ---
-    @FXML private ComboBox<String> projektIdForLederInput;
+    @FXML private ComboBox<Projekt> projektIdForLederInput;
     @FXML private ComboBox<String> projektlederInitialerVaelger;
 
     // --- Projektmedarbejdere ---
-    @FXML private ComboBox<String> projektIdForProjektMedarbejderInput;
+    @FXML private ComboBox<Projekt> projektIdForProjektMedarbejderInput;
     @FXML private ComboBox<String> medarbejderTilProjektVaelger;
-    @FXML private ComboBox<String> projektIdForFjernProjektMedarbejderInput;
+    @FXML private ComboBox<Projekt> projektIdForFjernProjektMedarbejderInput;
     @FXML private ComboBox<String> medarbejderFraProjektVaelger;
 
     // --- Omdøb projekt ---
-    @FXML private ComboBox<String> projektIdForOmdobInput;
+    @FXML private ComboBox<Projekt> projektIdForOmdobInput;
     @FXML private TextField nytProjektNavnOmdobInput;
 
     // --- Slet projekt ---
-    @FXML private ComboBox<String> projektIdForSletProjektInput;
+    @FXML private ComboBox<Projekt> projektIdForSletProjektInput;
 
     // --- Opret aktivitet ---
-    @FXML private ComboBox<String> projektIdForAktivitetInput;
+    @FXML private ComboBox<Projekt> projektIdForAktivitetInput;
     @FXML private TextField aktivitetsNavnInput;
     @FXML private TextField budgetInput;
     @FXML private TextField startUgeAktivitetInput;
     @FXML private TextField slutUgeAktivitetInput;
 
     // --- Opdater aktivitet ---
-    @FXML private ComboBox<String> projektIdForOpdaterAktivitetInput;
+    @FXML private ComboBox<Projekt> projektIdForOpdaterAktivitetInput;
     @FXML private ComboBox<String> aktivitetForOpdateringInput;
     @FXML private TextField nytBudgetInput;
     @FXML private TextField nyStartUgeInput;
     @FXML private TextField nySlutUgeInput;
 
     // --- Slet aktivitet ---
-    @FXML private ComboBox<String> projektIdForSletAktivitetInput;
+    @FXML private ComboBox<Projekt> projektIdForSletAktivitetInput;
     @FXML private ComboBox<String> aktivitetForSletningInput;
 
     // --- Tilknyt medarbejder til aktivitet ---
-    @FXML private ComboBox<String> projektIdForTilknytningInput;
+    @FXML private ComboBox<Projekt> projektIdForTilknytningInput;
     @FXML private ComboBox<String> aktivitetForTilknytningInput;
     @FXML private ComboBox<String> medarbejderInitialerVaelger;
 
@@ -63,12 +64,12 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML private TextArea ledigeOutput;
 
     // --- Fjern medarbejder fra aktivitet ---
-    @FXML private ComboBox<String> projektIdForFjernMedarbejderInput;
+    @FXML private ComboBox<Projekt> projektIdForFjernMedarbejderInput;
     @FXML private ComboBox<String> aktivitetForFjernMedarbejderInput;
     @FXML private ComboBox<String> medarbejderForFjernelseVaelger;
 
     // --- Tidsregistrering ---
-    @FXML private ComboBox<String> projektIdTidInput;
+    @FXML private ComboBox<Projekt> projektIdTidInput;
     @FXML private ComboBox<String> aktivitetsNavnTidInput;
     @FXML private TextField timerInput;
     @FXML private TextArea egneTimerOutput;
@@ -79,13 +80,14 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML private TextField slutUgeInput;
 
     // --- Rapport ---
-    @FXML private ComboBox<String> rapportProjektIdInput;
+    @FXML private ComboBox<Projekt> rapportProjektIdInput;
     @FXML private TextArea rapportOutput;
 
     @FXML
     public void initialize() {
         App.getFacade().addPropertyChangeListener(this);
 
+        konfigurerProjektVaelgere();
         opdaterMedarbejderLister();
         opdaterProjektLister();
 
@@ -117,21 +119,67 @@ public class SecondaryController implements PropertyChangeListener {
     }
 
     private void opdaterProjektLister() {
-        List<String> ids = App.getFacade().getAlleProjektIds();
+        List<Projekt> projekter = App.getFacade().getProjekter();
 
-        projektIdForLederInput.getItems().setAll(ids);
-        projektIdForAktivitetInput.getItems().setAll(ids);
-        projektIdForTilknytningInput.getItems().setAll(ids);
-        projektIdTidInput.getItems().setAll(ids);
-        rapportProjektIdInput.getItems().setAll(ids);
+        projektIdForLederInput.getItems().setAll(projekter);
+        projektIdForAktivitetInput.getItems().setAll(projekter);
+        projektIdForTilknytningInput.getItems().setAll(projekter);
+        projektIdTidInput.getItems().setAll(projekter);
+        rapportProjektIdInput.getItems().setAll(projekter);
 
-        projektIdForProjektMedarbejderInput.getItems().setAll(ids);
-        projektIdForFjernProjektMedarbejderInput.getItems().setAll(ids);
-        projektIdForOmdobInput.getItems().setAll(ids);
-        projektIdForSletProjektInput.getItems().setAll(ids);
-        projektIdForOpdaterAktivitetInput.getItems().setAll(ids);
-        projektIdForSletAktivitetInput.getItems().setAll(ids);
-        projektIdForFjernMedarbejderInput.getItems().setAll(ids);
+        projektIdForProjektMedarbejderInput.getItems().setAll(projekter);
+        projektIdForFjernProjektMedarbejderInput.getItems().setAll(projekter);
+        projektIdForOmdobInput.getItems().setAll(projekter);
+        projektIdForSletProjektInput.getItems().setAll(projekter);
+        projektIdForOpdaterAktivitetInput.getItems().setAll(projekter);
+        projektIdForSletAktivitetInput.getItems().setAll(projekter);
+        projektIdForFjernMedarbejderInput.getItems().setAll(projekter);
+    }
+
+    private void konfigurerProjektVaelgere() {
+        konfigurerProjektVaelger(projektIdForLederInput);
+        konfigurerProjektVaelger(projektIdForAktivitetInput);
+        konfigurerProjektVaelger(projektIdForTilknytningInput);
+        konfigurerProjektVaelger(projektIdTidInput);
+        konfigurerProjektVaelger(rapportProjektIdInput);
+        konfigurerProjektVaelger(projektIdForProjektMedarbejderInput);
+        konfigurerProjektVaelger(projektIdForFjernProjektMedarbejderInput);
+        konfigurerProjektVaelger(projektIdForOmdobInput);
+        konfigurerProjektVaelger(projektIdForSletProjektInput);
+        konfigurerProjektVaelger(projektIdForOpdaterAktivitetInput);
+        konfigurerProjektVaelger(projektIdForSletAktivitetInput);
+        konfigurerProjektVaelger(projektIdForFjernMedarbejderInput);
+    }
+
+    private void konfigurerProjektVaelger(ComboBox<Projekt> projektBox) {
+        projektBox.setCellFactory(listView -> new ListCell<>() {
+            @Override
+            protected void updateItem(Projekt projekt, boolean empty) {
+                super.updateItem(projekt, empty);
+                setText(empty ? null : formatProjekt(projekt));
+            }
+        });
+
+        projektBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Projekt projekt, boolean empty) {
+                super.updateItem(projekt, empty);
+                setText(empty ? null : formatProjekt(projekt));
+            }
+        });
+    }
+
+    private String formatProjekt(Projekt projekt) {
+        if (projekt == null) {
+            return null;
+        }
+
+        return projekt.getProjektNummer() + " - " + projekt.getProjektNavn();
+    }
+
+    private String getProjektNummer(ComboBox<Projekt> projektBox) {
+        Projekt projekt = projektBox.getValue();
+        return projekt == null ? null : projekt.getProjektNummer();
     }
 
     private void opdaterAktiviteterTilTilknytning() {
@@ -154,9 +202,9 @@ public class SecondaryController implements PropertyChangeListener {
         opdaterAktivitetsDropdown(projektIdForFjernMedarbejderInput, aktivitetForFjernMedarbejderInput);
     }
 
-    private void opdaterAktivitetsDropdown(ComboBox<String> projektBox, ComboBox<String> aktivitetBox) {
+    private void opdaterAktivitetsDropdown(ComboBox<Projekt> projektBox, ComboBox<String> aktivitetBox) {
         try {
-            String projektId = projektBox.getValue();
+            String projektId = getProjektNummer(projektBox);
             aktivitetBox.getItems().clear();
 
             if (projektId == null || projektId.isEmpty()) {
@@ -188,7 +236,7 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleOmdobProjekt() {
         try {
-            String projektId = projektIdForOmdobInput.getValue();
+            String projektId = getProjektNummer(projektIdForOmdobInput);
             String nytNavn = nytProjektNavnOmdobInput.getText();
 
             App.getFacade().omdoebProjekt(projektId, nytNavn);
@@ -204,7 +252,7 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleSletProjekt() {
         try {
-            String projektId = projektIdForSletProjektInput.getValue();
+            String projektId = getProjektNummer(projektIdForSletProjektInput);
 
             App.getFacade().sletProjekt(projektId);
 
@@ -217,13 +265,14 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleTilknytProjektleder() {
         try {
-            String projektId = projektIdForLederInput.getValue();
+            String projektId = getProjektNummer(projektIdForLederInput);
+            String projektVisning = formatProjekt(projektIdForLederInput.getValue());
             String initialer = projektlederInitialerVaelger.getValue();
 
             App.getFacade().opdaterProjektMedProjektleder(projektId, initialer);
 
             visInfo("Projektleder tilknyttet",
-                    initialer + " er nu projektleder for projekt " + projektId + ".");
+                    initialer + " er nu projektleder for projekt " + projektVisning + ".");
         } catch (OperationNotAllowedException e) {
             visFejl("Kunne ikke tilknytte projektleder", e.getMessage());
         }
@@ -232,13 +281,14 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleTilknytMedarbejderTilProjekt() {
         try {
-            String projektId = projektIdForProjektMedarbejderInput.getValue();
+            String projektId = getProjektNummer(projektIdForProjektMedarbejderInput);
+            String projektVisning = formatProjekt(projektIdForProjektMedarbejderInput.getValue());
             String initialer = medarbejderTilProjektVaelger.getValue();
 
             App.getFacade().tilfoejMedarbejderTilProjekt(projektId, initialer);
 
             visInfo("Medarbejder tilknyttet",
-                    initialer + " er tilknyttet projekt " + projektId + ".");
+                    initialer + " er tilknyttet projekt " + projektVisning + ".");
         } catch (OperationNotAllowedException e) {
             visFejl("Kunne ikke tilknytte medarbejder", e.getMessage());
         }
@@ -247,13 +297,14 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleFjernMedarbejderFraProjekt() {
         try {
-            String projektId = projektIdForFjernProjektMedarbejderInput.getValue();
+            String projektId = getProjektNummer(projektIdForFjernProjektMedarbejderInput);
+            String projektVisning = formatProjekt(projektIdForFjernProjektMedarbejderInput.getValue());
             String initialer = medarbejderFraProjektVaelger.getValue();
 
             App.getFacade().fjernMedarbejderFraProjekt(projektId, initialer);
 
             visInfo("Medarbejder fjernet",
-                    initialer + " er fjernet fra projekt " + projektId + ".");
+                    initialer + " er fjernet fra projekt " + projektVisning + ".");
         } catch (OperationNotAllowedException e) {
             visFejl("Kunne ikke fjerne medarbejder", e.getMessage());
         }
@@ -262,7 +313,8 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleOpretAktivitet() {
         try {
-            String projektId = projektIdForAktivitetInput.getValue();
+            String projektId = getProjektNummer(projektIdForAktivitetInput);
+            String projektVisning = formatProjekt(projektIdForAktivitetInput.getValue());
             String navn = aktivitetsNavnInput.getText();
             double budget = Double.parseDouble(budgetInput.getText());
             int startUge = Integer.parseInt(startUgeAktivitetInput.getText());
@@ -275,7 +327,7 @@ public class SecondaryController implements PropertyChangeListener {
             startUgeAktivitetInput.clear();
             slutUgeAktivitetInput.clear();
 
-            visInfo("Aktivitet oprettet", "Aktiviteten er oprettet på projekt " + projektId + ".");
+            visInfo("Aktivitet oprettet", "Aktiviteten er oprettet på projekt " + projektVisning + ".");
         } catch (NumberFormatException e) {
             visFejl("Inputfejl", "Budget, startuge og slutuge skal være tal.");
         } catch (OperationNotAllowedException e) {
@@ -286,7 +338,7 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleOpdaterAktivitet() {
         try {
-            String projektId = projektIdForOpdaterAktivitetInput.getValue();
+            String projektId = getProjektNummer(projektIdForOpdaterAktivitetInput);
             String aktivitet = aktivitetForOpdateringInput.getValue();
             double budget = Double.parseDouble(nytBudgetInput.getText());
             int start = Integer.parseInt(nyStartUgeInput.getText());
@@ -309,7 +361,7 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleSletAktivitet() {
         try {
-            String projektId = projektIdForSletAktivitetInput.getValue();
+            String projektId = getProjektNummer(projektIdForSletAktivitetInput);
             String aktivitet = aktivitetForSletningInput.getValue();
 
             App.getFacade().sletAktivitet(projektId, aktivitet);
@@ -323,7 +375,7 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleTilknytMedarbejder() {
         try {
-            String projektId = projektIdForTilknytningInput.getValue();
+            String projektId = getProjektNummer(projektIdForTilknytningInput);
             String aktivitetsNavn = aktivitetForTilknytningInput.getValue();
             String initialer = medarbejderInitialerVaelger.getValue();
 
@@ -339,7 +391,7 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleFjernMedarbejderFraAktivitet() {
         try {
-            String projektId = projektIdForFjernMedarbejderInput.getValue();
+            String projektId = getProjektNummer(projektIdForFjernMedarbejderInput);
             String aktivitet = aktivitetForFjernMedarbejderInput.getValue();
             String initialer = medarbejderForFjernelseVaelger.getValue();
 
@@ -355,7 +407,7 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleRegistrerTid() {
         try {
-            String projektId = projektIdTidInput.getValue();
+            String projektId = getProjektNummer(projektIdTidInput);
             String aktivitetsNavn = aktivitetsNavnTidInput.getValue();
             double timer = Double.parseDouble(timerInput.getText());
 
@@ -421,7 +473,7 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML
     private void handleGenererRapport() {
         try {
-            String projektId = rapportProjektIdInput.getValue();
+            String projektId = getProjektNummer(rapportProjektIdInput);
 
             String rapport = App.getFacade().genererRapport(projektId);
             rapportOutput.setText(rapport);
