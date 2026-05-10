@@ -1,1 +1,2 @@
 huba,Ferie,28,30
+huba,syg,1,2

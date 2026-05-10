@@ -330,6 +330,8 @@ public class Planlaegningsvaerktoej {
         tjek_AntalTimerStoerreEnd0(timer);
         tjek_AntalTimerMindreEnd24(timer);
 
+        assert true : "Pre-condition: Ingen yderligere logisk pre-condition";
+
         Projekt projekt = tjek_ProjektetFindes(projektNr);
 
         // --- @pre-state snapshot til brug i post-condition ---
@@ -740,6 +742,8 @@ public class Planlaegningsvaerktoej {
      * @throws OperationNotAllowedException
      */
     public String genererRapport(String projektInfo) throws OperationNotAllowedException {
+        tjek_BrugerErLoggedInd();
+
         // Find projektet (helper)
         Projekt p = findProjekt(projektInfo);
 
