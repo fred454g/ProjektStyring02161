@@ -25,6 +25,9 @@ public class Observer implements PropertyChangeListener {
             Projekt projekt = (Projekt) event.getNewValue();
             String gammeltNavn = (String) event.getOldValue();
             System.out.println(">>> SYSTEM BESKED: Projekt omdøbt fra '" + gammeltNavn + "' til '" + projekt.getProjektNavn() + "'");
+        } else if ("PROJEKT_SLETTET".equals(eventName)) {
+            Projekt projekt = (Projekt) event.getOldValue();
+            System.out.println(">>> SYSTEM BESKED: Projekt " + projekt.getProjektNummer() + " er slettet");
         } else if ("PROJEKTLEDER_OPDATERET".equals(eventName)) {
             Projekt projekt = (Projekt) event.getNewValue();
             Medarbejder nyLeder = projekt.getProjektleder();

@@ -31,6 +31,9 @@ public class SecondaryController implements PropertyChangeListener {
     @FXML private ComboBox<String> projektIdForOmdobInput;
     @FXML private TextField nytProjektNavnOmdobInput;
 
+    // --- Slet projekt ---
+    @FXML private ComboBox<String> projektIdForSletProjektInput;
+
     // --- Opret aktivitet ---
     @FXML private ComboBox<String> projektIdForAktivitetInput;
     @FXML private TextField aktivitetsNavnInput;
@@ -125,6 +128,7 @@ public class SecondaryController implements PropertyChangeListener {
         projektIdForProjektMedarbejderInput.getItems().setAll(ids);
         projektIdForFjernProjektMedarbejderInput.getItems().setAll(ids);
         projektIdForOmdobInput.getItems().setAll(ids);
+        projektIdForSletProjektInput.getItems().setAll(ids);
         projektIdForOpdaterAktivitetInput.getItems().setAll(ids);
         projektIdForSletAktivitetInput.getItems().setAll(ids);
         projektIdForFjernMedarbejderInput.getItems().setAll(ids);
@@ -194,6 +198,19 @@ public class SecondaryController implements PropertyChangeListener {
             visInfo("Projekt omdøbt", "Projektet er omdøbt.");
         } catch (OperationNotAllowedException e) {
             visFejl("Kunne ikke omdøbe projekt", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleSletProjekt() {
+        try {
+            String projektId = projektIdForSletProjektInput.getValue();
+
+            App.getFacade().sletProjekt(projektId);
+
+            visInfo("Projekt slettet", "Projektet er slettet.");
+        } catch (OperationNotAllowedException e) {
+            visFejl("Kunne ikke slette projekt", e.getMessage());
         }
     }
 
@@ -442,6 +459,7 @@ public class SecondaryController implements PropertyChangeListener {
 
         if ("PROJECT_OPRETTET".equals(eventName)
                 || "PROJEKT_OMDOEBT".equals(eventName)
+                || "PROJEKT_SLETTET".equals(eventName)
                 || "AKTIVITET_OPRETTET".equals(eventName)
                 || "AKTIVITET_OPDATERET".equals(eventName)
                 || "AKTIVITET_SLETTET".equals(eventName)

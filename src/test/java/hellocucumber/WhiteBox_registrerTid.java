@@ -224,6 +224,27 @@ public class WhiteBox_registrerTid {
         assertEquals(2.0, aktivitet.getRegistreretTidForMedarbejder("jfk"));
     }
 
+    /*
+     * Sæt K:
+     * 1 false, 2 false, 3 false, 4 false, 5 false, 6 false, 7 true
+     * Projekt findes, men aktivitet findes ikke i projekt.
+     */
+    @Test
+    public void testSetK_AktivitetFindesIkkeIProjekt() throws Exception {
+        logIndSomJfk();
+
+        planlaegningsvaerktoej.opretProjekt("Projekt A");
+
+        try {
+            planlaegningsvaerktoej.registrerTid("26001", "Ukendt Aktivitet", 2.0);
+
+            fail("Forventede at OperationNotAllowedException blev kastet");
+
+        } catch (OperationNotAllowedException exception) {
+            assertEquals("Aktivitet findes ikke i projekt", exception.getMessage());
+        }
+    }
+
 
     private void logIndSomJfk() throws Exception {
 

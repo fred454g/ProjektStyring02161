@@ -87,6 +87,20 @@
                                             <VBox prefWidth="320.0" spacing="12.0"
                                                   style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
                                                 <children>
+                                                    <Label text="Slet projekt">
+                                                        <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <ComboBox fx:id="projektIdForSletProjektInput" prefHeight="36.0" maxWidth="Infinity" promptText="Projekt" />
+                                                    <Button onAction="#handleSletProjekt" prefHeight="38.0" maxWidth="Infinity" text="Slet projekt"
+                                                            style="-fx-background-color: #c0392b; -fx-text-fill: white;" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox prefWidth="320.0" spacing="12.0"
+                                                  style="-fx-background-color: white; -fx-padding: 24; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                                <children>
                                                     <Label text="Tilknyt projektleder">
                                                         <font>
                                                             <Font name="System Bold" size="14.0" />
