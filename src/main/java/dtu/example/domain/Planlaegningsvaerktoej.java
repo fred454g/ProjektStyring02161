@@ -160,6 +160,7 @@ public class Planlaegningsvaerktoej {
         Projekt projekt = tjek_ProjektetFindes(projektNummer); // Fejlscenarie 3
 
         projekter.remove(projekt);
+        observers.firePropertyChange("PROJEKT_SLETTET", projekt, null);
         gemProjekter();
     }
 
